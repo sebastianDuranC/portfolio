@@ -1,0 +1,327 @@
+/* Enhanced notebook background with Tailwind-like approach */
+.notebook-bg {
+    background: 
+        linear-gradient(90deg, transparent 0%, transparent 40px, #e5e7eb 40px, #e5e7eb 41px, transparent 41px),
+        linear-gradient(#f9fafb 0%, #f9fafb 100%);
+    background-size: 100% 100%, 100% 24px;
+    position: relative;
+}
+
+.notebook-bg::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Enhanced carousel with Tailwind-like transitions */
+.carousel-container {
+    overflow: hidden;
+    position: relative;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1.25rem 0;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carousel-item {
+    flex-shrink: 0;
+    width: 120px;
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+}
+
+.carousel-item:hover {
+    transform: scale(1.05);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.carousel-item:hover img {
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+/* Enhanced navigation with Tailwind-like effects */
+nav {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+nav a {
+    position: relative;
+    overflow: hidden;
+}
+
+nav a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #3b82f6;
+    transition: width 0.3s ease;
+}
+
+nav a:hover::before {
+    width: 100%;
+}
+
+/* Enhanced buttons with Tailwind-like gradients */
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+/* Enhanced form inputs with Tailwind-like focus states */
+input, textarea {
+    transition: all 0.3s ease;
+    border: 2px solid #e5e7eb;
+}
+
+input:focus, textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Enhanced section headers with Tailwind-like underlines */
+section h2 {
+    position: relative;
+    display: inline-block;
+}
+
+section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 2px;
+}
+
+/* Enhanced hero section with Tailwind-like animations */
+#inicio {
+    position: relative;
+    overflow: hidden;
+}
+
+#inicio::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+}
+
+/* Enhanced about section with Tailwind-like gradients */
+#sobre-mi .bg-gradient-to-br {
+    position: relative;
+    overflow: hidden;
+}
+
+#sobre-mi .bg-gradient-to-br::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Enhanced contact section with Tailwind-like backgrounds */
+#contacto {
+    position: relative;
+}
+
+#contacto::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* Enhanced GitHub buttons with Tailwind-like effects */
+.project-card a[href*="github"] {
+    position: relative;
+    overflow: hidden;
+}
+
+.project-card a[href*="github"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.project-card a[href*="github"]:hover::before {
+    left: 100%;
+}
+
+/* Enhanced contact cards with Tailwind-like transitions */
+#contacto .group:hover div {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+#contacto .group div {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Profile image enhancements with Tailwind-like effects */
+#sobre-mi img {
+    transition: all 0.3s ease;
+}
+
+#sobre-mi img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Responsive enhancements using Tailwind-like breakpoints */
+@media (max-width: 768px) {
+    .carousel-item {
+        width: 100px;
+        margin: 0 8px;
+    }
+    
+    .carousel-item img {
+        height: 100px;
+    }
+    
+    #contacto .flex {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    #contacto .group div {
+        padding: 1rem;
+    }
+}
+
+/* Loading animation for images with Tailwind-like timing */
+.carousel-item img {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Enhanced scrollbar with Tailwind-like colors */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+    .carousel-container {
+        padding: 1rem 0;
+    }
+    
+    .carousel-item {
+        width: 80px;
+        margin: 0 6px;
+    }
+    
+    .carousel-item img {
+        height: 80px;
+    }
+    
+    #contacto .group div {
+        padding: 0.75rem;
+    }
+    
+    #contacto .group div i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #contacto .group div h3 {
+        font-size: 0.875rem;
+    }
+    
+    #contacto .group div p {
+        font-size: 0.75rem;
+    }
+} 
