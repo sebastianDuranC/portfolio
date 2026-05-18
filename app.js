@@ -18,12 +18,18 @@ class LinuxOS {
         
         const updateClock = () => {
             const now = new Date();
-            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            // Spanish locale matching the html lang
-            let dateString = now.toLocaleDateString('es-ES', options).replace(',', '');
-            // Capitalize first letter of day and month
-            dateString = dateString.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
-            dateElement.textContent = dateString;
+
+            // Format: "mar 29 oct  14:30" (Ubuntu Gnome style)
+            const dayNames = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+            const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+            const dayName = dayNames[now.getDay()];
+            const day = now.getDate();
+            const monthName = monthNames[now.getMonth()];
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+
+            dateElement.textContent = `${dayName} ${day} ${monthName}  ${hours}:${minutes}`;
         };
 
         updateClock();
@@ -31,14 +37,31 @@ class LinuxOS {
     }
 
     bringToFront(windowElement) {
+        if (parseInt(windowElement.style.zIndex || 0) === this.highestZIndex) return;
+
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+
+        // Visual indicator of active window
+        this.windows.forEach(w => {
+            if (w !== windowElement) {
+                w.classList.add('opacity-95');
+                w.classList.remove('shadow-2xl');
+                w.classList.add('shadow-lg');
+            }
+        });
+
+        windowElement.classList.remove('opacity-95');
+        windowElement.classList.add('shadow-2xl');
+        windowElement.classList.remove('shadow-lg');
     }
 
     setupWindowClickToFront() {
         this.windows.forEach(win => {
             win.addEventListener('mousedown', () => {
-                this.bringToFront(win);
+                if(!win.classList.contains('hidden') && !win.classList.contains('minimized')) {
+                    this.bringToFront(win);
+                }
             });
         });
     }
@@ -81,6 +104,15 @@ class LinuxOS {
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
+
+                    // Basic boundary constraints
+                    const rect = win.getBoundingClientRect();
+                    const parentRect = document.getElementById('desktop').getBoundingClientRect();
+
+                    // Allow dragging off screen a bit, but keep header visible
+                    if (currentY < -parentRect.top) {
+                        currentY = -parentRect.top;
+                    }
 
                     xOffset = currentX;
                     yOffset = currentY;
