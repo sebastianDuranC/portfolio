@@ -62,7 +62,7 @@ class LinuxOS {
 
             function dragStart(e) {
                 // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.tagName === 'BUTTON') return;
+                if(e.target.closest('button')) return;
 
                 // Don't drag if maximized
                 if(win.classList.contains('maximized')) return;
