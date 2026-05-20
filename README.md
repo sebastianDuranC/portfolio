@@ -1,43 +1,31 @@
-# Mi Portafolio - Desarrollador Web
+# Linux OS Portfolio
 
-Un portafolio moderno y elegante con estilo de cuaderno/bosquejo, construido con HTML, Tailwind CSS y JavaScript.
+Un portfolio web interactivo diseñado para parecer un sistema operativo Linux (estilo Ubuntu/GNOME).
 
-## 🚀 Características
+## Características
 
-- **Diseño Responsivo**: Se adapta perfectamente a todos los dispositivos
-- **Tema de Cuaderno**: Estilo único con líneas de papel y efectos de bosquejo
-- **Carrusel de Habilidades**: Muestra tus tecnologías en un carrusel interactivo
-- **Animaciones Suaves**: Transiciones y efectos visuales modernos
-- **Navegación Fluida**: Scroll suave entre secciones
-- **Formulario de Contacto**: Funcional y listo para integrar con backend
+- **Diseño de Sistema Operativo:** Barra superior con reloj y estado, dock lateral con aplicaciones.
+- **Sistema de Ventanas:** Las secciones del portfolio se abren como ventanas que se pueden arrastrar y enfocar.
+- **Terminal (Sobre Mí):** Una ventana de terminal simulada con efecto de escritura para la presentación personal.
+- **Explorador de Archivos (Proyectos):** Visualización de proyectos como archivos y carpetas.
+- **Configuración (Skills):** Habilidades presentadas en un formato similar a la configuración del sistema.
+- **Ventana de Diálogo (Contacto):** Formulario de contacto integrado en una ventana de diálogo.
 
-## 📁 Estructura del Proyecto
+## Tecnologías
 
-```
-Portafolio/
-├── index.html          # Página principal
-├── app.js             # Funcionalidad JavaScript
-├── images/            # Carpeta para imágenes de habilidades
-│   ├── html5.png
-│   ├── css3.png
-│   ├── javascript.png
-│   ├── react.png
-│   ├── git.png
-│   ├── github.png
-│   └── .NET.png
-└── README.md          
-```
+- HTML5
+- Tailwind CSS (vía CDN)
+- JavaScript (Vanilla)
+- FontAwesome (Iconos)
 
-## 📱 Funcionalidades
+## Uso
 
-### Carrusel de Habilidades
-- Navegación manual con botones
-- Auto-scroll cada 3 segundos
-- Efecto infinito
-- Imágenes con fallback a placeholder
-- Efectos 3D en hover con Tailwind CSS
+1. Simplemente abre `index.html` en tu navegador web.
+2. Haz clic en los iconos del dock lateral o en el escritorio para abrir las diferentes "aplicaciones".
+3. Arrastra las ventanas por la barra de título.
+4. Haz clic en una ventana para traerla al frente.
+5. Cierra las ventanas usando la "x" en la barra de título.
 
-### Navegación
-- Scroll suave entre secciones
-- Navegación activa en tiempo real
-- Responsive design
+## Temática y Diseño
+
+El diseño utiliza colores inspirados en el tema Yaru de Ubuntu (`Aubergine` y `Orange`) e implementa controles de ventana clásicos de Linux a la derecha (cerrar, minimizar, maximizar - simulados para efecto visual).
