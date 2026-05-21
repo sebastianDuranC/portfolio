@@ -104,6 +104,7 @@ class LinuxOS {
     openWindow(id) {
         const win = document.getElementById(`window-${id}`);
         const dot = document.getElementById(`dot-${id}`);
+        const icon = document.getElementById(`dock-${id}`);
         
         if (win) {
             if (win.classList.contains('hidden') || win.classList.contains('minimized')) {
@@ -118,23 +119,125 @@ class LinuxOS {
                 this.bringToFront(win);
                 this.openWindows.add(id);
 
-                if(dot) dot.classList.remove('hidden');
+                if(dot) {
+                    dot.classList.remove('hidden');
+                }
+                if(icon) {
+                    icon.classList.add('bg-white/10');
+                }
+
+                // Trigger typing effect for terminal only on first open
+                if (id === 'terminal' && !this.terminalTyped) {
+                    this.typeTerminalContent();
+                    this.terminalTyped = true;
+                }
             } else {
                 this.bringToFront(win);
             }
         }
     }
 
+    typeTerminalContent() {
+        const contentDiv = document.getElementById('terminal-content');
+        const promptDiv = document.getElementById('terminal-prompt');
+        if (!contentDiv || !promptDiv) return;
+
+        contentDiv.innerHTML = '';
+        promptDiv.style.display = 'none';
+
+        const commands = [
+            { cmd: 'whoami', out: 'Sebastian Duran Caballero' },
+            { cmd: 'cat description.txt', out: 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.' },
+            { cmd: 'neofetch', out: `<div class="flex flex-col md:flex-row text-gray-100 mb-4 mt-2">
+                <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/&#x60;--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                </div>
+                <div>
+                    <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                    <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                    <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                    <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                    <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                    <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                    <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                </div>
+            </div>` }
+        ];
+
+        let i = 0;
+
+        const typeCommand = () => {
+            if (i >= commands.length) {
+                promptDiv.style.display = 'block';
+                const terminalWin = document.querySelector('#window-terminal .window-content');
+                if (terminalWin) terminalWin.scrollTop = terminalWin.scrollHeight;
+                return;
+            }
+
+            const line = document.createElement('div');
+            line.className = 'mb-2';
+            line.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ `;
+            contentDiv.appendChild(line);
+
+            let charIndex = 0;
+            const cmdText = commands[i].cmd;
+
+            const typeChar = () => {
+                if (charIndex < cmdText.length) {
+                    line.innerHTML += cmdText.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeChar, 50); // typing speed
+                } else {
+                    setTimeout(() => {
+                        const outDiv = document.createElement('div');
+                        outDiv.className = 'text-gray-100 mb-4';
+                        outDiv.innerHTML = commands[i].out;
+                        contentDiv.appendChild(outDiv);
+                        i++;
+                        setTimeout(typeCommand, 300);
+
+                        const terminalWin = document.querySelector('#window-terminal .window-content');
+                        if (terminalWin) terminalWin.scrollTop = terminalWin.scrollHeight;
+                    }, 200);
+                }
+            };
+
+            typeChar();
+        };
+
+        setTimeout(typeCommand, 500);
+    }
+
     closeWindow(id) {
         const win = document.getElementById(`window-${id}`);
         const dot = document.getElementById(`dot-${id}`);
+        const icon = document.getElementById(`dock-${id}`);
         
         if (win) {
             win.classList.add('hidden');
             win.classList.remove('maximized');
 
             this.openWindows.delete(id);
-            if(dot) dot.classList.add('hidden');
+            if(dot) {
+                dot.classList.add('hidden');
+            }
+            if(icon) {
+                icon.classList.remove('bg-white/10');
+            }
         }
     }
 
