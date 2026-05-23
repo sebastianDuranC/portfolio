@@ -10,71 +10,64 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 bg-[#300a24] z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full border-4 border-gray-600 object-cover mb-4 shadow-xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+            <h1 class="text-2xl font-ubuntu font-bold text-white mb-6">Sebastian Duran Caballero</h1>
+            <div class="w-64 relative">
+                <input type="password" id="login-password" placeholder="Contraseña (Enter para entrar)" class="w-full bg-[#1e1e1e] text-white border border-gray-600 rounded-md py-2 px-3 focus:outline-none focus:border-[#e95420] font-ubuntu transition-colors" autocomplete="off">
+                <button onclick="app.login()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <p id="login-error" class="text-red-400 text-sm mt-2 opacity-0 transition-opacity">Contraseña incorrecta</p>
+        </div>
+        <div class="absolute bottom-8 right-8 flex space-x-4 text-white/70">
+            <i class="fas fa-network-wired hover:text-white cursor-pointer"></i>
+            <i class="fas fa-universal-access hover:text-white cursor-pointer"></i>
+            <i class="fas fa-power-off hover:text-white cursor-pointer"></i>
+        </div>
+    </div>
+
     <!-- Top Bar -->
-    <div class="top-bar w-full h-7 bg-black/80 backdrop-blur-md flex justify-between items-center px-4 z-50 fixed top-0 text-sm font-ubuntu shadow-sm text-gray-200">
-        <div class="flex items-center space-x-4">
-            <span class="hover:bg-white/10 px-2 py-0.5 rounded-sm cursor-pointer transition-colors font-medium">Actividades</span>
+    <div class="top-bar w-full h-7 bg-[#1e1e1e] border-b border-black/50 flex justify-between items-center px-4 z-50 fixed top-0 text-sm font-ubuntu shadow-md text-gray-200">
+        <div class="flex items-center space-x-4 h-full">
+            <span class="hover:bg-white/10 h-full flex items-center px-3 cursor-pointer transition-colors font-medium">Actividades</span>
         </div>
-        <div class="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer hover:bg-white/10 px-3 rounded-sm transition-colors" id="clock-container">
-            <span id="topbar-date" class="font-medium text-[13px]"></span>
+        <div class="absolute left-1/2 transform -translate-x-1/2 h-full flex items-center cursor-pointer hover:bg-white/10 px-3 transition-colors" id="clock-container">
+            <span id="topbar-date" class="font-medium text-[14px]"></span>
         </div>
-        <div class="flex items-center space-x-3 cursor-pointer hover:bg-white/10 px-2 py-0.5 rounded-sm transition-colors">
-            <i class="fas fa-network-wired text-[10px]"></i>
-            <i class="fas fa-volume-up text-[10px]"></i>
-            <i class="fas fa-battery-full text-[10px]"></i>
-            <i class="fas fa-caret-down text-[10px] ml-1"></i>
+        <div class="flex items-center h-full cursor-pointer hover:bg-white/10 px-3 transition-colors space-x-3">
+            <i class="fas fa-network-wired text-[12px]"></i>
+            <i class="fas fa-volume-up text-[12px]"></i>
+            <i class="fas fa-battery-full text-[12px]"></i>
+            <i class="fas fa-caret-down text-[12px] ml-1"></i>
         </div>
     </div>
 
     <!-- Desktop Area -->
-    <div id="desktop" class="relative w-full h-[calc(100vh-28px)] mt-7 z-10">
+    <div id="desktop" class="relative w-[calc(100vw-64px)] ml-[64px] h-[calc(100vh-28px)] mt-7 z-10">
         <!-- Desktop Icons -->
-        <div class="absolute top-4 left-4 flex flex-col space-y-6 w-24">
-            <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('terminal')">
-                <div class="w-14 h-14 bg-gray-800/90 rounded-2xl flex items-center justify-center border border-gray-600/50 shadow-md group-hover:bg-gray-700 transition-all hover:scale-105">
-                    <i class="fas fa-terminal text-2xl text-gray-200"></i>
-                </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Terminal</span>
-            </div>
-
-            <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('projects')">
-                <div class="w-14 h-14 bg-[#e95420]/90 rounded-2xl flex items-center justify-center border border-[#e95420]/50 shadow-md group-hover:bg-[#e95420] transition-all hover:scale-105">
-                    <i class="fas fa-folder text-2xl text-white"></i>
-                </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Proyectos</span>
-            </div>
-
-            <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('skills')">
-                <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
-                    <i class="fas fa-cogs text-2xl text-gray-200"></i>
-                </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Habilidades</span>
-            </div>
-            
-             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('contact')">
-                <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
-                    <i class="fas fa-envelope text-2xl text-gray-200"></i>
-                </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Contacto</span>
-            </div>
-        </div>
+        <!-- Removed old desktop icons in favor of left dock -->
 
         <!-- Windows Container -->
         <div id="windows-container" class="absolute inset-0 pointer-events-none">
             
             <!-- Terminal Window (Sobre Mi) -->
-            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-aubergine rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col" data-id="terminal">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24] rounded-lg shadow-2xl overflow-hidden border border-gray-700/50 ring-1 ring-black/50 pointer-events-auto flex flex-col" data-id="terminal">
+                <div class="window-header h-10 bg-[#3d3d3d] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="text-gray-300 text-sm font-ubuntu">sebastian@ubuntu: ~</div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 items-center">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.minimizeWindow('terminal')">
+                            <div class="w-2.5 h-[1.5px] bg-gray-300"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.maximizeWindow('terminal')">
+                            <div class="w-2.5 h-2.5 border-[1.5px] border-gray-300 rounded-[2px]"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-[#d64a1a] focus:outline-none flex items-center justify-center group transition-colors" onclick="app.closeWindow('terminal')">
+                            <i class="fas fa-times text-[10px] text-white"></i>
                         </button>
                     </div>
                 </div>
@@ -122,21 +115,21 @@
             </div>
 
             <!-- Projects Explorer Window -->
-            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="projects">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#242424] rounded-lg shadow-2xl overflow-hidden border border-gray-700/50 ring-1 ring-black/50 pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+                <div class="window-header h-10 bg-[#3d3d3d] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-folder text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Archivos - Proyectos</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 items-center">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.minimizeWindow('projects')">
+                            <div class="w-2.5 h-[1.5px] bg-gray-300"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.maximizeWindow('projects')">
+                            <div class="w-2.5 h-2.5 border-[1.5px] border-gray-300 rounded-[2px]"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-[#d64a1a] focus:outline-none flex items-center justify-center group transition-colors" onclick="app.closeWindow('projects')">
+                            <i class="fas fa-times text-[10px] text-white"></i>
                         </button>
                     </div>
                 </div>
@@ -203,21 +196,21 @@
             </div>
 
             <!-- Skills Window (Settings style) -->
-            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="skills">
-                 <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#242424] rounded-lg shadow-2xl overflow-hidden border border-gray-700/50 ring-1 ring-black/50 pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+                 <div class="window-header h-10 bg-[#3d3d3d] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-cogs text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Configuración - Habilidades</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 items-center">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.minimizeWindow('skills')">
+                            <div class="w-2.5 h-[1.5px] bg-gray-300"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.maximizeWindow('skills')">
+                            <div class="w-2.5 h-2.5 border-[1.5px] border-gray-300 rounded-[2px]"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-[#d64a1a] focus:outline-none flex items-center justify-center group transition-colors" onclick="app.closeWindow('skills')">
+                            <i class="fas fa-times text-[10px] text-white"></i>
                         </button>
                     </div>
                 </div>
@@ -262,21 +255,21 @@
             </div>
 
             <!-- Contact Window (Mail client style) -->
-            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-lg bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="contact">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-lg bg-[#242424] rounded-lg shadow-2xl overflow-hidden border border-gray-700/50 ring-1 ring-black/50 pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+                <div class="window-header h-10 bg-[#3d3d3d] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-envelope text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Contacto</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 items-center">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.minimizeWindow('contact')">
+                            <div class="w-2.5 h-[1.5px] bg-gray-300"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/20 focus:outline-none flex items-center justify-center group transition-colors" onclick="app.maximizeWindow('contact')">
+                            <div class="w-2.5 h-2.5 border-[1.5px] border-gray-300 rounded-[2px]"></div>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-[#d64a1a] focus:outline-none flex items-center justify-center group transition-colors" onclick="app.closeWindow('contact')">
+                            <i class="fas fa-times text-[10px] text-white"></i>
                         </button>
                     </div>
                 </div>
@@ -323,23 +316,38 @@
     </div>
 
     <!-- Dock -->
-    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 glass-dark rounded-2xl p-2 flex space-x-2 z-40 shadow-2xl">
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
-            <i class="fas fa-terminal text-2xl text-gray-200"></i>
-            <!-- Dot indicator for open app -->
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-terminal"></div>
+    <!-- Dock (Left Side) -->
+    <div class="fixed left-0 top-7 h-[calc(100vh-28px)] w-16 bg-[#111111]/90 backdrop-blur-md flex flex-col items-center py-2 z-40 border-r border-white/5 shadow-2xl">
+        <!-- Ubuntu Dash Icon -->
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative mb-2" data-title="Aplicaciones">
+            <i class="fas fa-th text-xl text-gray-200"></i>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
-            <i class="fas fa-folder text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-projects"></div>
+
+        <div class="w-10 h-px bg-white/10 mb-2"></div>
+
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative mb-2" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
+            <div class="w-10 h-10 bg-gray-800/90 rounded-xl flex items-center justify-center border border-gray-600/50 shadow-sm">
+                <i class="fas fa-terminal text-lg text-gray-200"></i>
+            </div>
+            <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-[#e95420] rounded-r-md hidden transition-all" id="dot-terminal"></div>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
-            <i class="fas fa-cogs text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-skills"></div>
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative mb-2" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Archivos">
+            <div class="w-10 h-10 bg-[#e95420]/90 rounded-xl flex items-center justify-center border border-[#e95420]/50 shadow-sm">
+                <i class="fas fa-folder text-lg text-white"></i>
+            </div>
+            <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-[#e95420] rounded-r-md hidden transition-all" id="dot-projects"></div>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
-            <i class="fas fa-envelope text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-contact"></div>
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative mb-2" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Configuración">
+            <div class="w-10 h-10 bg-gray-700/90 rounded-xl flex items-center justify-center border border-gray-500/50 shadow-sm">
+                <i class="fas fa-cogs text-lg text-gray-200"></i>
+            </div>
+            <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-[#e95420] rounded-r-md hidden transition-all" id="dot-skills"></div>
+        </div>
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative mb-2" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Correo">
+            <div class="w-10 h-10 bg-gray-700/90 rounded-xl flex items-center justify-center border border-gray-500/50 shadow-sm">
+                <i class="fas fa-envelope text-lg text-gray-200"></i>
+            </div>
+            <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-5 bg-[#e95420] rounded-r-md hidden transition-all" id="dot-contact"></div>
         </div>
     </div>
 
