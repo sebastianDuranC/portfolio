@@ -93,7 +93,7 @@
 /* Animations for window opening */
 @keyframes windowOpen {
     0% {
-        transform: scale(0.95);
+        transform: scale(0.9);
         opacity: 0;
     }
     100% {
@@ -103,7 +103,7 @@
 }
 
 .window-opening {
-    animation: windowOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: windowOpen 0.2s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
 }
 
 /* Terminal blink cursor */
@@ -128,14 +128,14 @@
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    left: calc(100% + 10px);
+    transform: translateY(-50%);
     background: rgba(17, 17, 17, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
     pointer-events: none;
@@ -147,14 +147,23 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%) translateY(10px);
+    top: 50%;
+    left: calc(100% + 5px);
+    transform: translateY(-50%) translateX(-10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Inactive window dimming */
+.os-window.inactive .window-header {
+    background-color: #2b2b2b !important;
+}
+.os-window.inactive .window-header .text-gray-300,
+.os-window.inactive .window-header .text-gray-200 {
+    color: #888 !important;
 }

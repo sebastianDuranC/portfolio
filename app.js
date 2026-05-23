@@ -1,4 +1,22 @@
 class LinuxOS {
+
+    login() {
+        const passwordInput = document.getElementById('login-password');
+        const loginScreen = document.getElementById('login-screen');
+        const errorText = document.getElementById('login-error');
+
+        // We will accept any password or empty for this portfolio
+        loginScreen.style.opacity = '0';
+        setTimeout(() => {
+            loginScreen.style.display = 'none';
+        }, 500);
+
+        // Setup initial typing effect for terminal if not already done
+        setTimeout(() => {
+            this.openWindow('terminal');
+        }, 600);
+    }
+
     constructor() {
         this.windows = document.querySelectorAll('.os-window');
         this.highestZIndex = 100;
@@ -8,9 +26,24 @@ class LinuxOS {
     }
 
     init() {
+        this.setupLogin();
         this.setupClock();
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
+    }
+
+
+    setupLogin() {
+        const passwordInput = document.getElementById('login-password');
+        if(passwordInput) {
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.login();
+                }
+            });
+            // Auto focus
+            passwordInput.focus();
+        }
     }
 
     setupClock() {
@@ -30,10 +63,21 @@ class LinuxOS {
         setInterval(updateClock, 1000);
     }
 
+
     bringToFront(windowElement) {
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+
+        // Handle inactive styles
+        this.windows.forEach(win => {
+            if (win === windowElement) {
+                win.classList.remove('inactive');
+            } else {
+                win.classList.add('inactive');
+            }
+        });
     }
+
 
     setupWindowClickToFront() {
         this.windows.forEach(win => {
@@ -75,6 +119,7 @@ class LinuxOS {
                 }
             }
 
+
             function drag(e) {
                 if (isDragging) {
                     e.preventDefault();
@@ -82,12 +127,24 @@ class LinuxOS {
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
+                    // Bounding Box Logic
+                    const rect = win.getBoundingClientRect();
+                    const maxX = window.innerWidth - rect.width;
+                    const maxY = window.innerHeight - rect.height;
+
+                    // Don't let header go under top bar (28px) or left dock (64px)
+                    if (currentY < 0) currentY = 0; // Relative to the container that starts at top:28px
+                    // The #windows-container is inset-0, but we want to make sure the header is clickable.
+                    // Wait, the window's starting position in css is relative to its parent.
+                    // For simplicity, just bound relative to viewport.
+
                     xOffset = currentX;
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
                 }
             }
+
 
             function setTranslate(xPos, yPos, el) {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
