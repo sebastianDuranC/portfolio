@@ -10,52 +10,67 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
-    <!-- Top Bar -->
-    <div class="top-bar w-full h-7 bg-black/80 backdrop-blur-md flex justify-between items-center px-4 z-50 fixed top-0 text-sm font-ubuntu shadow-sm text-gray-200">
-        <div class="flex items-center space-x-4">
-            <span class="hover:bg-white/10 px-2 py-0.5 rounded-sm cursor-pointer transition-colors font-medium">Actividades</span>
+    <!-- Login Screen Overlay -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24] bg-opacity-95 transition-opacity duration-500 ease-in-out">
+        <div class="flex flex-col items-center">
+            <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-6 border-4 border-gray-600 object-cover shadow-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+            <h1 class="text-3xl font-ubuntu font-bold text-white mb-8">Sebastian Duran Caballero</h1>
+            <div class="flex items-center bg-white/10 rounded-md overflow-hidden border border-white/20">
+                <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-48 font-ubuntu placeholder-gray-400" value="ubuntu" readonly>
+                <button id="login-btn" class="bg-[#e95420] hover:bg-orange-600 px-4 py-2 text-white transition-colors" onclick="app.login()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <p class="text-gray-400 mt-4 text-sm font-ubuntu">Click en la flecha para iniciar sesión</p>
         </div>
-        <div class="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center cursor-pointer hover:bg-white/10 px-3 rounded-sm transition-colors" id="clock-container">
-            <span id="topbar-date" class="font-medium text-[13px]"></span>
+    </div>
+
+    <!-- Top Bar (GNOME style) -->
+    <div class="top-bar w-full h-7 bg-black/90 flex justify-between items-center px-3 z-50 fixed top-0 text-[13px] font-ubuntu font-medium text-gray-100 select-none">
+        <div class="flex items-center h-full">
+            <span class="hover:bg-white/10 px-3 h-full flex items-center rounded-full cursor-pointer transition-colors">Actividades</span>
         </div>
-        <div class="flex items-center space-x-3 cursor-pointer hover:bg-white/10 px-2 py-0.5 rounded-sm transition-colors">
-            <i class="fas fa-network-wired text-[10px]"></i>
-            <i class="fas fa-volume-up text-[10px]"></i>
-            <i class="fas fa-battery-full text-[10px]"></i>
-            <i class="fas fa-caret-down text-[10px] ml-1"></i>
+        <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center cursor-pointer hover:bg-white/10 px-3 h-full rounded-full transition-colors" id="clock-container">
+            <span id="topbar-date"></span>
+        </div>
+        <div class="flex items-center space-x-3 h-full cursor-pointer hover:bg-white/10 px-3 rounded-full transition-colors">
+            <i class="fas fa-network-wired text-xs"></i>
+            <i class="fas fa-volume-up text-xs"></i>
+            <i class="fas fa-battery-full text-xs"></i>
+            <i class="fas fa-caret-down text-xs ml-1"></i>
         </div>
     </div>
 
     <!-- Desktop Area -->
-    <div id="desktop" class="relative w-full h-[calc(100vh-28px)] mt-7 z-10">
+    <div id="desktop" class="relative ml-14 h-[calc(100vh-28px)] mt-7 z-10">
         <!-- Desktop Icons -->
         <div class="absolute top-4 left-4 flex flex-col space-y-6 w-24">
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('terminal')">
                 <div class="w-14 h-14 bg-gray-800/90 rounded-2xl flex items-center justify-center border border-gray-600/50 shadow-md group-hover:bg-gray-700 transition-all hover:scale-105">
                     <i class="fas fa-terminal text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Terminal</span>
+                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Terminal</span>
             </div>
 
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('projects')">
                 <div class="w-14 h-14 bg-[#e95420]/90 rounded-2xl flex items-center justify-center border border-[#e95420]/50 shadow-md group-hover:bg-[#e95420] transition-all hover:scale-105">
                     <i class="fas fa-folder text-2xl text-white"></i>
                 </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Proyectos</span>
+                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Proyectos</span>
             </div>
 
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('skills')">
                 <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
                     <i class="fas fa-cogs text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Habilidades</span>
+                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Habilidades</span>
             </div>
             
              <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('contact')">
                 <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
                     <i class="fas fa-envelope text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 bg-black/60 px-2 py-0.5 rounded-md text-center shadow-sm font-ubuntu text-gray-100 backdrop-blur-sm border border-white/10">Contacto</span>
+                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Contacto</span>
             </div>
         </div>
 
@@ -64,17 +79,17 @@
             
             <!-- Terminal Window (Sobre Mi) -->
             <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-aubergine rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col" data-id="terminal">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="text-gray-300 text-sm font-ubuntu">sebastian@ubuntu: ~</div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 ml-auto">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
+                            <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('terminal')">
+                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('terminal')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('terminal')">
+                            <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
@@ -123,20 +138,20 @@
 
             <!-- Projects Explorer Window -->
             <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="projects">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-folder text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Archivos - Proyectos</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 ml-auto">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('projects')">
+                            <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('projects')">
+                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('projects')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('projects')">
+                            <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
@@ -204,20 +219,20 @@
 
             <!-- Skills Window (Settings style) -->
             <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="skills">
-                 <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+                 <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-cogs text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Configuración - Habilidades</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 ml-auto">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('skills')">
+                            <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('skills')">
+                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('skills')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('skills')">
+                            <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
@@ -263,20 +278,20 @@
 
             <!-- Contact Window (Mail client style) -->
             <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-lg bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="contact">
-                <div class="window-header h-10 bg-gray-800/90 flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50 backdrop-blur-md">
+                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="flex items-center">
                         <i class="fas fa-envelope text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Contacto</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none mb-1">-</span>
+                    <div class="flex space-x-3 ml-auto">
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('contact')">
+                            <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-gray-500 hover:bg-gray-400 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-black text-[8px] leading-none">□</span>
+                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('contact')">
+                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-3.5 h-3.5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('contact')">
-                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">×</span>
+                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('contact')">
+                            <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
@@ -322,24 +337,31 @@
         </div>
     </div>
 
-    <!-- Dock -->
-    <div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 glass-dark rounded-2xl p-2 flex space-x-2 z-40 shadow-2xl">
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
-            <i class="fas fa-terminal text-2xl text-gray-200"></i>
-            <!-- Dot indicator for open app -->
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-terminal"></div>
+    <!-- Left Dock (Ubuntu style) -->
+    <div class="absolute left-0 top-7 bottom-0 w-14 bg-black/50 backdrop-blur-md flex flex-col items-center py-4 space-y-3 z-40 shadow-2xl border-r border-white/5">
+        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
+            <i class="fas fa-terminal text-xl text-gray-200"></i>
+            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-terminal"></div>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
-            <i class="fas fa-folder text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-projects"></div>
+        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
+            <i class="fas fa-folder text-xl text-gray-200"></i>
+            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-projects"></div>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
-            <i class="fas fa-cogs text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-skills"></div>
+        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
+            <i class="fas fa-cogs text-xl text-gray-200"></i>
+            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-skills"></div>
         </div>
-        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-xl cursor-pointer transition-all hover:scale-110 group relative" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
-            <i class="fas fa-envelope text-2xl text-gray-200"></i>
-            <div class="absolute -bottom-1.5 w-1 h-1 bg-[#e95420] rounded-full hidden" id="dot-contact"></div>
+        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
+            <i class="fas fa-envelope text-xl text-gray-200"></i>
+            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-contact"></div>
+        </div>
+
+        <!-- Dock Bottom section -->
+        <div class="mt-auto pt-4 flex flex-col space-y-3 w-full items-center">
+            <div class="w-8 h-px bg-white/20"></div>
+            <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" data-title="Mostrar Aplicaciones">
+                <i class="fas fa-th text-xl text-gray-200"></i>
+            </div>
         </div>
     </div>
 
