@@ -11,6 +11,31 @@ class LinuxOS {
         this.setupClock();
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
+        this.setupLogin();
+    }
+
+    setupLogin() {
+        const passwordInput = document.getElementById('login-password');
+        if (passwordInput) {
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.login();
+                }
+            });
+        }
+    }
+
+
+    login() {
+        const loginScreen = document.getElementById('login-screen');
+        if (loginScreen) {
+            loginScreen.classList.add('fade-out');
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                // Automatically open terminal on startup to show neofetch
+                this.openWindow('terminal');
+            }, 500); // Wait for transition to complete
+        }
     }
 
     setupClock() {
