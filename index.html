@@ -11,7 +11,7 @@
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24] bg-opacity-95 transition-opacity duration-500 ease-in-out">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24]/80 backdrop-blur-2xl transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
             <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-6 border-4 border-gray-600 object-cover shadow-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
             <h1 class="text-3xl font-ubuntu font-bold text-white mb-8">Sebastian Duran Caballero</h1>
@@ -26,7 +26,7 @@
     </div>
 
     <!-- Top Bar (GNOME style) -->
-    <div class="top-bar w-full h-7 bg-black/90 flex justify-between items-center px-3 z-50 fixed top-0 text-[13px] font-ubuntu font-medium text-gray-100 select-none">
+    <div class="top-bar w-full h-7 bg-black/85 backdrop-blur-md flex justify-between items-center px-4 z-50 fixed top-0 text-[13px] font-ubuntu font-medium text-gray-100 select-none">
         <div class="flex items-center h-full">
             <span class="hover:bg-white/10 px-3 h-full flex items-center rounded-full cursor-pointer transition-colors">Actividades</span>
         </div>
@@ -49,28 +49,28 @@
                 <div class="w-14 h-14 bg-gray-800/90 rounded-2xl flex items-center justify-center border border-gray-600/50 shadow-md group-hover:bg-gray-700 transition-all hover:scale-105">
                     <i class="fas fa-terminal text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Terminal</span>
+                <span class="text-xs mt-2 bg-black/40 px-2 py-0.5 rounded text-center font-ubuntu text-white">Terminal</span>
             </div>
 
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('projects')">
                 <div class="w-14 h-14 bg-[#e95420]/90 rounded-2xl flex items-center justify-center border border-[#e95420]/50 shadow-md group-hover:bg-[#e95420] transition-all hover:scale-105">
                     <i class="fas fa-folder text-2xl text-white"></i>
                 </div>
-                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Proyectos</span>
+                <span class="text-xs mt-2 bg-black/40 px-2 py-0.5 rounded text-center font-ubuntu text-white">Proyectos</span>
             </div>
 
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('skills')">
                 <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
                     <i class="fas fa-cogs text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Habilidades</span>
+                <span class="text-xs mt-2 bg-black/40 px-2 py-0.5 rounded text-center font-ubuntu text-white">Habilidades</span>
             </div>
             
              <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('contact')">
                 <div class="w-14 h-14 bg-gray-700/90 rounded-2xl flex items-center justify-center border border-gray-500/50 shadow-md group-hover:bg-gray-600 transition-all hover:scale-105">
                     <i class="fas fa-envelope text-2xl text-gray-200"></i>
                 </div>
-                <span class="text-xs mt-2 text-center font-ubuntu text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Contacto</span>
+                <span class="text-xs mt-2 bg-black/40 px-2 py-0.5 rounded text-center font-ubuntu text-white">Contacto</span>
             </div>
         </div>
 
@@ -81,15 +81,15 @@
             <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-aubergine rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col" data-id="terminal">
                 <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
                     <div class="text-gray-300 text-sm font-ubuntu">sebastian@ubuntu: ~</div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
-                            <span class="text-white font-bold mb-1">-</span>
+                    <div class="flex space-x-2 ml-auto">
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('terminal')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white font-bold mb-1 text-[10px] leading-none">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('terminal')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('terminal')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">□</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('terminal')">
-                            <span class="text-white text-sm font-bold">×</span>
+                        <button class="w-4 h-4 rounded-full bg-[#E95420] hover:bg-[#D94E1B] focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('terminal')">
+                            <span class="opacity-0 group-hover:opacity-100 text-black text-[10px] font-bold leading-none">×</span>
                         </button>
                     </div>
                 </div>
@@ -143,15 +143,15 @@
                         <i class="fas fa-folder text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Archivos - Proyectos</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('projects')">
-                            <span class="text-white font-bold mb-1">-</span>
+                    <div class="flex space-x-2 ml-auto">
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('projects')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white font-bold mb-1 text-[10px] leading-none">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('projects')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('projects')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">□</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('projects')">
-                            <span class="text-white text-sm font-bold">×</span>
+                        <button class="w-4 h-4 rounded-full bg-[#E95420] hover:bg-[#D94E1B] focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('projects')">
+                            <span class="opacity-0 group-hover:opacity-100 text-black text-[10px] font-bold leading-none">×</span>
                         </button>
                     </div>
                 </div>
@@ -224,15 +224,15 @@
                         <i class="fas fa-cogs text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Configuración - Habilidades</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('skills')">
-                            <span class="text-white font-bold mb-1">-</span>
+                    <div class="flex space-x-2 ml-auto">
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('skills')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white font-bold mb-1 text-[10px] leading-none">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('skills')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('skills')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">□</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('skills')">
-                            <span class="text-white text-sm font-bold">×</span>
+                        <button class="w-4 h-4 rounded-full bg-[#E95420] hover:bg-[#D94E1B] focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('skills')">
+                            <span class="opacity-0 group-hover:opacity-100 text-black text-[10px] font-bold leading-none">×</span>
                         </button>
                     </div>
                 </div>
@@ -283,15 +283,15 @@
                         <i class="fas fa-envelope text-gray-400 mr-2"></i>
                         <span class="text-sm font-ubuntu font-bold text-gray-200">Contacto</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('contact')">
-                            <span class="text-white font-bold mb-1">-</span>
+                    <div class="flex space-x-2 ml-auto">
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.minimizeWindow('contact')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white font-bold mb-1 text-[10px] leading-none">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('contact')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-4 h-4 rounded-full border border-gray-500 hover:bg-white/10 focus:outline-none flex items-center justify-center group" onclick="app.maximizeWindow('contact')">
+                            <span class="opacity-0 group-hover:opacity-100 text-white text-[8px] leading-none">□</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('contact')">
-                            <span class="text-white text-sm font-bold">×</span>
+                        <button class="w-4 h-4 rounded-full bg-[#E95420] hover:bg-[#D94E1B] focus:outline-none flex items-center justify-center group" onclick="app.closeWindow('contact')">
+                            <span class="opacity-0 group-hover:opacity-100 text-black text-[10px] font-bold leading-none">×</span>
                         </button>
                     </div>
                 </div>

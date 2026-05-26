@@ -82,6 +82,12 @@ class LinuxOS {
             let yOffset = 0;
 
             header.addEventListener('mousedown', dragStart);
+
+            // Double click to maximize/restore
+            header.addEventListener('dblclick', () => {
+                this.maximizeWindow(win.dataset.id);
+            });
+
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
