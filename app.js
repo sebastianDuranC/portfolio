@@ -181,6 +181,13 @@ class LinuxOS {
         }
     }
 
+    toggleDock() {
+        const dock = document.querySelector('.fixed.left-0');
+        if(dock) {
+            dock.classList.toggle('-translate-x-full');
+        }
+    }
+
     toggleWindow(id) {
         const win = document.getElementById(`window-${id}`);
         if(win && !win.classList.contains('hidden')) {
