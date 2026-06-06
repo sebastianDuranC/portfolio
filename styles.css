@@ -81,13 +81,13 @@
 }
 
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
-    left: 0 !important;
-    width: 100% !important;
+    top: 28px !important;
+    left: 56px !important;
+    width: calc(100vw - 56px) !important;
     height: calc(100vh - 28px) !important;
     max-width: none !important;
-    border-radius: 0;
-    transform: none;
+    border-radius: 0 !important;
+    transform: none !important;
 }
 
 /* Animations for window opening */
@@ -173,8 +173,8 @@
 }
 /* Login Screen Fade Out */
 .fade-out {
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 /* GNOME Window Header Styling */
