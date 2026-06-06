@@ -31,7 +31,7 @@ class LinuxOS {
         if (loginScreen) {
             loginScreen.classList.add('fade-out');
             setTimeout(() => {
-                loginScreen.style.display = 'none';
+                loginScreen.style.display = 'none'; // Use display none so it doesn't break reference if needed
                 // Automatically open terminal on startup to show neofetch
                 this.openWindow('terminal');
             }, 500); // Wait for transition to complete
