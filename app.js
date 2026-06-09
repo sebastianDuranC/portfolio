@@ -58,6 +58,20 @@ class LinuxOS {
     bringToFront(windowElement) {
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+
+        // Remove focused state from all windows
+        this.windows.forEach(win => {
+            const header = win.querySelector('.window-header');
+            if (header) {
+                header.classList.remove('window-focused');
+            }
+        });
+
+        // Add focused state to the current window
+        const header = windowElement.querySelector('.window-header');
+        if (header) {
+            header.classList.add('window-focused');
+        }
     }
 
     setupWindowClickToFront() {
@@ -106,6 +120,15 @@ class LinuxOS {
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
+
+                    // Prevent window from being dragged under the top bar (28px height)
+                    const winRect = win.getBoundingClientRect();
+                    const computedStyle = window.getComputedStyle(win);
+                    const topOffset = parseInt(computedStyle.top, 10) || 0;
+
+                    if (topOffset + currentY < 28) {
+                        currentY = 28 - topOffset;
+                    }
 
                     xOffset = currentX;
                     yOffset = currentY;
