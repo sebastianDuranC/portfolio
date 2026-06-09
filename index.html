@@ -11,17 +11,17 @@
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24] bg-opacity-95 transition-opacity duration-500 ease-in-out">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24] bg-opacity-80 backdrop-blur-md transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
             <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-6 border-4 border-gray-600 object-cover shadow-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-            <h1 class="text-3xl font-ubuntu font-bold text-white mb-8">Sebastian Duran Caballero</h1>
-            <div class="flex items-center bg-white/10 rounded-md overflow-hidden border border-white/20">
+            <h1 class="text-3xl font-ubuntu font-bold text-white mb-8 drop-shadow-md">Sebastian Duran Caballero</h1>
+            <div class="flex items-center bg-[#2b2b2b] rounded-md overflow-hidden border border-gray-500 shadow-xl">
                 <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-48 font-ubuntu placeholder-gray-400" value="ubuntu" readonly>
                 <button id="login-btn" class="bg-[#e95420] hover:bg-orange-600 px-4 py-2 text-white transition-colors" onclick="app.login()">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-            <p class="text-gray-400 mt-4 text-sm font-ubuntu">Click en la flecha para iniciar sesión</p>
+            <p class="text-gray-300 mt-4 text-sm font-ubuntu drop-shadow">Click en la flecha para iniciar sesión</p>
         </div>
     </div>
 
@@ -159,16 +159,19 @@
                     <!-- Sidebar -->
                     <div class="w-48 bg-[#1e1e1e] border-r border-gray-700/50 p-2 text-sm font-ubuntu hidden md:block">
                         <ul class="space-y-1">
-                            <li class="px-2 py-1.5 bg-[#e95420]/20 text-[#e95420] rounded-md cursor-pointer font-bold"><i class="fas fa-home mr-2"></i>Inicio</li>
+                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer"><i class="fas fa-home mr-2 text-gray-400"></i>Inicio</li>
                             <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer"><i class="fas fa-desktop mr-2 text-gray-400"></i>Escritorio</li>
                             <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer"><i class="fas fa-download mr-2 text-gray-400"></i>Descargas</li>
-                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer mt-4"><i class="fas fa-folder-open mr-2 text-orange-400"></i>Mis Proyectos</li>
+                            <li class="px-2 py-1.5 bg-[#e95420]/20 text-[#e95420] rounded-md cursor-pointer font-bold mt-4"><i class="fas fa-folder-open mr-2 text-orange-400"></i>Proyectos</li>
                         </ul>
                     </div>
                     <!-- Main Content -->
                     <div class="flex-1 bg-[#242424] p-4 overflow-y-auto">
-                        <h2 class="text-xl font-ubuntu mb-4 text-gray-100 font-bold border-b border-gray-700 pb-2">/home/sebastian/proyectos</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="flex items-center space-x-2 text-sm text-gray-400 mb-4 border-b border-gray-700 pb-2">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>/home/sebastian/proyectos</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                             <!-- Project 1 -->
                             <div class="bg-[#303030] border border-gray-600 rounded-lg p-4 hover:bg-[#383838] hover:border-gray-500 transition-all group shadow-md">
@@ -236,41 +239,49 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex-1 p-6 overflow-y-auto bg-[#1e1e1e]">
-                    <h2 class="text-2xl font-ubuntu mb-6 text-center text-gray-100">Stack Tecnológico</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                        <!-- Skills Icons -->
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/html.png" alt="HTML5" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732212.png'">
-                            <span class="text-xs font-bold text-gray-300">HTML5</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/Official_CSS_Logo.svg.png" alt="CSS3" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732190.png'">
-                            <span class="text-xs font-bold text-gray-300">CSS3</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/javascript.png" alt="JavaScript" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968292.png'">
-                            <span class="text-xs font-bold text-gray-300">JavaScript</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/c-sharp.png" alt="C#" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/6132/6132221.png'">
-                            <span class="text-xs font-bold text-gray-300">C#</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/Microsoft_.NET_logo.png" alt=".NET" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/512px-.NET_Core_Logo.svg.png'">
-                            <span class="text-xs font-bold text-gray-300">.NET</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/icons8-servidor-microsoft-sql-100.png" alt="SQL Server" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968313.png'">
-                            <span class="text-xs font-bold text-gray-300">SQL Server</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/git.png" alt="Git" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162803.png'">
-                            <span class="text-xs font-bold text-gray-300">Git</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/github.png" alt="Github" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/25/25231.png'">
-                            <span class="text-xs font-bold text-gray-300">Github</span>
+                <div class="flex flex-1 overflow-hidden">
+                    <div class="w-48 bg-[#1e1e1e] border-r border-gray-700/50 p-2 text-sm font-ubuntu hidden md:block">
+                        <ul class="space-y-1">
+                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer text-gray-400"><i class="fas fa-search mr-2"></i>Buscar</li>
+                            <li class="px-2 py-1.5 bg-[#e95420]/20 text-[#e95420] rounded-md cursor-pointer font-bold mt-2"><i class="fas fa-code mr-2"></i>Stack</li>
+                        </ul>
+                    </div>
+                    <div class="flex-1 p-6 overflow-y-auto bg-[#242424]">
+                        <h2 class="text-xl font-ubuntu mb-6 text-gray-100 border-b border-gray-700 pb-2">Stack Tecnológico</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <!-- Skills Icons -->
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/html.png" alt="HTML5" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732212.png'">
+                                <span class="text-xs font-bold text-gray-300">HTML5</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/Official_CSS_Logo.svg.png" alt="CSS3" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732190.png'">
+                                <span class="text-xs font-bold text-gray-300">CSS3</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/javascript.png" alt="JavaScript" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968292.png'">
+                                <span class="text-xs font-bold text-gray-300">JavaScript</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/c-sharp.png" alt="C#" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/6132/6132221.png'">
+                                <span class="text-xs font-bold text-gray-300">C#</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/Microsoft_.NET_logo.png" alt=".NET" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/512px-.NET_Core_Logo.svg.png'">
+                                <span class="text-xs font-bold text-gray-300">.NET</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/icons8-servidor-microsoft-sql-100.png" alt="SQL Server" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968313.png'">
+                                <span class="text-xs font-bold text-gray-300">SQL Server</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/git.png" alt="Git" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162803.png'">
+                                <span class="text-xs font-bold text-gray-300">Git</span>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors aspect-square">
+                                <img src="images/github.png" alt="Github" class="w-12 h-12 mb-3 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/25/25231.png'">
+                                <span class="text-xs font-bold text-gray-300">Github</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -301,8 +312,8 @@
                     <p class="text-gray-400 mb-6 font-ubuntu">Desarrollador Web .NET</p>
                     
                     <div class="w-full space-y-3">
-                        <a href="mailto:sd8587793@email.com" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-[#e95420] group-hover:text-white transition-colors">
+                        <a href="mailto:sd8587793@email.com" class="flex items-center space-x-4 p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
+                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center group-hover:bg-[#e95420] group-hover:text-white transition-colors">
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <div>
@@ -311,8 +322,8 @@
                             </div>
                         </a>
 
-                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-gray-100 group-hover:text-black transition-colors">
+                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center space-x-4 p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
+                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center group-hover:bg-gray-100 group-hover:text-black transition-colors">
                                 <i class="fab fa-github"></i>
                             </div>
                             <div>
@@ -321,8 +332,8 @@
                             </div>
                         </a>
 
-                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-[#0077b5] group-hover:text-white transition-colors">
+                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center space-x-4 p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
+                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center group-hover:bg-[#0077b5] group-hover:text-white transition-colors">
                                 <i class="fab fa-linkedin-in"></i>
                             </div>
                             <div>

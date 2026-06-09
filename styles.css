@@ -1,10 +1,7 @@
 /* Ubuntu-like background */
 .ubuntu-bg {
-    background: 
-        linear-gradient(135deg, rgba(233,84,32,0.9) 0%, rgba(119,33,111,0.9) 100%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.05"/></svg>');
-    background-size: cover, cover;
-    background-color: #300a24;
+    background: radial-gradient(circle at top left, #300a24, #111111);
+    background-size: cover;
 }
 
 /* Glassmorphism Utilities */
@@ -65,13 +62,16 @@
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 0 1px rgba(0, 0, 0, 0.8);
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease-out;
     border-radius: 8px 8px 0 0;
 }
 
 .window-header {
     border-radius: 8px 8px 0 0;
+    background: linear-gradient(to bottom, #3a3a3a, #2b2b2b);
+    border-bottom: 1px solid #1a1a1a;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .os-window.minimized {
@@ -82,12 +82,17 @@
 
 .os-window.maximized {
     top: 28px !important; /* Below top bar */
-    left: 0 !important;
-    width: 100% !important;
+    left: 56px !important; /* Right of the dock */
+    width: calc(100vw - 56px) !important;
     height: calc(100vh - 28px) !important;
     max-width: none !important;
     border-radius: 0;
     transform: none;
+}
+
+/* Focused window state */
+.window-focused {
+    background: linear-gradient(to bottom, #4a4a4a, #3b3b3b) !important;
 }
 
 /* Animations for window opening */
@@ -177,18 +182,6 @@
     pointer-events: none;
 }
 
-/* GNOME Window Header Styling */
-.window-header {
-    border-radius: 8px 8px 0 0;
-    background: linear-gradient(to bottom, #3a3a3a, #2b2b2b);
-    border-bottom: 1px solid #1a1a1a;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-}
-
-/* Updated OS Window Box Shadow for realism */
-.os-window {
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 0 1px rgba(0, 0, 0, 0.8);
-}
 
 /* Subtle dock app active indicator */
 .dock-icon.active {
