@@ -12,6 +12,8 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTopBarCalendar();
+        this.setupContextMenu();
     }
 
     setupLogin() {
@@ -48,11 +50,152 @@ class LinuxOS {
             let dateString = now.toLocaleDateString('es-ES', options).replace(',', '');
             // Capitalize first letter of day and month
             dateString = dateString.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
-            dateElement.textContent = dateString;
+            if(dateElement) dateElement.textContent = dateString;
         };
 
         updateClock();
         setInterval(updateClock, 1000);
+    }
+
+    setupTopBarCalendar() {
+        const calendarMonthYear = document.getElementById('calendar-month-year');
+        if(calendarMonthYear) {
+            const now = new Date();
+            const options = { month: 'long', year: 'numeric' };
+            let title = now.toLocaleDateString('es-ES', options);
+            calendarMonthYear.textContent = title.charAt(0).toUpperCase() + title.slice(1);
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            const calendar = document.getElementById('calendar-dropdown');
+            const systemTray = document.getElementById('system-tray-dropdown');
+            const clockContainer = document.getElementById('clock-container');
+
+            // Check if clicking outside calendar
+            if (calendar && !calendar.classList.contains('hidden') && !calendar.contains(e.target) && (!clockContainer || !clockContainer.contains(e.target))) {
+                calendar.classList.add('opacity-0');
+                setTimeout(() => calendar.classList.add('hidden'), 200);
+            }
+
+            // System tray handled in toggle method for simplicity, but clicking outside closes it
+            if (systemTray && !systemTray.classList.contains('hidden') && !systemTray.contains(e.target) && !e.target.closest('.fas.fa-network-wired')) {
+                 systemTray.classList.add('opacity-0');
+                 setTimeout(() => systemTray.classList.add('hidden'), 200);
+            }
+        });
+    }
+
+    setupContextMenu() {
+        const desktop = document.getElementById('desktop');
+        const contextMenu = document.getElementById('desktop-context-menu');
+
+        if(desktop && contextMenu) {
+            desktop.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+
+                // Hide if clicking on a window or icon
+                if(e.target.closest('.os-window') || e.target.closest('.desktop-icon')) return;
+
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY}px`;
+                contextMenu.classList.remove('hidden');
+
+                // small delay for transition
+                setTimeout(() => {
+                    contextMenu.classList.remove('opacity-0');
+                }, 10);
+            });
+
+            document.addEventListener('click', () => {
+                contextMenu.classList.add('opacity-0');
+                setTimeout(() => {
+                    contextMenu.classList.add('hidden');
+                }, 100);
+            });
+        }
+    }
+
+    toggleCalendar(e) {
+        if(e) e.stopPropagation();
+        const calendar = document.getElementById('calendar-dropdown');
+        const systemTray = document.getElementById('system-tray-dropdown');
+
+        if (calendar) {
+            if (calendar.classList.contains('hidden')) {
+                // Close others
+                if(systemTray) {
+                    systemTray.classList.add('opacity-0');
+                    systemTray.classList.add('hidden');
+                }
+
+                calendar.classList.remove('hidden');
+                setTimeout(() => calendar.classList.remove('opacity-0'), 10);
+            } else {
+                calendar.classList.add('opacity-0');
+                setTimeout(() => calendar.classList.add('hidden'), 200);
+            }
+        }
+    }
+
+    toggleSystemTray(e) {
+        if(e) e.stopPropagation();
+        const systemTray = document.getElementById('system-tray-dropdown');
+        const calendar = document.getElementById('calendar-dropdown');
+
+        if (systemTray) {
+            if (systemTray.classList.contains('hidden')) {
+                // Close others
+                if(calendar) {
+                    calendar.classList.add('opacity-0');
+                    calendar.classList.add('hidden');
+                }
+
+                systemTray.classList.remove('hidden');
+                setTimeout(() => systemTray.classList.remove('opacity-0'), 10);
+            } else {
+                systemTray.classList.add('opacity-0');
+                setTimeout(() => systemTray.classList.add('hidden'), 200);
+            }
+        }
+    }
+
+    initTerminalTyping() {
+        // Typing effect simulation
+        const terminalCursor = document.getElementById('terminal-cursor');
+        if(!terminalCursor) return;
+
+        // This is a simple placeholder to show the concept is active
+        // Full typing logic would manipulate the DOM lines sequentially
+    }
+
+    toggleAppLauncher() {
+        const launcher = document.getElementById('app-launcher');
+        const desktop = document.getElementById('desktop');
+        const dock = document.getElementById('left-dock');
+
+        if(launcher) {
+            if(launcher.classList.contains('hidden')) {
+                // Open
+                launcher.classList.remove('hidden');
+                // blur desktop
+                if(desktop) desktop.classList.add('blur-sm');
+                if(dock) dock.style.transform = 'translateX(-100%)';
+
+                setTimeout(() => {
+                    launcher.classList.remove('opacity-0');
+                }, 10);
+            } else {
+                // Close
+                launcher.classList.add('opacity-0');
+                if(desktop) desktop.classList.remove('blur-sm');
+                if(dock) dock.style.transform = 'none';
+
+                setTimeout(() => {
+                    launcher.classList.add('hidden');
+                }, 300);
+            }
+        }
     }
 
     bringToFront(windowElement) {
@@ -106,6 +249,16 @@ class LinuxOS {
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
+
+                    // Enforce boundaries
+                    const rect = win.getBoundingClientRect();
+                    const topBarHeight = 28;
+                    const leftDockWidth = 56;
+
+                    // Don't let header go above top bar
+                    if (e.clientY < topBarHeight + 10) {
+                         currentY = (topBarHeight + 10) - initialY - rect.height/2; // rough estimation
+                    }
 
                     xOffset = currentX;
                     yOffset = currentY;
