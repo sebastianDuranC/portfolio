@@ -58,6 +58,9 @@ class LinuxOS {
     bringToFront(windowElement) {
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+        // Optional: add visual cue for active window
+        this.windows.forEach(w => w.style.opacity = '0.98');
+        windowElement.style.opacity = '1';
     }
 
     setupWindowClickToFront() {
@@ -97,6 +100,7 @@ class LinuxOS {
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    win.style.transition = 'none'; // Disable transition while dragging
                 }
             }
 
@@ -110,6 +114,13 @@ class LinuxOS {
                     xOffset = currentX;
                     yOffset = currentY;
 
+                    // "Aero snap" like maximizing to top edge
+                    if (e.clientY <= 0 && !win.classList.contains('maximized')) {
+                        isDragging = false;
+                        app.maximizeWindow(win.dataset.id);
+                        return;
+                    }
+
                     setTranslate(currentX, currentY, win);
                 }
             }
@@ -119,9 +130,11 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
+                if(!isDragging) return;
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+                win.style.transition = 'transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease-out'; // Re-enable transition
             }
         });
     }

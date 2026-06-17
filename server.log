@@ -1,15 +1,61 @@
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /styles.css HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] code 404, message File not found
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /images/profile.jpg HTTP/1.1" 404 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /images/html.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /images/javascript.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /images/c-sharp.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:17] "GET /app.js HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:18] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:18] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:18] "GET /images/git.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:18] "GET /images/github.png HTTP/1.1" 200 -
-127.0.0.1 - - [25/May/2026 19:33:18] code 404, message File not found
-127.0.0.1 - - [25/May/2026 19:33:18] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:26:27] "HEAD / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:27:13] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:27:13] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:49] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:31:50] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:31:50] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:32:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:10] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:10] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:32:10] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:11] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:32:11] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jun/2026 19:32:34] code 404, message File not found
+127.0.0.1 - - [17/Jun/2026 19:32:34] "GET /images/profile.jpg HTTP/1.1" 404 -
