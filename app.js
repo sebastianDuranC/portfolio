@@ -22,6 +22,8 @@ class LinuxOS {
                     this.login();
                 }
             });
+
+
         }
     }
 
@@ -58,6 +60,11 @@ class LinuxOS {
     bringToFront(windowElement) {
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+
+        const id = windowElement.getAttribute('data-id');
+        document.querySelectorAll('.dock-icon').forEach(icon => icon.classList.remove('active'));
+        const dockIcon = document.getElementById(`dock-${id}`);
+        if (dockIcon) dockIcon.classList.add('active');
     }
 
     setupWindowClickToFront() {
@@ -196,6 +203,13 @@ class LinuxOS {
             }
         } else {
             this.openWindow(id);
+        }
+
+        // Update dock icon active state
+        document.querySelectorAll('.dock-icon').forEach(icon => icon.classList.remove('active'));
+        if (parseInt(win.style.zIndex || 0) === this.highestZIndex && !win.classList.contains('minimized') && !win.classList.contains('hidden')) {
+            const dockIcon = document.getElementById(`dock-${id}`);
+            if (dockIcon) dockIcon.classList.add('active');
         }
     }
 }
