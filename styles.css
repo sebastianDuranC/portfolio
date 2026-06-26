@@ -1,38 +1,12 @@
 /* Ubuntu-like background */
 .ubuntu-bg {
     background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
+        radial-gradient(circle at bottom left, rgba(233,84,32,0.6) 0%, transparent 40%),
+        radial-gradient(circle at top right, rgba(119,33,111,0.6) 0%, transparent 40%),
         url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
-}
-
-/* Glassmorphism Utilities */
-.glass {
-    background: rgba(17, 17, 17, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-light {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-dark {
-    background: rgba(36, 36, 36, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal specific */
-.bg-aubergine {
-    background-color: #300a24;
+    background-size: cover, cover, 100px 100px;
+    background-color: #2c001e; /* Canonical aubergine */
+    background-attachment: fixed;
 }
 
 /* Base font classes */
@@ -46,34 +20,66 @@
 
 /* Custom scrollbar for windows */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05) inset;
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
-    border-radius: 10px;
-    background-clip: padding-box;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out, box-shadow 0.3s ease;
+    will-change: transform, opacity;
 }
 
-.window-header {
-    border-radius: 10px 10px 0 0;
+/* Window Header Buttons (GNOME Style) */
+.window-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    outline: none;
+    transition: background-color 0.15s ease;
+    color: rgba(0,0,0,0.6);
+}
+.window-btn i {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.window-header:hover .window-btn i {
+    opacity: 1;
+}
+.window-btn.close {
+    background-color: #ed6a5e;
+}
+.window-btn.close:hover {
+    background-color: #f57d71;
+}
+.window-btn.minimize {
+    background-color: #f4bf4f;
+}
+.window-btn.minimize:hover {
+    background-color: #fcd066;
+}
+.window-btn.maximize {
+    background-color: #61c554;
+}
+.window-btn.maximize:hover {
+    background-color: #72d665;
 }
 
 .os-window.minimized {
@@ -83,19 +89,27 @@
 }
 
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
-    max-width: none !important;
-    border-radius: 0;
+    height: 100% !important;
+    border-radius: 0 !important;
     transform: none;
+    border: none !important;
+}
+
+.os-window.maximized .window-header {
+    border-radius: 0 !important;
+}
+.os-window.maximized .window-content,
+.os-window.maximized > div:last-child {
+    border-radius: 0 !important;
 }
 
 /* Animations for window opening */
 @keyframes windowOpen {
     0% {
-        transform: scale(0.95);
+        transform: scale(0.9);
         opacity: 0;
     }
     100% {
@@ -118,42 +132,26 @@
     50% { opacity: 0; }
 }
 
-/* Line clamp utility */
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
 /* Tooltip for left dock */
-.dock-icon:hover::after {
+.dock-icon::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
+    left: calc(100% + 15px);
     top: 50%;
-    transform: translateY(-50%);
-    background: rgba(17, 17, 17, 0.95);
+    transform: translateY(-50%) translateX(-10px);
+    background: rgba(0, 0, 0, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 6px;
     font-size: 13px;
     white-space: nowrap;
     pointer-events: none;
     font-family: 'Ubuntu', sans-serif;
-    z-index: 50;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.dock-icon::after {
-    content: '';
-    position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    z-index: 100;
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .dock-icon:hover::after {
@@ -162,53 +160,36 @@
 }
 
 /* Little triangle for tooltip */
-.dock-icon:hover::before {
+.dock-icon::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
+    left: calc(100% + 9px);
     top: 50%;
     transform: translateY(-50%);
     border-width: 6px 6px 6px 0;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
-    z-index: 50;
+    border-color: transparent rgba(0, 0, 0, 0.85) transparent transparent;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
+.dock-icon:hover::before {
+    opacity: 1;
+}
+
 /* Login Screen Fade Out */
 .fade-out {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Subtle dock app active indicator */
-.dock-icon.active {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal transparency */
-#window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
-    backdrop-filter: blur(10px);
-}
-
 /* Active window styling */
 .window-active {
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.1) inset;
+    filter: brightness(1);
 }
 
 .window-inactive {
-    opacity: 0.95;
-    filter: brightness(0.95);
-}
-
-/* Fix maximized state rounded corners */
-.os-window.maximized .window-header {
-    border-radius: 0;
-}
-
-/* Custom styles for window buttons */
-.window-header button {
-    transition: background-color 0.15s ease, transform 0.1s ease;
-}
-.window-header button:active {
-    transform: scale(0.9);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    filter: brightness(0.85);
 }
