@@ -22,7 +22,19 @@ class LinuxOS {
                     this.login();
                 }
             });
+            // Focus on input
+            passwordInput.focus();
         }
+
+        // Also allow enter anywhere to login
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const loginScreen = document.getElementById('login-screen');
+                if(loginScreen && loginScreen.style.display !== 'none' && !loginScreen.classList.contains('fade-out')) {
+                    this.login();
+                }
+            }
+        });
     }
 
 
@@ -58,6 +70,17 @@ class LinuxOS {
     bringToFront(windowElement) {
         this.highestZIndex++;
         windowElement.style.zIndex = this.highestZIndex;
+
+        // Update active/inactive classes
+        this.windows.forEach(win => {
+            if (win === windowElement) {
+                win.classList.add('window-active');
+                win.classList.remove('window-inactive');
+            } else {
+                win.classList.remove('window-active');
+                win.classList.add('window-inactive');
+            }
+        });
     }
 
     setupWindowClickToFront() {
@@ -173,11 +196,19 @@ class LinuxOS {
     maximizeWindow(id) {
         const win = document.getElementById(`window-${id}`);
         if (win) {
-            win.classList.toggle('maximized');
-            // Reset translation when maximized
-            if(win.classList.contains('maximized')) {
+            if (!win.classList.contains('maximized')) {
+                // Save current transform before maximizing
+                win.dataset.prevTransform = win.style.transform;
+                win.classList.add('maximized');
                 win.style.transform = 'none';
+            } else {
+                win.classList.remove('maximized');
+                // Restore transform
+                if (win.dataset.prevTransform) {
+                    win.style.transform = win.dataset.prevTransform;
+                }
             }
+            this.bringToFront(win);
         }
     }
 

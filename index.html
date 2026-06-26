@@ -11,29 +11,29 @@
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#300a24] bg-opacity-95 transition-opacity duration-500 ease-in-out">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
-            <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-6 border-4 border-gray-600 object-cover shadow-lg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-            <h1 class="text-3xl font-ubuntu font-bold text-white mb-8">Sebastian Duran Caballero</h1>
-            <div class="flex items-center bg-white/10 rounded-md overflow-hidden border border-white/20">
-                <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-48 font-ubuntu placeholder-gray-400" value="ubuntu" readonly>
-                <button id="login-btn" class="bg-[#e95420] hover:bg-orange-600 px-4 py-2 text-white transition-colors" onclick="app.login()">
+            <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-4 border-2 border-white/20 object-cover shadow-2xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+            <h1 class="text-2xl font-ubuntu font-bold text-white mb-6 drop-shadow-md">Sebastian Duran Caballero</h1>
+            <div class="flex items-center bg-white/10 rounded-lg overflow-hidden border border-white/10 backdrop-blur-xl transition-all focus-within:border-[#e95420]/80 focus-within:ring-1 focus-within:ring-[#e95420]/80">
+                <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-56 font-ubuntu placeholder-gray-300" value="ubuntu" readonly>
+                <button id="login-btn" class="bg-white/5 hover:bg-white/20 px-4 py-2 text-white transition-colors" onclick="app.login()">
                     <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-            <p class="text-gray-400 mt-4 text-sm font-ubuntu">Click en la flecha para iniciar sesión</p>
+            <p class="text-gray-300 mt-6 text-xs font-ubuntu drop-shadow-md">Click en la flecha o Enter para iniciar sesión</p>
         </div>
     </div>
 
     <!-- Top Bar (GNOME style) -->
-    <div class="top-bar w-full h-7 bg-black/90 flex justify-between items-center px-3 z-50 fixed top-0 text-[13px] font-ubuntu font-medium text-gray-100 select-none">
-        <div class="flex items-center h-full">
-            <span class="hover:bg-white/10 px-3 h-full flex items-center rounded-full cursor-pointer transition-colors">Actividades</span>
+    <div class="top-bar w-full h-7 bg-[#1a1a1a]/95 flex justify-between items-center px-2 z-50 fixed top-0 text-[13px] font-ubuntu font-medium text-gray-200 select-none border-b border-black/80 shadow-md">
+        <div class="flex items-center h-full space-x-1">
+            <span class="hover:bg-white/15 px-3 h-full flex items-center rounded-full cursor-pointer transition-colors duration-200 active:bg-white/20">Actividades</span>
         </div>
-        <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center cursor-pointer hover:bg-white/10 px-3 h-full rounded-full transition-colors" id="clock-container">
-            <span id="topbar-date"></span>
+        <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center cursor-pointer hover:bg-white/15 px-4 h-full rounded-full transition-colors duration-200 active:bg-white/20" id="clock-container">
+            <span id="topbar-date" class="font-bold tracking-wide"></span>
         </div>
-        <div class="flex items-center space-x-3 h-full cursor-pointer hover:bg-white/10 px-3 rounded-full transition-colors">
+        <div class="flex items-center space-x-2 h-full cursor-pointer hover:bg-white/15 px-3 rounded-full transition-colors duration-200 active:bg-white/20">
             <i class="fas fa-network-wired text-xs"></i>
             <i class="fas fa-volume-up text-xs"></i>
             <i class="fas fa-battery-full text-xs"></i>
@@ -78,31 +78,31 @@
         <div id="windows-container" class="absolute inset-0 pointer-events-none">
             
             <!-- Terminal Window (Sobre Mi) -->
-            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-aubergine rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col" data-id="terminal">
-                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
-                    <div class="text-gray-300 text-sm font-ubuntu">sebastian@ubuntu: ~</div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
+            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
+                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@ubuntu: ~</div>
+                    <div class="flex space-x-2 absolute right-3">
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
                             <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('terminal')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('terminal')">
+                            <span class="text-white text-xs border border-white/80 w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('terminal')">
+                        <button class="w-6 h-6 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('terminal')">
                             <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
-                <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-aubergine cursor-text">
-                    <p class="mb-2"><span class="text-green-400">sebastian@ubuntu</span>:<span class="text-blue-400">~</span>$ whoami</p>
+                <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text">
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ whoami</p>
                     <p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>
 
-                    <p class="mb-2"><span class="text-green-400">sebastian@ubuntu</span>:<span class="text-blue-400">~</span>$ cat description.txt</p>
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ cat description.txt</p>
                     <p class="text-gray-100 mb-4">
                         Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.
                     </p>
 
-                    <p class="mb-2"><span class="text-green-400">sebastian@ubuntu</span>:<span class="text-blue-400">~</span>$ neofetch</p>
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ neofetch</p>
                     <div class="flex flex-col md:flex-row text-gray-100 mb-4">
                         <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
 <pre>
@@ -132,84 +132,97 @@
                         </div>
                     </div>
 
-                    <p class="mb-2"><span class="text-green-400">sebastian@ubuntu</span>:<span class="text-blue-400">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
                 </div>
             </div>
 
             <!-- Projects Explorer Window -->
-            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="projects">
-                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
-                    <div class="flex items-center">
-                        <i class="fas fa-folder text-gray-400 mr-2"></i>
-                        <span class="text-sm font-ubuntu font-bold text-gray-200">Archivos - Proyectos</span>
+            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
+                        <span class="font-bold">Proyectos</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('projects')">
+                    <div class="flex space-x-2 absolute right-3">
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('projects')">
                             <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('projects')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('projects')">
+                            <span class="text-white text-xs border border-white/80 w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('projects')">
+                        <button class="w-6 h-6 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('projects')">
                             <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
                 <div class="flex flex-1 overflow-hidden">
-                    <!-- Sidebar -->
-                    <div class="w-48 bg-[#1e1e1e] border-r border-gray-700/50 p-2 text-sm font-ubuntu hidden md:block">
-                        <ul class="space-y-1">
-                            <li class="px-2 py-1.5 bg-[#e95420]/20 text-[#e95420] rounded-md cursor-pointer font-bold"><i class="fas fa-home mr-2"></i>Inicio</li>
-                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer"><i class="fas fa-desktop mr-2 text-gray-400"></i>Escritorio</li>
-                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer"><i class="fas fa-download mr-2 text-gray-400"></i>Descargas</li>
-                            <li class="px-2 py-1.5 hover:bg-gray-800 rounded-md cursor-pointer mt-4"><i class="fas fa-folder-open mr-2 text-orange-400"></i>Mis Proyectos</li>
+                    <!-- Sidebar (Nautilus style) -->
+                    <div class="w-52 bg-[#2d2d2d] border-r border-black/40 p-2 text-[13px] font-ubuntu hidden md:block select-none overflow-y-auto">
+                        <ul class="space-y-[2px]">
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="far fa-clock mr-3 w-4 text-center"></i>Recientes</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="far fa-star mr-3 w-4 text-center"></i>Destacados</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors mt-2"><i class="fas fa-home mr-3 w-4 text-center"></i>Inicio</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="fas fa-desktop mr-3 w-4 text-center"></i>Escritorio</li>
+                            <li class="px-3 py-1.5 bg-[#e95420]/20 text-[#e95420] font-bold rounded-md cursor-pointer flex items-center transition-colors"><i class="fas fa-folder mr-3 w-4 text-center text-[#e95420]"></i>Proyectos</li>
                         </ul>
                     </div>
                     <!-- Main Content -->
-                    <div class="flex-1 bg-[#242424] p-4 overflow-y-auto">
-                        <h2 class="text-xl font-ubuntu mb-4 text-gray-100 font-bold border-b border-gray-700 pb-2">/home/sebastian/proyectos</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="flex-1 bg-[#202020] p-6 overflow-y-auto relative">
+                         <!-- Path bar -->
+                         <div class="absolute top-0 left-0 right-0 bg-[#2b2b2b] p-2 flex items-center border-b border-black/30 text-xs px-4">
+                             <div class="flex space-x-1 items-center bg-[#1e1e1e] rounded-md border border-gray-700/50 p-1">
+                                <span class="px-2 text-gray-400 hover:text-gray-200 cursor-pointer">Inicio</span>
+                                <span class="text-gray-600">/</span>
+                                <span class="px-2 font-bold text-gray-200 bg-white/5 rounded">Proyectos</span>
+                             </div>
+                         </div>
+                        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 
                             <!-- Project 1 -->
-                            <div class="bg-[#303030] border border-gray-600 rounded-lg p-4 hover:bg-[#383838] hover:border-gray-500 transition-all group shadow-md">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-paw text-3xl text-green-400 mr-3 group-hover:scale-110 transition-transform"></i>
-                                    <h3 class="font-bold text-gray-100">Landing Page</h3>
+                            <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3 border border-green-800/50">
+                                        <i class="fas fa-paw text-xl text-green-400 group-hover:scale-110 transition-transform"></i>
+                                    </div>
+                                    <h3 class="font-bold text-gray-100 text-base leading-tight">Landing Page<br><span class="text-xs font-normal text-gray-400">Veterinaria</span></h3>
                                 </div>
-                                <p class="text-xs text-gray-400 mb-3 line-clamp-3">Landing page para una clinica veterinaria con sistema de registro de citas para las mascotas</p>
-                                <div class="flex flex-wrap gap-1 mb-3">
-                                    <span class="px-2 py-0.5 bg-blue-900/50 text-blue-300 text-[10px] rounded border border-blue-800">ASP.NET MVC</span>
-                                    <span class="px-2 py-0.5 bg-teal-900/50 text-teal-300 text-[10px] rounded border border-teal-800">TailwindCss</span>
+                                <p class="text-xs text-gray-400 mb-4 flex-1">Landing page para una clínica veterinaria con sistema de registro de citas para mascotas.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="px-2.5 py-1 bg-[#1e293b] text-blue-300 text-[10px] rounded border border-blue-800/50 font-medium">ASP.NET MVC</span>
+                                    <span class="px-2.5 py-1 bg-[#134e4a] text-teal-300 text-[10px] rounded border border-teal-800/50 font-medium">TailwindCss</span>
                                 </div>
-                                <a href="https://github.com/sebastianDuranC/AplicacionAspNET-MVC-Veterinaria" target="_blank" class="text-xs text-[#e95420] hover:text-orange-400 hover:underline"><i class="fab fa-github mr-1"></i>Ver código</a>
+                                <a href="https://github.com/sebastianDuranC/AplicacionAspNET-MVC-Veterinaria" target="_blank" class="inline-flex items-center justify-center w-full py-2 bg-[#333] hover:bg-[#444] text-xs font-medium text-white rounded-lg transition-colors border border-white/10"><i class="fab fa-github mr-2"></i>Ver código</a>
                             </div>
 
                             <!-- Project 2 -->
-                            <div class="bg-[#303030] border border-gray-600 rounded-lg p-4 hover:bg-[#383838] hover:border-gray-500 transition-all group shadow-md">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-calculator text-3xl text-purple-400 mr-3 group-hover:scale-110 transition-transform"></i>
-                                    <h3 class="font-bold text-gray-100">Aplicacion Web</h3>
+                            <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3 border border-purple-800/50">
+                                        <i class="fas fa-calculator text-xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+                                    </div>
+                                    <h3 class="font-bold text-gray-100 text-base leading-tight">Calculadora IA<br><span class="text-xs font-normal text-gray-400">Gemini</span></h3>
                                 </div>
-                                <p class="text-xs text-gray-400 mb-3 line-clamp-3">Aplicación web de una calculadora con IA de gemini</p>
-                                <div class="flex flex-wrap gap-1 mb-3">
-                                    <span class="px-2 py-0.5 bg-yellow-900/50 text-yellow-300 text-[10px] rounded border border-yellow-800">Python</span>
-                                    <span class="px-2 py-0.5 bg-red-900/50 text-red-300 text-[10px] rounded border border-red-800">Gemini API</span>
+                                <p class="text-xs text-gray-400 mb-4 flex-1">Aplicación web de una calculadora interactiva potenciada por la API de Google Gemini.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="px-2.5 py-1 bg-[#422006] text-yellow-300 text-[10px] rounded border border-yellow-800/50 font-medium">Python</span>
+                                    <span class="px-2.5 py-1 bg-[#450a0a] text-red-300 text-[10px] rounded border border-red-800/50 font-medium">Gemini API</span>
                                 </div>
-                                <a href="https://github.com/sebastianDuranC/CalculadoraIA" target="_blank" class="text-xs text-[#e95420] hover:text-orange-400 hover:underline"><i class="fab fa-github mr-1"></i>Ver código</a>
+                                <a href="https://github.com/sebastianDuranC/CalculadoraIA" target="_blank" class="inline-flex items-center justify-center w-full py-2 bg-[#333] hover:bg-[#444] text-xs font-medium text-white rounded-lg transition-colors border border-white/10"><i class="fab fa-github mr-2"></i>Ver código</a>
                             </div>
 
                             <!-- Project 3 -->
-                            <div class="bg-[#303030] border border-gray-600 rounded-lg p-4 hover:bg-[#383838] hover:border-gray-500 transition-all group shadow-md">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-utensils text-3xl text-orange-400 mr-3 group-hover:scale-110 transition-transform"></i>
-                                    <h3 class="font-bold text-gray-100">Sistema Web</h3>
+                            <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-10 h-10 bg-orange-900/30 rounded-lg flex items-center justify-center mr-3 border border-orange-800/50">
+                                        <i class="fas fa-utensils text-xl text-orange-400 group-hover:scale-110 transition-transform"></i>
+                                    </div>
+                                    <h3 class="font-bold text-gray-100 text-base leading-tight">Sistema Ventas<br><span class="text-xs font-normal text-gray-400">Restaurante</span></h3>
                                 </div>
-                                <p class="text-xs text-gray-400 mb-3 line-clamp-3">Sistema web de compra y venta para la gestión de un negocio de comida a la plancha</p>
-                                <div class="flex flex-wrap gap-1 mb-3">
-                                    <span class="px-2 py-0.5 bg-blue-900/50 text-blue-300 text-[10px] rounded border border-blue-800">ASP.NET WEB FORM</span>
-                                    <span class="px-2 py-0.5 bg-green-900/50 text-green-300 text-[10px] rounded border border-green-800">DataTable.js</span>
+                                <p class="text-xs text-gray-400 mb-4 flex-1">Sistema integral web de compra/venta para gestión eficiente de un negocio de comida.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="px-2.5 py-1 bg-[#1e3a8a] text-blue-300 text-[10px] rounded border border-blue-800/50 font-medium">ASP.NET WebForms</span>
+                                    <span class="px-2.5 py-1 bg-[#14532d] text-green-300 text-[10px] rounded border border-green-800/50 font-medium">DataTable.js</span>
                                 </div>
-                                <a href="https://github.com/sebastianDuranC/Sistema-venta-asp.net-WebForm" target="_blank" class="text-xs text-[#e95420] hover:text-orange-400 hover:underline"><i class="fab fa-github mr-1"></i>Ver código</a>
+                                <a href="https://github.com/sebastianDuranC/Sistema-venta-asp.net-WebForm" target="_blank" class="inline-flex items-center justify-center w-full py-2 bg-[#333] hover:bg-[#444] text-xs font-medium text-white rounded-lg transition-colors border border-white/10"><i class="fab fa-github mr-2"></i>Ver código</a>
                             </div>
 
                         </div>
@@ -218,142 +231,149 @@
             </div>
 
             <!-- Skills Window (Settings style) -->
-            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="skills">
-                 <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
-                    <div class="flex items-center">
-                        <i class="fas fa-cogs text-gray-400 mr-2"></i>
-                        <span class="text-sm font-ubuntu font-bold text-gray-200">Configuración - Habilidades</span>
+            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
+                        <span class="font-bold">Habilidades</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('skills')">
+                    <div class="flex space-x-2 absolute right-3">
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('skills')">
                             <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('skills')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('skills')">
+                            <span class="text-white text-xs border border-white/80 w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('skills')">
+                        <button class="w-6 h-6 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('skills')">
                             <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
-                <div class="flex-1 p-6 overflow-y-auto bg-[#1e1e1e]">
-                    <h2 class="text-2xl font-ubuntu mb-6 text-center text-gray-100">Stack Tecnológico</h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                        <!-- Skills Icons -->
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/html.png" alt="HTML5" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732212.png'">
-                            <span class="text-xs font-bold text-gray-300">HTML5</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/Official_CSS_Logo.svg.png" alt="CSS3" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732190.png'">
-                            <span class="text-xs font-bold text-gray-300">CSS3</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/javascript.png" alt="JavaScript" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968292.png'">
-                            <span class="text-xs font-bold text-gray-300">JavaScript</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/c-sharp.png" alt="C#" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/6132/6132221.png'">
-                            <span class="text-xs font-bold text-gray-300">C#</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/Microsoft_.NET_logo.png" alt=".NET" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/512px-.NET_Core_Logo.svg.png'">
-                            <span class="text-xs font-bold text-gray-300">.NET</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/icons8-servidor-microsoft-sql-100.png" alt="SQL Server" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968313.png'">
-                            <span class="text-xs font-bold text-gray-300">SQL Server</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/git.png" alt="Git" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162803.png'">
-                            <span class="text-xs font-bold text-gray-300">Git</span>
-                        </div>
-                        <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-lg shadow-sm border border-gray-700/50 hover:bg-[#333] transition-colors">
-                            <img src="images/github.png" alt="Github" class="w-12 h-12 mb-2 object-contain" onerror="this.src='https://cdn-icons-png.flaticon.com/512/25/25231.png'">
-                            <span class="text-xs font-bold text-gray-300">Github</span>
+                <div class="flex flex-1 overflow-hidden">
+                    <!-- Settings Sidebar -->
+                    <div class="w-48 bg-[#2d2d2d] border-r border-black/40 p-2 text-[13px] font-ubuntu hidden sm:block overflow-y-auto select-none">
+                        <ul class="space-y-[2px]">
+                            <div class="text-[11px] font-bold text-gray-400 px-3 py-2 uppercase tracking-wider">Sistema</div>
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="fas fa-desktop mr-3 w-4 text-center"></i>Pantalla</li>
+                            <li class="px-3 py-1.5 bg-white/10 font-bold rounded-md cursor-pointer flex items-center text-white transition-colors"><i class="fas fa-cogs mr-3 w-4 text-center"></i>Tecnologías</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="fas fa-network-wired mr-3 w-4 text-center"></i>Red</li>
+                        </ul>
+                    </div>
+                    <div class="flex-1 p-8 overflow-y-auto bg-[#1e1e1e]">
+                        <h2 class="text-xl font-ubuntu mb-8 text-gray-100 font-bold border-b border-white/10 pb-4">Stack Tecnológico Principal</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <!-- Skills Icons -->
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/html.png" alt="HTML5" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732212.png'">
+                                <span class="text-xs font-medium text-gray-300">HTML5</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/Official_CSS_Logo.svg.png" alt="CSS3" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732190.png'">
+                                <span class="text-xs font-medium text-gray-300">CSS3</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/javascript.png" alt="JavaScript" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968292.png'">
+                                <span class="text-xs font-medium text-gray-300">JavaScript</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/c-sharp.png" alt="C#" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/6132/6132221.png'">
+                                <span class="text-xs font-medium text-gray-300">C#</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/Microsoft_.NET_logo.png" alt=".NET" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/512px-.NET_Core_Logo.svg.png'">
+                                <span class="text-xs font-medium text-gray-300">.NET</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/icons8-servidor-microsoft-sql-100.png" alt="SQL Server" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968313.png'">
+                                <span class="text-xs font-medium text-gray-300">SQL Server</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/git.png" alt="Git" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162803.png'">
+                                <span class="text-xs font-medium text-gray-300">Git</span>
+                            </div>
+                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                                <img src="images/github.png" alt="Github" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/25/25231.png'">
+                                <span class="text-xs font-medium text-gray-300">Github</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Contact Window (Mail client style) -->
-            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-lg bg-[#242424] rounded-t-lg shadow-2xl overflow-hidden border border-gray-700 pointer-events-auto flex flex-col text-gray-200" data-id="contact">
-                <div class="window-header h-10 bg-[#2b2b2b] flex justify-between items-center px-4 cursor-grab active:cursor-grabbing select-none border-b border-black/50">
-                    <div class="flex items-center">
-                        <i class="fas fa-envelope text-gray-400 mr-2"></i>
-                        <span class="text-sm font-ubuntu font-bold text-gray-200">Contacto</span>
+            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-md bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
+                        <span class="font-bold">Contacto</span>
                     </div>
-                    <div class="flex space-x-3 ml-auto">
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('contact')">
+                    <div class="flex space-x-2 absolute right-3">
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('contact')">
                             <span class="text-white font-bold mb-1">-</span>
                         </button>
-                        <button class="w-5 h-5 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('contact')">
-                            <span class="text-white text-xs border border-white w-2.5 h-2.5 inline-block"></span>
+                        <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.maximizeWindow('contact')">
+                            <span class="text-white text-xs border border-white/80 w-2.5 h-2.5 inline-block"></span>
                         </button>
-                        <button class="w-5 h-5 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('contact')">
+                        <button class="w-6 h-6 rounded-full bg-[#e95420] hover:bg-orange-600 focus:outline-none flex items-center justify-center transition-colors" onclick="app.closeWindow('contact')">
                             <span class="text-white text-sm font-bold">×</span>
                         </button>
                     </div>
                 </div>
-                <div class="flex-1 p-6 flex flex-col items-center justify-center bg-[#1e1e1e]">
-                    <img src="images/profile.jpg" alt="Sebastian" class="w-24 h-24 rounded-full mb-4 shadow-lg border-2 border-gray-600 object-cover" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
-                    <h2 class="text-2xl font-ubuntu font-bold text-gray-100 mb-1">Sebastian Duran Caballero</h2>
-                    <p class="text-gray-400 mb-6 font-ubuntu">Desarrollador Web .NET</p>
+                <div class="flex-1 p-8 flex flex-col items-center bg-[#1e1e1e]">
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 bg-[#e95420] rounded-full blur-md opacity-30"></div>
+                        <img src="images/profile.jpg" alt="Sebastian" class="relative w-28 h-28 rounded-full shadow-lg border-[3px] border-[#3a3a3a] object-cover" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    </div>
+                    <h2 class="text-2xl font-ubuntu font-bold text-white mb-1">Sebastian Duran Caballero</h2>
+                    <p class="text-[#e95420] mb-8 font-ubuntu text-sm font-medium tracking-wide">Desarrollador Web .NET</p>
                     
-                    <div class="w-full space-y-3">
-                        <a href="mailto:sd8587793@email.com" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-[#e95420] group-hover:text-white transition-colors">
-                                <i class="fas fa-envelope"></i>
+                    <div class="w-full space-y-4">
+                        <a href="mailto:sd8587793@email.com" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                            <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-[#e95420] group-hover:text-white transition-colors border border-black/50">
+                                <i class="fas fa-envelope text-lg"></i>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-200">Email</p>
-                                <p class="text-xs text-gray-400">sd8587793@email.com</p>
+                            <div class="flex-1">
+                                <p class="text-[13px] font-bold text-gray-200">Correo Electrónico</p>
+                                <p class="text-xs text-gray-400 mt-0.5">sd8587793@email.com</p>
                             </div>
+                            <i class="fas fa-external-link-alt text-xs text-gray-600 group-hover:text-gray-400"></i>
                         </a>
 
-                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-gray-100 group-hover:text-black transition-colors">
-                                <i class="fab fa-github"></i>
+                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                            <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-white group-hover:text-black transition-colors border border-black/50">
+                                <i class="fab fa-github text-lg"></i>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-200">GitHub</p>
-                                <p class="text-xs text-gray-400">@sebastianDuranC</p>
+                            <div class="flex-1">
+                                <p class="text-[13px] font-bold text-gray-200">GitHub</p>
+                                <p class="text-xs text-gray-400 mt-0.5">@sebastianDuranC</p>
                             </div>
+                            <i class="fas fa-external-link-alt text-xs text-gray-600 group-hover:text-gray-400"></i>
                         </a>
 
-                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center p-3 bg-[#2a2a2a] border border-gray-700/50 rounded-lg hover:bg-[#333] hover:border-gray-500 transition-all group">
-                            <div class="w-10 h-10 bg-gray-800 text-gray-300 rounded-full flex items-center justify-center mr-4 group-hover:bg-[#0077b5] group-hover:text-white transition-colors">
-                                <i class="fab fa-linkedin-in"></i>
+                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                            <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-[#0a66c2] group-hover:text-white transition-colors border border-black/50">
+                                <i class="fab fa-linkedin-in text-lg"></i>
                             </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-200">LinkedIn</p>
-                                <p class="text-xs text-gray-400">Sebastian Duran Caballero</p>
+                            <div class="flex-1">
+                                <p class="text-[13px] font-bold text-gray-200">LinkedIn</p>
+                                <p class="text-xs text-gray-400 mt-0.5">Sebastian Duran Caballero</p>
                             </div>
+                            <i class="fas fa-external-link-alt text-xs text-gray-600 group-hover:text-gray-400"></i>
                         </a>
                     </div>
                 </div>
             </div>
 
         </div>
-    </div>
-
-    <!-- Left Dock (Ubuntu style) -->
-    <div class="absolute left-0 top-7 bottom-0 w-14 bg-black/50 backdrop-blur-md flex flex-col items-center py-4 space-y-3 z-40 shadow-2xl border-r border-white/5">
-        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
-            <i class="fas fa-terminal text-xl text-gray-200"></i>
-            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-terminal"></div>
+        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
+            <i class="fas fa-folder text-2xl text-[#e95420] drop-shadow-sm"></i>
+            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-projects"></div>
         </div>
-        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
-            <i class="fas fa-folder text-xl text-gray-200"></i>
-            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-projects"></div>
+        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
+            <i class="fas fa-cogs text-2xl text-gray-300 drop-shadow-sm"></i>
+            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-skills"></div>
         </div>
-        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
-            <i class="fas fa-cogs text-xl text-gray-200"></i>
-            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-skills"></div>
-        </div>
-        <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
-            <i class="fas fa-envelope text-xl text-gray-200"></i>
-            <div class="absolute left-0 w-1 h-1 bg-[#e95420] rounded-full hidden transition-all duration-300" id="dot-contact"></div>
+        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
+            <i class="fas fa-envelope text-2xl text-blue-400 drop-shadow-sm"></i>
+            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-contact"></div>
         </div>
 
         <!-- Dock Bottom section -->
