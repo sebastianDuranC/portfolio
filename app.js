@@ -3,6 +3,7 @@ class LinuxOS {
         this.windows = document.querySelectorAll('.os-window');
         this.highestZIndex = 100;
         this.openWindows = new Set();
+        this.desktop = document.getElementById('desktop');
         
         this.init();
     }
@@ -37,7 +38,6 @@ class LinuxOS {
         });
     }
 
-
     login() {
         const loginScreen = document.getElementById('login-screen');
         if (loginScreen) {
@@ -46,7 +46,7 @@ class LinuxOS {
                 loginScreen.style.display = 'none';
                 // Automatically open terminal on startup to show neofetch
                 this.openWindow('terminal');
-            }, 500); // Wait for transition to complete
+            }, 700); // Wait for transition to complete
         }
     }
 
@@ -104,11 +104,7 @@ class LinuxOS {
             let xOffset = 0;
             let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
-
-            function dragStart(e) {
+            const dragStart = (e) => {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
@@ -120,38 +116,55 @@ class LinuxOS {
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    this.bringToFront(win);
                 }
-            }
+            };
 
-            function drag(e) {
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
+                    // Basic boundary checks relative to desktop
+                    const rect = win.getBoundingClientRect();
+                    const desktopRect = this.desktop.getBoundingClientRect();
+
+                    // Snap to top edge to maximize (Aero snap style)
+                    if (e.clientY <= desktopRect.top + 5) {
+                        this.maximizeWindow(win.dataset.id);
+                        isDragging = false;
+                        return;
+                    }
+
                     xOffset = currentX;
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
+            const setTranslate = (xPos, yPos, el) => {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
+            };
 
-            function dragEnd(e) {
+            const dragEnd = () => {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
-            }
+            };
+
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
         });
     }
 
     openWindow(id) {
         const win = document.getElementById(`window-${id}`);
         const dot = document.getElementById(`dot-${id}`);
+        const dockIcon = document.getElementById(`dock-${id}`);
         
         if (win) {
             if (win.classList.contains('hidden') || win.classList.contains('minimized')) {
@@ -161,12 +174,13 @@ class LinuxOS {
                 // Remove animation class after it finishes
                 setTimeout(() => {
                     win.classList.remove('window-opening');
-                }, 200);
+                }, 300);
 
                 this.bringToFront(win);
                 this.openWindows.add(id);
 
                 if(dot) dot.classList.remove('hidden');
+                if(dockIcon) dockIcon.classList.add('bg-white/10');
             } else {
                 this.bringToFront(win);
             }
@@ -176,13 +190,20 @@ class LinuxOS {
     closeWindow(id) {
         const win = document.getElementById(`window-${id}`);
         const dot = document.getElementById(`dot-${id}`);
+        const dockIcon = document.getElementById(`dock-${id}`);
         
         if (win) {
             win.classList.add('hidden');
-            win.classList.remove('maximized');
+            win.classList.remove('maximized', 'minimized');
+
+            // Reset transform when closed
+            win.style.transform = 'none';
+            // Need to clear the offsets in drag logic but we reset transform here for simplicity
+            win.dataset.prevTransform = '';
 
             this.openWindows.delete(id);
             if(dot) dot.classList.add('hidden');
+            if(dockIcon) dockIcon.classList.remove('bg-white/10');
         }
     }
 
@@ -190,6 +211,7 @@ class LinuxOS {
         const win = document.getElementById(`window-${id}`);
         if (win) {
             win.classList.add('minimized');
+            win.classList.remove('window-active');
         }
     }
 
@@ -198,7 +220,7 @@ class LinuxOS {
         if (win) {
             if (!win.classList.contains('maximized')) {
                 // Save current transform before maximizing
-                win.dataset.prevTransform = win.style.transform;
+                win.dataset.prevTransform = win.style.transform || 'translate3d(0px, 0px, 0)';
                 win.classList.add('maximized');
                 win.style.transform = 'none';
             } else {
