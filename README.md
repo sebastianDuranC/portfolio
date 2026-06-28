@@ -1,15 +1,15 @@
 # Mi Portafolio - Desarrollador Web
 
-Un portafolio moderno y elegante con estilo de cuaderno/bosquejo, construido con HTML, Tailwind CSS y JavaScript.
+Un portafolio interactivo y moderno que simula el entorno de escritorio de un sistema operativo Linux (estilo Ubuntu/GNOME), construido con HTML, Tailwind CSS y Vanilla JavaScript.
 
 ## 🚀 Características
 
-- **Diseño Responsivo**: Se adapta perfectamente a todos los dispositivos
-- **Tema de Cuaderno**: Estilo único con líneas de papel y efectos de bosquejo
-- **Carrusel de Habilidades**: Muestra tus tecnologías en un carrusel interactivo
-- **Animaciones Suaves**: Transiciones y efectos visuales modernos
-- **Navegación Fluida**: Scroll suave entre secciones
-- **Formulario de Contacto**: Funcional y listo para integrar con backend
+- **Interfaz de Sistema Operativo**: Diseño basado en un entorno de escritorio clásico de Linux, con barra superior y dock lateral.
+- **Gestión de Ventanas**: Ventanas arrastrables que se pueden minimizar, maximizar y cerrar, tal como en un sistema real.
+- **Pantalla de Inicio de Sesión**: Simula la pantalla de login (GDM) con fondo difuminado al iniciar el portafolio.
+- **Metáforas de Aplicaciones**: Las secciones de contenido se muestran como aplicaciones (Terminal, Explorador de Archivos, Configuración, Cliente de Correo).
+- **Animaciones Suaves**: Transiciones CSS para abrir, cerrar y organizar ventanas.
+- **Diseño Personalizado**: Implementado íntegramente con utilidades de Tailwind CSS y JavaScript sin depender de frameworks complejos.
 
 ## 📁 Estructura del Proyecto
 
@@ -30,14 +30,12 @@ Portafolio/
 
 ## 📱 Funcionalidades
 
-### Carrusel de Habilidades
-- Navegación manual con botones
-- Auto-scroll cada 3 segundos
-- Efecto infinito
-- Imágenes con fallback a placeholder
-- Efectos 3D en hover con Tailwind CSS
+### Gestor de Ventanas
+- Arrastre libre de ventanas por la pantalla.
+- Opción de maximizar para ocupar el escritorio disponible.
+- Sistema de capas (z-index) para poner en primer plano la ventana activa.
+- Minimizar al dock lateral.
 
 ### Navegación
-- Scroll suave entre secciones
-- Navegación activa en tiempo real
-- Responsive design
+- Interacción a través de iconos en el dock y la barra superior.
+- Pantalla de bienvenida / bloqueo interactiva.
