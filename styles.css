@@ -1,3 +1,12 @@
+
+:root {
+    --ubuntu-orange: #e95420;
+    --ubuntu-purple: #77216f;
+    --ubuntu-bg-dark: #300a24;
+    --window-shadow: 0 30px 80px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.1) inset;
+    --window-active-shadow: 0 40px 100px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255,255,255,0.2) inset, 0 0 0 1px rgba(0,0,0,0.8);
+}
+
 /* Ubuntu-like background */
 .ubuntu-bg {
     background: 
@@ -66,10 +75,12 @@
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    box-shadow: var(--window-shadow);
     transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
-    border-radius: 10px;
+    border-radius: 12px;
     background-clip: padding-box;
+    /* Add border to separate from background */
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
 }
 
 .window-header {
@@ -90,6 +101,7 @@
     max-width: none !important;
     border-radius: 0;
     transform: none;
+    border: none !important;
 }
 
 /* Animations for window opening */
@@ -192,7 +204,7 @@
 
 /* Active window styling */
 .window-active {
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
+    box-shadow: var(--window-active-shadow);
 }
 
 .window-inactive {
@@ -211,4 +223,48 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+
+/* Resizer handles */
+.resizer {
+    position: absolute;
+    z-index: 100;
+}
+.resizer-r {
+    cursor: e-resize;
+    right: -5px;
+    top: 0;
+    width: 10px;
+    height: 100%;
+}
+.resizer-b {
+    cursor: s-resize;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+.resizer-br {
+    cursor: se-resize;
+    right: -5px;
+    bottom: -5px;
+    width: 15px;
+    height: 15px;
+}
+.os-window.maximized .resizer {
+    display: none;
+}
+
+/* Terminal input */
+#terminal-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-family: inherit;
+    width: 100%;
+}
+#terminal-input:focus {
+    outline: none;
 }

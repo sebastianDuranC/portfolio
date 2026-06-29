@@ -11,7 +11,7 @@
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-opacity duration-500 ease-in-out">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
             <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-4 border-2 border-white/20 object-cover shadow-2xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
             <h1 class="text-2xl font-ubuntu font-bold text-white mb-6 drop-shadow-md">Sebastian Duran Caballero</h1>
@@ -33,11 +33,29 @@
         <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center cursor-pointer hover:bg-white/15 px-4 h-full rounded-full transition-colors duration-200 active:bg-white/20" id="clock-container">
             <span id="topbar-date" class="font-bold tracking-wide"></span>
         </div>
-        <div class="flex items-center space-x-2 h-full cursor-pointer hover:bg-white/15 px-3 rounded-full transition-colors duration-200 active:bg-white/20">
-            <i class="fas fa-network-wired text-xs"></i>
-            <i class="fas fa-volume-up text-xs"></i>
-            <i class="fas fa-battery-full text-xs"></i>
-            <i class="fas fa-caret-down text-xs ml-1"></i>
+        <div class="relative flex items-center h-full">
+            <div id="system-menu-btn" class="flex items-center space-x-2 h-full cursor-pointer hover:bg-white/15 px-3 rounded-full transition-colors duration-200 active:bg-white/20">
+                <i class="fas fa-network-wired text-xs"></i>
+                <i class="fas fa-volume-up text-xs"></i>
+                <i class="fas fa-battery-full text-xs"></i>
+                <i class="fas fa-caret-down text-xs ml-1"></i>
+            </div>
+            <!-- Dropdown Menu -->
+            <div id="system-menu" class="hidden absolute top-8 right-0 w-64 bg-[#2b2b2b]/95 backdrop-blur-xl rounded-xl shadow-2xl border border-black/80 overflow-hidden text-gray-200 py-2">
+                <div class="px-4 py-2 border-b border-white/10 flex items-center">
+                    <i class="fas fa-volume-up w-6 text-center mr-2"></i>
+                    <input type="range" class="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div class="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center transition-colors">
+                    <i class="fas fa-network-wired w-6 text-center mr-2"></i> Cableada Conectada
+                </div>
+                <div class="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center transition-colors" onclick="app.openWindow('skills')">
+                    <i class="fas fa-cog w-6 text-center mr-2"></i> Configuración
+                </div>
+                <div class="px-4 py-2 hover:bg-white/10 cursor-pointer flex items-center transition-colors text-[#e95420]" onclick="location.reload()">
+                    <i class="fas fa-power-off w-6 text-center mr-2"></i> Cerrar Sesión
+                </div>
+            </div>
         </div>
     </div>
 
@@ -81,6 +99,11 @@
             <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@ubuntu: ~</div>
+                <!-- Resizers -->
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
+
                     <div class="flex space-x-2 absolute right-3">
                         <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
                             <span class="text-white font-bold mb-1">-</span>
@@ -132,7 +155,10 @@
                         </div>
                     </div>
 
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
+                    <div class="flex items-center mt-2" id="terminal-input-line">
+                        <span class="text-green-400 font-bold mr-1">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold mr-1">~</span>$
+                        <input type="text" id="terminal-input" class="ml-2 flex-1 bg-transparent border-none outline-none text-gray-200" autocomplete="off" spellcheck="false">
+                    </div>
                 </div>
             </div>
 
@@ -142,6 +168,11 @@
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Proyectos</span>
                     </div>
+                <!-- Resizers -->
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
+
                     <div class="flex space-x-2 absolute right-3">
                         <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('projects')">
                             <span class="text-white font-bold mb-1">-</span>
@@ -236,6 +267,11 @@
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Habilidades</span>
                     </div>
+                <!-- Resizers -->
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
+
                     <div class="flex space-x-2 absolute right-3">
                         <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('skills')">
                             <span class="text-white font-bold mb-1">-</span>
@@ -305,6 +341,11 @@
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Contacto</span>
                     </div>
+                <!-- Resizers -->
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
+
                     <div class="flex space-x-2 absolute right-3">
                         <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('contact')">
                             <span class="text-white font-bold mb-1">-</span>
