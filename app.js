@@ -12,6 +12,9 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
+        this.setupTopMenu();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -228,6 +231,183 @@ class LinuxOS {
         } else {
             this.openWindow(id);
         }
+    }
+
+    setupTopMenu() {
+        const menuBtn = document.getElementById('system-menu-btn');
+        const menu = document.getElementById('system-menu');
+
+        if(menuBtn && menu) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if(!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        }
+    }
+
+    setupResizers() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+
+            let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation(); // prevent window drag
+
+                    isResizing = true;
+                    currentResizer = resizer;
+
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    const rect = win.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+                    startLeft = rect.left;
+                    startTop = rect.top;
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+
+                    this.bringToFront(win);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                if (win.classList.contains('maximized')) return;
+
+                if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                } else if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            };
+        });
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalWindow = document.getElementById('window-terminal');
+
+        if (terminalInput && terminalWindow) {
+            // Focus input when terminal is clicked
+            terminalWindow.addEventListener('click', () => {
+                if (!window.getSelection().toString()) {
+                    terminalInput.focus();
+                }
+            });
+
+            terminalInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = terminalInput.value.trim();
+                    terminalInput.value = '';
+                    this.executeCommand(command);
+                }
+            });
+        }
+    }
+
+    executeCommand(command) {
+        const terminalContent = document.querySelector('#window-terminal .window-content');
+        const inputLine = document.getElementById('terminal-input-line');
+
+        if (!terminalContent || !inputLine) return;
+
+        // Echo command
+        const echoLine = document.createElement('p');
+        echoLine.className = 'mb-2 mt-2 text-sm';
+        echoLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ${command}`;
+        terminalContent.insertBefore(echoLine, inputLine);
+
+        // Process command
+        const outputLine = document.createElement('div');
+        outputLine.className = 'mb-4 text-sm text-gray-200';
+
+        const cmd = command.toLowerCase();
+
+        if (cmd === 'clear') {
+            // Remove everything except the input line
+            Array.from(terminalContent.children).forEach(child => {
+                if (child !== inputLine) {
+                    terminalContent.removeChild(child);
+                }
+            });
+            return;
+        } else if (cmd === 'whoami') {
+            outputLine.innerHTML = '<p>Sebastian Duran Caballero - Desarrollador Web .NET</p>';
+        } else if (cmd === 'help') {
+             outputLine.innerHTML = `
+                <p>Comandos disponibles:</p>
+                <ul class="ml-4 mt-2 list-disc list-inside">
+                    <li><span class="text-yellow-400">whoami</span> - Muestra información sobre mi</li>
+                    <li><span class="text-yellow-400">neofetch</span> - Muestra información del sistema</li>
+                    <li><span class="text-yellow-400">clear</span> - Limpia la consola</li>
+                    <li><span class="text-yellow-400">help</span> - Muestra este mensaje</li>
+                </ul>
+            `;
+        } else if (cmd === 'neofetch') {
+            outputLine.innerHTML = `
+                <div class="flex flex-col md:flex-row text-gray-100 mb-4 mt-2">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\\\-,
+     ,' /   ,-'   ) \\\\
+   ,'  |  ,'     /   \\\\
+  /    | /      /     \\\\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\\\     |   /         /
+  \\\\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>
+            `;
+        } else if (cmd === '') {
+             // do nothing
+             return;
+        } else {
+            outputLine.innerHTML = `<p class="text-red-400">bash: ${command}: orden no encontrada. Escribe 'help' para ver los comandos.</p>`;
+        }
+
+        terminalContent.insertBefore(outputLine, inputLine);
+
+        // Scroll to bottom
+        terminalContent.scrollTop = terminalContent.scrollHeight;
     }
 }
 
