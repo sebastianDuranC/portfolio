@@ -93,47 +93,16 @@
                         </button>
                     </div>
                 </div>
-                <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text">
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ whoami</p>
-                    <p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ cat description.txt</p>
-                    <p class="text-gray-100 mb-4">
-                        Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.
-                    </p>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ neofetch</p>
-                    <div class="flex flex-col md:flex-row text-gray-100 mb-4">
-                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
-<pre>
-       _,-/`--,-/\-,
-     ,' /   ,-'   ) \
-   ,'  |  ,'     /   \
-  /    | /      /     \
- /      /      /      |
-|      /      /       |
-|      |     /        |
-|      |    /         |
- \     |   /         /
-  \    |  /         /
-   `.  | /        ,'
-     `./'      ,-'
-       `-----'
-</pre>
-                        </div>
-                        <div>
-                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
-                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
-                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
-                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
-                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
-                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
-                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
-                        </div>
+                <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text" id="terminal-content" onclick="document.getElementById('terminal-input').focus()">
+                    <div id="terminal-output"></div>
+                    <div class="flex items-center mt-2">
+                        <span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$&nbsp;
+                        <input type="text" id="terminal-input" class="flex-1 bg-transparent border-none outline-none text-gray-200 font-ubuntu-mono caret-gray-200" autocomplete="off" spellcheck="false" autofocus>
                     </div>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
                 </div>
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
             </div>
 
             <!-- Projects Explorer Window -->
@@ -228,6 +197,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
             </div>
 
             <!-- Skills Window (Settings style) -->
@@ -297,6 +269,9 @@
                         </div>
                     </div>
                 </div>
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
             </div>
 
             <!-- Contact Window (Mail client style) -->
@@ -360,6 +335,9 @@
                         </a>
                     </div>
                 </div>
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
             </div>
 
         </div>
