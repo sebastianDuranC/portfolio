@@ -212,3 +212,46 @@
 .window-header button:active {
     transform: scale(0.9);
 }
+
+/* Resizing handles */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+
+.resizer-r {
+    cursor: col-resize;
+    right: 0;
+    top: 0;
+    width: 8px;
+    height: 100%;
+}
+
+.resizer-b {
+    cursor: row-resize;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+}
+
+.resizer-br {
+    cursor: nwse-resize;
+    right: 0;
+    bottom: 0;
+    width: 12px;
+    height: 12px;
+    z-index: 11;
+}
+
+/* Snap outline preview */
+.snap-preview {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.1s ease;
+    display: none;
+}
