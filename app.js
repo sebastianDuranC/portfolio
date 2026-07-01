@@ -12,6 +12,8 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
+        this.setupResizableWindows();
     }
 
     setupLogin() {
@@ -92,60 +94,147 @@ class LinuxOS {
     }
 
     setupDraggableWindows() {
+        const snapPreview = document.getElementById('snap-preview');
+
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
             if (!header) return;
 
             let isDragging = false;
-            let currentX;
-            let currentY;
-            let initialX;
-            let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
+            let initialX, initialY;
+            let winLeft, winTop;
+
+            const dragStart = (e) => {
+                if (e.target.closest('button') || win.classList.contains('maximized')) return;
+
+                isDragging = true;
+
+                // Get the computed style or inline style values
+                const rect = win.getBoundingClientRect();
+
+                // Store initial mouse position
+                initialX = e.clientX;
+                initialY = e.clientY;
+
+                // Store initial window position
+                // We use getComputedStyle to handle % values and fixed positioning properly
+                const style = window.getComputedStyle(win);
+                winLeft = parseInt(style.left, 10);
+                if (isNaN(winLeft)) winLeft = rect.left;
+                winTop = parseInt(style.top, 10);
+                if (isNaN(winTop)) winTop = rect.top;
+
+                // Bring to front on drag start
+                this.bringToFront(win);
+
+                // Clear transforms and commit to left/top for easier dragging
+                win.style.transform = 'none';
+                win.style.left = `${winLeft}px`;
+                win.style.top = `${winTop}px`;
+            };
+
+            const drag = (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+
+                    const dx = e.clientX - initialX;
+                    const dy = e.clientY - initialY;
+
+                    let newLeft = winLeft + dx;
+                    let newTop = winTop + dy;
+
+                    // Boundaries (Don't go under top bar (28px))
+                    if (newTop < 28) newTop = 28;
+
+                    win.style.left = `${newLeft}px`;
+                    win.style.top = `${newTop}px`;
+
+                    // Aero snap preview logic
+                    if (e.clientY <= 30 && snapPreview) {
+                        snapPreview.style.display = 'block';
+                        snapPreview.style.top = '28px';
+                        snapPreview.style.left = '56px'; // Dock width
+                        snapPreview.style.width = 'calc(100% - 56px)';
+                        snapPreview.style.height = 'calc(100vh - 28px)';
+                    } else if (snapPreview) {
+                        snapPreview.style.display = 'none';
+                    }
+                }
+            };
+
+            const dragEnd = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                // Aero snap action
+                if (e.clientY <= 30) {
+                    this.maximizeWindow(win.dataset.id);
+                }
+
+                if (snapPreview) {
+                    snapPreview.style.display = 'none';
+                }
+            };
 
             header.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
+        });
+    }
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.closest('button')) return;
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+            let initialMouseX, initialMouseY;
+            let initialWidth, initialHeight;
 
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+            const startResize = (e) => {
+                if (win.classList.contains('maximized')) return;
 
-                if (e.target === header || header.contains(e.target)) {
-                    isDragging = true;
+                isResizing = true;
+                currentResizer = e.target;
+
+                initialMouseX = e.clientX;
+                initialMouseY = e.clientY;
+
+                const style = window.getComputedStyle(win);
+                initialWidth = parseInt(style.width, 10);
+                initialHeight = parseInt(style.height, 10);
+
+                // Prevent text selection while resizing
+                e.preventDefault();
+            };
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                const dx = e.clientX - initialMouseX;
+                const dy = e.clientY - initialMouseY;
+
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = `${initialWidth + dx}px`;
+                    // Remove max-width to allow free resizing
+                    win.style.maxWidth = 'none';
                 }
-            }
 
-            function drag(e) {
-                if (isDragging) {
-                    e.preventDefault();
-
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
-
-                    xOffset = currentX;
-                    yOffset = currentY;
-
-                    setTranslate(currentX, currentY, win);
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    win.style.height = `${initialHeight + dy}px`;
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
+            const stopResize = () => {
+                isResizing = false;
+            };
 
-            function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-            }
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', startResize);
+            });
+
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
         });
     }
 
@@ -228,6 +317,135 @@ class LinuxOS {
         } else {
             this.openWindow(id);
         }
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalWindow = document.getElementById('window-terminal');
+
+        if (!terminalInput || !terminalOutput) return;
+
+        // Focus input when clicking anywhere in the terminal window
+        terminalWindow.addEventListener('click', () => {
+            terminalInput.focus();
+        });
+
+        // Add initial neofetch output
+        this.runCommand('neofetch', terminalOutput);
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                if (command) {
+                    // Echo command securely
+                    const promptLine = document.createElement('div');
+                    promptLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@portfolio</span><span class="text-gray-300">:</span><span class="text-blue-400">~</span><span class="text-gray-300">$ </span><span></span>`;
+                    promptLine.lastChild.textContent = command; // Escape user input
+                    terminalOutput.appendChild(promptLine);
+
+                    // Run command
+                    this.runCommand(command, terminalOutput);
+                } else {
+                    // Empty command echo
+                    const promptLine = document.createElement('div');
+                    promptLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@portfolio</span><span class="text-gray-300">:</span><span class="text-blue-400">~</span><span class="text-gray-300">$ </span>`;
+                    terminalOutput.appendChild(promptLine);
+                }
+
+                // Scroll to bottom
+                const terminalContentArea = terminalOutput.parentElement;
+                terminalContentArea.scrollTop = terminalContentArea.scrollHeight;
+            }
+        });
+    }
+
+    runCommand(command, outputElement) {
+        const args = command.split(' ');
+        const cmd = args[0].toLowerCase();
+
+        const responseLine = document.createElement('div');
+        responseLine.className = 'mb-2';
+
+        switch (cmd) {
+            case 'help':
+                responseLine.innerHTML = `
+                    <div class="mb-1">Available commands:</div>
+                    <div class="ml-4">
+                        <span class="text-green-400">whoami</span>   - Show information about me<br>
+                        <span class="text-green-400">neofetch</span> - Display system information<br>
+                        <span class="text-green-400">clear</span>    - Clear terminal output<br>
+                        <span class="text-green-400">help</span>     - Show this help message
+                    </div>
+                `;
+                break;
+            case 'whoami':
+                responseLine.innerHTML = `
+                    <div>Sebastian Duran Caballero</div>
+                    <div>Backend Developer | Data Engineer</div>
+                    <div>I specialize in Python, Django, Cloud architectures, and crafting robust software solutions.</div>
+                `;
+                break;
+            case 'neofetch':
+                responseLine.innerHTML = `
+<div class="flex flex-col md:flex-row gap-4 mb-4 mt-2">
+    <div class="text-ubuntu-orange whitespace-pre font-mono text-xs md:text-sm leading-tight">
+         _.-="""=-._
+       /  _     _  \\
+      /  ( o ) ( o )  \\
+     /      \\_/      \\
+    |   \\_       _/   |
+    |     \`"""""\`     |
+     \\               /
+      \\             /
+       \`-..___..-'\`
+    </div>
+    <div class="flex-1">
+        <div class="text-green-400 font-bold">sebastian<span class="text-gray-300">@</span>portfolio</div>
+        <div class="text-gray-400">-------------------</div>
+        <div><span class="text-ubuntu-orange font-bold">OS</span>: Ubuntu Web Edition x86_64</div>
+        <div><span class="text-ubuntu-orange font-bold">Host</span>: Browser-based Portfolio UI</div>
+        <div><span class="text-ubuntu-orange font-bold">Kernel</span>: HTML5/CSS3/JS</div>
+        <div><span class="text-ubuntu-orange font-bold">Uptime</span>: Just started</div>
+        <div><span class="text-ubuntu-orange font-bold">Packages</span>: 1042 (npm), 5 (pip)</div>
+        <div><span class="text-ubuntu-orange font-bold">Shell</span>: Bash-like JS</div>
+        <div><span class="text-ubuntu-orange font-bold">Resolution</span>: Responsive</div>
+        <div><span class="text-ubuntu-orange font-bold">DE</span>: GNOME Web</div>
+        <div><span class="text-ubuntu-orange font-bold">WM</span>: TailwindCSS</div>
+        <div><span class="text-ubuntu-orange font-bold">Theme</span>: Yaru-dark [GTK2/3]</div>
+        <div><span class="text-ubuntu-orange font-bold">Icons</span>: FontAwesome</div>
+        <div><span class="text-ubuntu-orange font-bold">Terminal</span>: JS-Term</div>
+        <div><span class="text-ubuntu-orange font-bold">CPU</span>: Client Processor</div>
+        <div><span class="text-ubuntu-orange font-bold">Memory</span>: Sufficient for Web</div>
+        <div class="mt-2 flex gap-1">
+            <div class="w-4 h-4 bg-black"></div>
+            <div class="w-4 h-4 bg-red-500"></div>
+            <div class="w-4 h-4 bg-green-500"></div>
+            <div class="w-4 h-4 bg-yellow-500"></div>
+            <div class="w-4 h-4 bg-blue-500"></div>
+            <div class="w-4 h-4 bg-purple-500"></div>
+            <div class="w-4 h-4 bg-cyan-500"></div>
+            <div class="w-4 h-4 bg-white"></div>
+        </div>
+    </div>
+</div>`;
+                break;
+            case 'clear':
+                outputElement.innerHTML = '';
+                return; // Do not append responseLine
+            case '':
+                return; // Do nothing
+            default:
+                const errorSpan = document.createElement('span');
+                errorSpan.className = 'text-red-400';
+                errorSpan.textContent = `Command '${command}' not found. Type 'help' for a list of commands.`;
+                responseLine.appendChild(errorSpan);
+                break;
+        }
+
+        outputElement.appendChild(responseLine);
     }
 }
 
