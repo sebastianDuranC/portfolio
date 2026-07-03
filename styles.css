@@ -126,13 +126,13 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,28 +149,28 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
 }
 /* Login Screen Fade Out */
@@ -211,4 +211,33 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    background: transparent;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 8px;
+    right: -4px;
+    top: 0;
+    height: 100%;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 8px;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 12px;
+    height: 12px;
+    right: -6px;
+    bottom: -6px;
+    z-index: 11;
 }

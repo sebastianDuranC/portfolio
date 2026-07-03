@@ -10,8 +10,110 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupWindowResizing();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalContent = document.getElementById('terminal-content');
+
+        if (!terminalInput || !terminalOutput) return;
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                // Echo the command
+                const echoLine = document.createElement('p');
+                echoLine.className = 'mb-2';
+                echoLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="command-text"></span>`;
+                echoLine.querySelector('.command-text').textContent = command;
+                terminalOutput.appendChild(echoLine);
+
+                // Process command
+                this.processTerminalCommand(command, terminalOutput);
+
+                // Scroll to bottom
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+            }
+        });
+    }
+
+    processTerminalCommand(cmd, outputElement) {
+        const command = cmd.toLowerCase().trim();
+        const responseLine = document.createElement('div');
+        responseLine.className = 'text-gray-100 mb-4';
+
+        if (command === '') {
+            return;
+        }
+
+        switch (command) {
+            case 'help':
+                responseLine.innerHTML = `
+                    <p>Comandos disponibles:</p>
+                    <ul class="list-none ml-4 mt-2">
+                        <li><span class="text-green-400 font-bold">help</span>     - Muestra este mensaje de ayuda</li>
+                        <li><span class="text-green-400 font-bold">whoami</span>   - Muestra el usuario actual</li>
+                        <li><span class="text-green-400 font-bold">neofetch</span> - Muestra la información del sistema</li>
+                        <li><span class="text-green-400 font-bold">clear</span>    - Limpia la terminal</li>
+                        <li><span class="text-green-400 font-bold">about</span>    - Muestra información sobre mi</li>
+                    </ul>
+                `;
+                break;
+            case 'whoami':
+                responseLine.textContent = 'Sebastian Duran Caballero';
+                break;
+            case 'about':
+                responseLine.textContent = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.';
+                break;
+            case 'clear':
+                outputElement.innerHTML = '';
+                return; // Return early so we don't append an empty response
+            case 'neofetch':
+                responseLine.innerHTML = `
+                    <div class="flex flex-col md:flex-row text-gray-100">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>
+                `;
+                break;
+            default:
+                responseLine.innerHTML = `Comando no encontrado: <span class="text-red-400"></span>. Escribe 'help' para ver los comandos disponibles.`;
+                responseLine.querySelector('span').textContent = command;
+                break;
+        }
+
+        outputElement.appendChild(responseLine);
     }
 
     setupLogin() {
@@ -145,6 +247,61 @@ class LinuxOS {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                // Aero snap to top
+                if (e.clientY <= 28) {
+                    const id = win.getAttribute('data-id');
+                    if (!win.classList.contains('maximized')) {
+                         app.maximizeWindow(id);
+                    }
+                }
+            }
+        });
+    }
+
+    setupWindowResizing() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', function(e) {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resize(e) {
+                if (!isResizing) return;
+
+                // Set fixed sizing instead of max-w constraints while resizing
+                win.style.maxWidth = 'none';
+
+                if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                } else if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
             }
         });
     }
