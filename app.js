@@ -10,8 +10,123 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupWindowResizing();
         this.setupWindowClickToFront();
         this.setupLogin();
+
+        // Initial text for terminal
+        setTimeout(() => {
+            const initialCmd = { preventDefault: () => {}, target: { elements: [] } };
+            const input = document.getElementById('terminal-input');
+            if (input) {
+                input.value = 'neofetch';
+                this.handleTerminalSubmit(initialCmd);
+            }
+        }, 800);
+    }
+
+    handleTerminalSubmit(event) {
+        if(event && event.preventDefault) event.preventDefault();
+        const inputElement = document.getElementById('terminal-input');
+        const outputElement = document.getElementById('terminal-output');
+        if (!inputElement || !outputElement) return;
+
+        const cmd = inputElement.value.trim();
+        inputElement.value = '';
+
+        // Echo command
+        const cmdDiv = document.createElement('div');
+        cmdDiv.className = 'mb-2';
+        cmdDiv.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ${this.escapeHTML(cmd)}`;
+        outputElement.appendChild(cmdDiv);
+
+        if (cmd.length > 0) {
+            this.processTerminalCommand(cmd, outputElement);
+        }
+
+        // Scroll to bottom
+        const contentArea = document.getElementById('terminal-content-area');
+        if (contentArea) {
+            contentArea.scrollTop = contentArea.scrollHeight;
+        }
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
+    processTerminalCommand(cmd, outputElement) {
+        const responseDiv = document.createElement('div');
+        responseDiv.className = 'text-gray-100 mb-4';
+
+        const args = cmd.toLowerCase().split(' ');
+        const mainCmd = args[0];
+
+        switch (mainCmd) {
+            case 'help':
+                responseDiv.innerHTML = `
+                    <p>Comandos disponibles:</p>
+                    <ul class="list-disc list-inside ml-2">
+                        <li><strong>whoami</strong> - Muestra el usuario actual</li>
+                        <li><strong>neofetch</strong> - Muestra información del sistema</li>
+                        <li><strong>clear</strong> - Limpia la terminal</li>
+                        <li><strong>date</strong> - Muestra la fecha y hora</li>
+                        <li><strong>help</strong> - Muestra este mensaje</li>
+                    </ul>`;
+                break;
+            case 'whoami':
+                responseDiv.textContent = 'Sebastian Duran Caballero';
+                break;
+            case 'clear':
+                outputElement.innerHTML = '';
+                return;
+            case 'date':
+                responseDiv.textContent = new Date().toString();
+                break;
+            case 'neofetch':
+                responseDiv.innerHTML = `
+                    <div class="flex flex-col md:flex-row">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/&#96;--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>`;
+                break;
+            default:
+                responseDiv.textContent = `bash: ${cmd}: orden no encontrada`;
+        }
+
+        outputElement.appendChild(responseDiv);
     }
 
     setupLogin() {
@@ -91,6 +206,57 @@ class LinuxOS {
         });
     }
 
+    setupWindowResizing() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer = null;
+            let initialX = 0;
+            let initialY = 0;
+            let initialWidth = 0;
+            let initialHeight = 0;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    if(win.classList.contains('maximized')) return;
+                    isResizing = true;
+                    currentResizer = resizer;
+                    initialX = e.clientX;
+                    initialY = e.clientY;
+                    initialWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+                    initialHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    const width = initialWidth + (e.clientX - initialX);
+                    if (width > 300) {
+                        win.style.width = width + 'px';
+                        win.style.maxWidth = 'none'; // Overide tailwind max-w if any
+                    }
+                }
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    const height = initialHeight + (e.clientY - initialY);
+                    if (height > 200) {
+                        win.style.height = height + 'px';
+                    }
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            };
+        });
+    }
+
     setupDraggableWindows() {
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
@@ -141,10 +307,16 @@ class LinuxOS {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
             }
 
+            const self = this;
             function dragEnd(e) {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                // Aero snap to top edge
+                if (e.clientY <= 28) {
+                     self.maximizeWindow(win.dataset.id);
+                }
             }
         });
     }

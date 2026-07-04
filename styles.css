@@ -126,13 +126,13 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,29 +149,37 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
+}
+
+/* Resizer styles */
+.resizer {
+    background: transparent;
+}
+.resizer:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 /* Login Screen Fade Out */
 .fade-out {
