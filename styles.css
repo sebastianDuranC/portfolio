@@ -126,13 +126,71 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Ubuntu Dock (Bottom Centered) */
+.ubuntu-dock {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30, 30, 30, 0.65);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 50;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dock-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+}
+
+.dock-icon:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.dock-icon:active {
+    transform: scale(0.95);
+}
+
+/* Active indicator */
+.dock-dot {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #e95420;
+    opacity: 0;
+    transition: opacity 0.2s;
+    box-shadow: 0 0 4px #e95420;
+}
+
+.dock-icon.active .dock-dot {
+    opacity: 1;
+}
+
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,39 +207,35 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
 }
+
 /* Login Screen Fade Out */
 .fade-out {
     opacity: 0;
     pointer-events: none;
-}
-
-/* Subtle dock app active indicator */
-.dock-icon.active {
-    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Terminal transparency */
@@ -211,4 +265,59 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Window Resizers */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    width: 5px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    cursor: e-resize;
+}
+.resizer-b {
+    height: 5px;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    cursor: s-resize;
+}
+.resizer-br {
+    width: 10px;
+    height: 10px;
+    right: 0;
+    bottom: 0;
+    cursor: se-resize;
+    z-index: 20;
+}
+
+/* Aero Snap Preview Overlay */
+#aero-snap-preview {
+    position: fixed;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+    transition: all 0.15s ease-out;
+}
+
+/* Terminal Input */
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: #e5e7eb; /* text-gray-200 */
+    font-family: inherit;
+    flex: 1;
+    outline: none;
+    margin-left: 0.25rem;
 }
