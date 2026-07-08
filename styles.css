@@ -1,38 +1,8 @@
-/* Ubuntu-like background */
+/* GNOME/Adwaita Background */
 .ubuntu-bg {
-    background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
-}
-
-/* Glassmorphism Utilities */
-.glass {
-    background: rgba(17, 17, 17, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-light {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-dark {
-    background: rgba(36, 36, 36, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal specific */
-.bg-aubergine {
-    background-color: #300a24;
+    background: url('https://upload.wikimedia.org/wikipedia/commons/2/23/Gnome-default-wallpaper.png') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #242424; /* Fallback */
 }
 
 /* Base font classes */
@@ -44,36 +14,39 @@
     font-family: 'Ubuntu Mono', monospace;
 }
 
-/* Custom scrollbar for windows */
+/* Custom scrollbar for windows (Adwaita style) */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.08) inset;
     transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
-    border-radius: 10px;
+    border-radius: 12px;
     background-clip: padding-box;
 }
 
 .window-header {
-    border-radius: 10px 10px 0 0;
+    border-radius: 12px 12px 0 0;
 }
 
 .os-window.minimized {
@@ -108,96 +81,70 @@
     animation: windowOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Terminal blink cursor */
-.animate-pulse {
-    animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-/* Line clamp utility */
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(17, 17, 17, 0.95);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30, 30, 30, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 6px;
     font-size: 13px;
     white-space: nowrap;
     pointer-events: none;
     font-family: 'Ubuntu', sans-serif;
-    z-index: 50;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    opacity: 1;
 }
 
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
-    z-index: 50;
+    border-color: rgba(30, 30, 30, 0.95) transparent transparent transparent;
+    z-index: 100;
 }
+
 /* Login Screen Fade Out */
 .fade-out {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Subtle dock app active indicator */
-.dock-icon.active {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal transparency */
-#window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
-    backdrop-filter: blur(10px);
-}
-
 /* Active window styling */
 .window-active {
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.15) inset;
+    z-index: 50;
 }
 
 .window-inactive {
     opacity: 0.95;
-    filter: brightness(0.95);
+    filter: brightness(0.85);
 }
 
 /* Fix maximized state rounded corners */
@@ -211,4 +158,38 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Resizer styles */
+.resizer {
+    position: absolute;
+    z-index: 100;
+    background: transparent;
+}
+.resizer-r {
+    right: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resizer-b {
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resizer-br {
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    cursor: se-resize;
+    z-index: 101;
+}
+
+/* Top bar dropdown / styling */
+.top-bar {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
 }
