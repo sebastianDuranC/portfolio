@@ -212,3 +212,48 @@
 .window-header button:active {
     transform: scale(0.9);
 }
+
+.resizer {
+    position: absolute;
+}
+.resizer.right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    cursor: ew-resize;
+}
+.resizer.bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    cursor: ns-resize;
+}
+
+
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer.right {
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: ew-resize;
+}
+.resizer.bottom {
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    cursor: ns-resize;
+}
+.resizer.bottom-right {
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    cursor: nwse-resize;
+}
