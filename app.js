@@ -12,6 +12,8 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -134,6 +136,13 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero snap to top
+                    if (e.clientY <= 0 && !win.classList.contains('maximized')) {
+                        // Maximize if dragged to very top
+                        isDragging = false;
+                        app.maximizeWindow(win.dataset.id);
+                    }
                 }
             }
 
@@ -147,6 +156,143 @@ class LinuxOS {
                 isDragging = false;
             }
         });
+    }
+
+    setupResizers() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    // bring to front when resizing starts
+                    this.bringToFront(win);
+                });
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                } else if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+            });
+        });
+    }
+
+    setupTerminal() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalInput = document.getElementById('terminal-input');
+
+        if (!terminalInput || !terminalOutput) return;
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                this.processTerminalCommand(command, terminalOutput);
+
+                // Scroll to bottom
+                const windowContent = terminalOutput.closest('.window-content');
+                if (windowContent) {
+                    windowContent.scrollTop = windowContent.scrollHeight;
+                }
+            }
+        });
+
+        // Focus input when clicking anywhere in terminal
+        const terminalWin = document.getElementById('window-terminal');
+        if (terminalWin) {
+            terminalWin.querySelector('.window-content').addEventListener('click', () => {
+                terminalInput.focus();
+            });
+        }
+    }
+
+    processTerminalCommand(command, outputElement) {
+        // Echo command
+        const promptDiv = document.createElement('div');
+        promptDiv.className = 'mb-2';
+        promptDiv.innerHTML = '<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="cmd-text"></span>';
+        promptDiv.querySelector('.cmd-text').textContent = command;
+        outputElement.appendChild(promptDiv);
+
+        if (!command) return;
+
+        const responseDiv = document.createElement('div');
+        responseDiv.className = 'text-gray-100 mb-4 whitespace-pre-wrap';
+
+        const cmd = command.toLowerCase().split(' ')[0];
+
+        switch (cmd) {
+            case 'help':
+                responseDiv.textContent = 'Comandos disponibles:\n  help      - Muestra este mensaje\n  whoami    - Muestra el usuario actual\n  clear     - Limpia la terminal\n  ls        - Lista los archivos\n  neofetch  - Muestra información del sistema';
+                break;
+            case 'whoami':
+                responseDiv.textContent = 'Sebastian Duran Caballero';
+                break;
+            case 'clear':
+                outputElement.innerHTML = '';
+                return; // Don't append responseDiv
+            case 'ls':
+                responseDiv.textContent = 'Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  description.txt';
+                break;
+            case 'neofetch':
+                responseDiv.innerHTML = `
+<div class="flex flex-col md:flex-row text-gray-100">
+    <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+        <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`;
+                break;
+            default:
+                responseDiv.textContent = `Comando no encontrado: ${cmd}`;
+        }
+
+        outputElement.appendChild(responseDiv);
     }
 
     openWindow(id) {
