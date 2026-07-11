@@ -1,12 +1,14 @@
-/* Ubuntu-like background */
+/* GNOME Adwaita background */
 .ubuntu-bg {
-    background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
+    background: url('images/adwaita-day.jpg') center/cover no-repeat;
+    background-color: #242424; /* Fallback */
 }
+/* If image is missing, we use a dark abstract gradient */
+.ubuntu-bg {
+    background: radial-gradient(circle at top right, #345c8c, #1e1e1e), radial-gradient(circle at bottom left, #234567, #121212);
+    background-color: #1e1e1e;
+}
+
 
 /* Glassmorphism Utilities */
 .glass {
@@ -32,7 +34,7 @@
 
 /* Terminal specific */
 .bg-aubergine {
-    background-color: #300a24;
+    background-color: #1e1e1e;
 }
 
 /* Base font classes */
@@ -126,14 +128,14 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(17, 17, 17, 0.95);
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(36, 36, 36, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     padding: 6px 10px;
@@ -149,28 +151,28 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(36, 36, 36, 0.95) transparent transparent transparent;
     z-index: 50;
 }
 /* Login Screen Fade Out */
@@ -186,7 +188,7 @@
 
 /* Terminal transparency */
 #window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
+    background-color: rgba(30, 30, 30, 0.9);
     backdrop-filter: blur(10px);
 }
 
@@ -211,4 +213,32 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Resizer styles */
+.resizer {
+    position: absolute;
+    z-index: 20;
+}
+.resizer-r {
+    right: -4px;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    cursor: ew-resize;
+}
+.resizer-b {
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    cursor: ns-resize;
+}
+.resizer-br {
+    bottom: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    cursor: nwse-resize;
+    z-index: 21; /* Above right and bottom */
 }
