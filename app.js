@@ -1,15 +1,149 @@
+class Terminal {
+    constructor(os) {
+        this.os = os;
+        this.input = document.getElementById('terminal-input');
+        this.history = document.getElementById('terminal-history');
+
+        if(this.input) {
+            this.input.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    this.executeCommand(this.input.value);
+                    this.input.value = '';
+                }
+            });
+        }
+    }
+
+    echo(text, isHtml = false) {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        if (isHtml) {
+            div.innerHTML = text;
+        } else {
+            div.textContent = text;
+        }
+        this.history.appendChild(div);
+
+        // Scroll to bottom
+        const container = document.getElementById('terminal-output');
+        if(container) container.scrollTop = container.scrollHeight;
+    }
+
+    echoPrompt(cmd) {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = `<span class="text-green-400 font-bold whitespace-nowrap">sebastian@ubuntu</span><span class="text-white">:</span><span class="text-blue-400 font-bold whitespace-nowrap">~</span><span class="text-white mr-2">$</span> <span class="text-gray-200">${this.escapeHtml(cmd)}</span>`;
+        this.history.appendChild(div);
+    }
+
+    escapeHtml(unsafe) {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+
+    executeCommand(cmd) {
+        const trimmed = cmd.trim();
+        if(!trimmed) {
+            this.echoPrompt('');
+            return;
+        }
+
+        this.echoPrompt(trimmed);
+
+        const args = trimmed.split(/\s+/);
+        const command = args[0].toLowerCase();
+
+        switch(command) {
+            case 'help':
+                this.echo('Comandos disponibles:');
+                this.echo('  help      - Muestra esta ayuda');
+                this.echo('  whoami    - Muestra el usuario actual');
+                this.echo('  clear     - Limpia la terminal');
+                this.echo('  ls        - Lista los archivos del directorio');
+                this.echo('  neofetch  - Muestra información del sistema');
+                this.echo('  open <app>- Abre una aplicación (projects, skills, contact)');
+                break;
+            case 'whoami':
+                this.echo('Sebastian Duran Caballero');
+                break;
+            case 'clear':
+                this.history.innerHTML = '';
+                break;
+            case 'ls':
+                this.echo('projects/  skills/  contact/  description.txt');
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.echo('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+                } else {
+                    this.echo(`cat: ${args[1] ? this.escapeHtml(args[1]) : ''}: No such file or directory`);
+                }
+                break;
+            case 'neofetch':
+                const neofetchHtml = `
+                    <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>`;
+                this.echo(neofetchHtml, true);
+                break;
+            case 'open':
+                const app = args[1];
+                if (['projects', 'skills', 'contact'].includes(app)) {
+                    this.os.openWindow(app);
+                    this.echo(`Abriendo ${app}...`);
+                } else {
+                    this.echo(`Aplicación no encontrada: ${app ? this.escapeHtml(app) : ''}`);
+                }
+                break;
+            default:
+                this.echo(`${this.escapeHtml(command)}: command not found`);
+        }
+    }
+}
+
 class LinuxOS {
     constructor() {
         this.windows = document.querySelectorAll('.os-window');
         this.highestZIndex = 100;
         this.openWindows = new Set();
         
+        this.terminal = new Terminal(this);
         this.init();
     }
 
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
     }
@@ -46,6 +180,12 @@ class LinuxOS {
                 loginScreen.style.display = 'none';
                 // Automatically open terminal on startup to show neofetch
                 this.openWindow('terminal');
+                // Run neofetch command after delay to allow window to open
+                setTimeout(() => {
+                    if (this.terminal && this.terminal.history.innerHTML === '') {
+                       this.terminal.executeCommand('neofetch');
+                    }
+                }, 300);
             }, 500); // Wait for transition to complete
         }
     }
@@ -88,6 +228,54 @@ class LinuxOS {
             win.addEventListener('mousedown', () => {
                 this.bringToFront(win);
             });
+        });
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            if (resizers.length === 0) return;
+
+            let isResizing = false;
+            let currentResizer;
+            let originalWidth;
+            let originalHeight;
+            let originalMouseX;
+            let originalMouseY;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    originalWidth = parseFloat(getComputedStyle(win).getPropertyValue('width').replace('px', ''));
+                    originalHeight = parseFloat(getComputedStyle(win).getPropertyValue('height').replace('px', ''));
+                    originalMouseX = e.pageX;
+                    originalMouseY = e.pageY;
+
+                    window.addEventListener('mousemove', resize);
+                    window.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = originalWidth + (e.pageX - originalMouseX) + 'px';
+                    win.style.height = originalHeight + (e.pageY - originalMouseY) + 'px';
+                } else if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = originalWidth + (e.pageX - originalMouseX) + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = originalHeight + (e.pageY - originalMouseY) + 'px';
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                window.removeEventListener('mousemove', resize);
+                window.removeEventListener('mouseup', stopResize);
+            };
         });
     }
 

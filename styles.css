@@ -72,6 +72,36 @@
     background-clip: padding-box;
 }
 
+/* Resizer styles */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+
+.resizer-r {
+    cursor: ew-resize;
+    width: 6px;
+    right: -3px;
+    top: 0;
+    height: 100%;
+}
+
+.resizer-b {
+    cursor: ns-resize;
+    height: 6px;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+}
+
+.resizer-br {
+    cursor: nwse-resize;
+    width: 10px;
+    height: 10px;
+    right: -3px;
+    bottom: -3px;
+}
+
 .window-header {
     border-radius: 10px 10px 0 0;
 }
@@ -86,7 +116,7 @@
     top: 28px !important; /* Below top bar */
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: calc(100vh - 28px - 70px) !important; /* Account for top bar and bottom dock */
     max-width: none !important;
     border-radius: 0;
     transform: none;
@@ -126,13 +156,13 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,28 +179,28 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
 }
 /* Login Screen Fade Out */

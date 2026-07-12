@@ -1,0 +1,60 @@
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:32:44] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:32:44] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:47:58] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:47:58] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:48:57] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:48:57] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jul/2026 19:49:13] code 404, message File not found
+127.0.0.1 - - [12/Jul/2026 19:49:13] "GET /images/profile.jpg HTTP/1.1" 404 -
