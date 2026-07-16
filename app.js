@@ -10,8 +10,10 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -130,6 +132,16 @@ class LinuxOS {
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
+                    // Aero Snap: drag to top
+                    if (e.clientY <= 28) {
+                         if(!win.classList.contains('maximized-snap-preview')) {
+                             win.classList.add('maximized-snap-preview');
+                             // show a preview overlay here if desired
+                         }
+                    } else {
+                         win.classList.remove('maximized-snap-preview');
+                    }
+
                     xOffset = currentX;
                     yOffset = currentY;
 
@@ -141,12 +153,183 @@ class LinuxOS {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
             }
 
+            const appInstance = this;
             function dragEnd(e) {
+                if(isDragging && e.clientY <= 28) {
+                    win.classList.remove('maximized-snap-preview');
+                    // Find actual app instance, this refers to header within listener if not bound, so we use arrow or appInstance
+                    const winId = win.getAttribute('data-id');
+                    if(winId) {
+                         // Maximize the window
+                         const appObj = window.app || appInstance;
+                         if(!win.classList.contains('maximized')) {
+                             appObj.maximizeWindow(winId);
+                         }
+                    }
+                }
+
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
             }
         });
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                    e.preventDefault();
+                });
+            });
+
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('right') || currentResizer.classList.contains('bottom-right')) {
+                    const width = startWidth + (e.clientX - startX);
+                    win.style.width = `${width}px`;
+                }
+
+                if (currentResizer.classList.contains('bottom') || currentResizer.classList.contains('bottom-right')) {
+                    const height = startHeight + (e.clientY - startY);
+                    win.style.height = `${height}px`;
+                }
+            }
+
+            function handleMouseUp() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+        });
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+
+        if (!terminalInput || !terminalOutput) return;
+
+        const executeCommand = (cmd) => {
+            const command = cmd.trim();
+            if (command === '') return;
+
+            // Echo command
+            const cmdLine = document.createElement('div');
+            cmdLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ `;
+            const cmdText = document.createElement('span');
+            cmdText.textContent = command;
+            cmdLine.appendChild(cmdText);
+            terminalOutput.appendChild(cmdLine);
+
+            const outputDiv = document.createElement('div');
+            outputDiv.className = 'text-gray-100 mb-4 whitespace-pre-wrap';
+
+            const args = command.split(' ');
+            const baseCmd = args[0].toLowerCase();
+
+            switch(baseCmd) {
+                case 'help':
+                    outputDiv.textContent = 'Comandos disponibles: help, whoami, clear, ls, neofetch, cat <archivo>, open <app>';
+                    break;
+                case 'whoami':
+                    outputDiv.textContent = 'Sebastian Duran Caballero';
+                    break;
+                case 'clear':
+                    terminalOutput.innerHTML = '';
+                    return; // Don't append empty outputDiv
+                case 'ls':
+                    outputDiv.innerHTML = '<span class="text-blue-400">Proyectos</span>  <span class="text-gray-200">description.txt</span>';
+                    break;
+                case 'cat':
+                    if(args[1] === 'description.txt') {
+                        outputDiv.textContent = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.';
+                    } else {
+                        outputDiv.textContent = `cat: ${args[1] || ''}: No such file or directory`;
+                    }
+                    break;
+                case 'neofetch':
+                    outputDiv.innerHTML = `
+<div class="flex flex-col md:flex-row text-gray-100">
+    <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+        <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`;
+                    break;
+                case 'open':
+                    if (args[1]) {
+                        const appName = args[1].toLowerCase();
+                        if (['terminal', 'projects', 'skills', 'contact'].includes(appName)) {
+                            this.openWindow(appName);
+                            outputDiv.textContent = `Abriendo ${appName}...`;
+                        } else {
+                            outputDiv.textContent = `Aplicación no encontrada: ${appName}`;
+                        }
+                    } else {
+                        outputDiv.textContent = 'Uso: open <app>';
+                    }
+                    break;
+                default:
+                    outputDiv.textContent = `${baseCmd}: command not found`;
+            }
+
+            terminalOutput.appendChild(outputDiv);
+
+            // Scroll to bottom
+            const terminalContent = document.getElementById('terminal-content');
+            if (terminalContent) {
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+            }
+        };
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                executeCommand(terminalInput.value);
+                terminalInput.value = '';
+            }
+        });
+
+        // Initial text
+        executeCommand('neofetch');
+        terminalInput.value = '';
     }
 
     openWindow(id) {

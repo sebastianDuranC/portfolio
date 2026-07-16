@@ -1,15 +1,15 @@
 # Mi Portafolio - Desarrollador Web
 
-Un portafolio moderno y elegante con estilo de cuaderno/bosquejo, construido con HTML, Tailwind CSS y JavaScript.
+Un portafolio moderno y elegante con diseño inspirado en un Sistema Operativo Linux (estilo Ubuntu/GNOME), construido con HTML, Tailwind CSS y JavaScript Vanilla.
 
 ## 🚀 Características
 
 - **Diseño Responsivo**: Se adapta perfectamente a todos los dispositivos
-- **Tema de Cuaderno**: Estilo único con líneas de papel y efectos de bosquejo
-- **Carrusel de Habilidades**: Muestra tus tecnologías en un carrusel interactivo
-- **Animaciones Suaves**: Transiciones y efectos visuales modernos
-- **Navegación Fluida**: Scroll suave entre secciones
-- **Formulario de Contacto**: Funcional y listo para integrar con backend
+- **Tema de Sistema Operativo**: Interfaz gráfica estilo Linux con ventanas móviles y redimensionables
+- **Dock Integrado**: Menú inferior de navegación tipo GNOME
+- **Terminal Interactivo**: Consola de comandos simulada y funcional (Prueba `help`, `neofetch`, etc.)
+- **Animaciones Suaves**: Transiciones fluidas y efectos de cristal (Glassmorphism)
+- **Gestión de Ventanas**: Posibilidad de maximizar con 'Aero Snap' arrastrando al borde superior
 
 ## 📁 Estructura del Proyecto
 
