@@ -12,6 +12,162 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizableWindows();
+        this.setupTerminal();
+    }
+
+    setupTerminal() {
+        const input = document.getElementById('terminal-input');
+        const output = document.getElementById('terminal-output');
+
+        if (!input || !output) return;
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim();
+
+                // Echo command
+                const echoLine = document.createElement('p');
+                echoLine.className = 'mb-2';
+
+                const userHost = document.createElement('span');
+                userHost.className = 'text-green-400 font-bold';
+                userHost.textContent = 'sebastian@ubuntu';
+
+                const colon = document.createTextNode(':');
+
+                const tilde = document.createElement('span');
+                tilde.className = 'text-blue-400 font-bold';
+                tilde.textContent = '~';
+
+                const prompt = document.createTextNode('$ ' + cmd);
+
+                echoLine.appendChild(userHost);
+                echoLine.appendChild(colon);
+                echoLine.appendChild(tilde);
+                echoLine.appendChild(prompt);
+
+                output.appendChild(echoLine);
+
+                // Process command
+                if (cmd.length > 0) {
+                    this.processCommand(cmd.toLowerCase(), output);
+                }
+
+                input.value = '';
+
+                // Auto scroll
+                const container = document.getElementById('terminal-content-area');
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            }
+        });
+    }
+
+    processCommand(cmd, output) {
+        const response = document.createElement('div');
+        response.className = 'text-gray-100 mb-4 whitespace-pre-wrap';
+
+        if (cmd === 'whoami') {
+            response.textContent = 'Sebastian Duran Caballero';
+        } else if (cmd === 'clear') {
+            output.innerHTML = '';
+            return;
+        } else if (cmd === 'help') {
+            response.textContent = 'Comandos disponibles: whoami, clear, help, neofetch, cat description.txt, ls';
+        } else if (cmd === 'ls') {
+            response.textContent = 'description.txt\nprojects/\nskills/\ncontact/';
+        } else if (cmd === 'cat description.txt') {
+            response.textContent = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.';
+        } else if (cmd === 'neofetch') {
+            response.innerHTML = `
+<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+    <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+        <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`;
+        } else {
+             const cmdSafe = document.createElement('span');
+             cmdSafe.textContent = cmd;
+             response.appendChild(cmdSafe);
+             response.appendChild(document.createTextNode(': orden no encontrada'));
+        }
+
+        if (response.innerHTML !== '') {
+             output.appendChild(response);
+        }
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let originalWidth = 0;
+            let originalHeight = 0;
+            let originalX = 0;
+            let originalY = 0;
+            let originalMouseX = 0;
+            let originalMouseY = 0;
+            let currentResizer = null;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', function(e) {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    originalWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+                    originalHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+                    originalX = win.getBoundingClientRect().left;
+                    originalY = win.getBoundingClientRect().top;
+                    originalMouseX = e.pageX;
+                    originalMouseY = e.pageY;
+                    currentResizer = resizer;
+                    window.addEventListener('mousemove', resize);
+                    window.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resize(e) {
+                if (currentResizer.classList.contains('resizer-br')) {
+                    const width = originalWidth + (e.pageX - originalMouseX);
+                    const height = originalHeight + (e.pageY - originalMouseY);
+                    if (width > 300) win.style.width = width + 'px';
+                    if (height > 200) win.style.height = height + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    const height = originalHeight + (e.pageY - originalMouseY);
+                    if (height > 200) win.style.height = height + 'px';
+                } else if (currentResizer.classList.contains('resizer-r')) {
+                    const width = originalWidth + (e.pageX - originalMouseX);
+                    if (width > 300) win.style.width = width + 'px';
+                }
+            }
+
+            function stopResize() {
+                window.removeEventListener('mousemove', resize);
+            }
+        });
     }
 
     setupLogin() {
@@ -134,6 +290,19 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero snap preview
+                    if (e.clientY < 35) {
+                        if (!document.getElementById('snap-preview')) {
+                            const preview = document.createElement('div');
+                            preview.id = 'snap-preview';
+                            preview.className = 'maximized-snap-preview';
+                            document.getElementById('desktop').appendChild(preview);
+                        }
+                    } else {
+                        const preview = document.getElementById('snap-preview');
+                        if (preview) preview.remove();
+                    }
                 }
             }
 
@@ -145,6 +314,14 @@ class LinuxOS {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                const preview = document.getElementById('snap-preview');
+                if (preview) {
+                    preview.remove();
+                    // trigger maximize
+                    const winId = win.dataset.id;
+                    if (winId) app.maximizeWindow(winId);
+                }
             }
         });
     }
