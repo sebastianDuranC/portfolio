@@ -212,3 +212,46 @@
 .window-header button:active {
     transform: scale(0.9);
 }
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 8px;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 8px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 12px;
+    height: 12px;
+    right: 0;
+    bottom: 0;
+    z-index: 11;
+}
+
+/* Aero Snap Preview */
+.maximized-snap-preview::before {
+    content: '';
+    position: fixed;
+    top: 28px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 28px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 9999;
+}
