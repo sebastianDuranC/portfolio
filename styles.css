@@ -198,9 +198,13 @@
 .window-inactive {
     opacity: 0.95;
     filter: brightness(0.95);
+    box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.05) inset;
 }
 
 /* Fix maximized state rounded corners */
+.os-window.maximized {
+    border-radius: 0;
+}
 .os-window.maximized .window-header {
     border-radius: 0;
 }
@@ -211,4 +215,79 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* --- Added Resizer and Aero Snap Styles --- */
+
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+
+.resizer-r {
+    cursor: ew-resize;
+    width: 8px;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+
+.resizer-b {
+    cursor: ns-resize;
+    height: 8px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.resizer-br {
+    cursor: nwse-resize;
+    width: 12px;
+    height: 12px;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+}
+
+.maximized-snap-preview {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 28px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    z-index: 9999;
+    pointer-events: none;
+    border-radius: 8px;
+    backdrop-filter: blur(2px);
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Adjust dock tooltip position for bottom taskbar */
+.dock-icon:hover::after {
+    left: 50%;
+    top: auto;
+    bottom: calc(100% + 10px);
+    transform: translateX(-50%);
+}
+
+.dock-icon::after {
+    left: 50%;
+    top: auto;
+    bottom: calc(100% + 5px);
+    transform: translateX(-50%) translateY(10px);
+}
+
+.dock-icon:hover::after {
+    transform: translateX(-50%) translateY(0);
+}
+
+.dock-icon:hover::before {
+    left: 50%;
+    top: auto;
+    bottom: calc(100% + 4px);
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
 }
