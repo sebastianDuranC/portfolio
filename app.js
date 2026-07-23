@@ -12,6 +12,7 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizing();
     }
 
     setupLogin() {
@@ -108,12 +109,34 @@ class LinuxOS {
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
+            const snapPreview = document.getElementById('snap-preview');
+            let isSnapping = false;
+
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if(win.classList.contains('maximized')) {
+                    // Restore window if dragging from top bar when maximized
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none';
+
+                    // Adjust offsets so it snaps to mouse cursor
+                    const baseRect = win.getBoundingClientRect();
+                    const offsetWithinHeaderX = baseRect.width / 2;
+                    const offsetWithinHeaderY = e.clientY - 28; // 28 is topbar height
+
+                    currentX = e.clientX - baseRect.left - offsetWithinHeaderX;
+                    currentY = e.clientY - baseRect.top - offsetWithinHeaderY;
+
+                    setTranslate(currentX, currentY, win);
+
+                    initialX = e.clientX - currentX;
+                    initialY = e.clientY - currentY;
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    isDragging = true;
+                    return;
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -134,6 +157,15 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero Snap Logic
+                    if (e.clientY <= 30) { // Near top edge
+                        snapPreview.classList.remove('hidden');
+                        isSnapping = true;
+                    } else {
+                        snapPreview.classList.add('hidden');
+                        isSnapping = false;
+                    }
                 }
             }
 
@@ -142,9 +174,18 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
+                if(!isDragging) return;
+
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                if (isSnapping) {
+                    snapPreview.classList.add('hidden');
+                    isSnapping = false;
+                    // Trigger maximize
+                    app.maximizeWindow(win.dataset.id);
+                }
             }
         });
     }
@@ -228,6 +269,50 @@ class LinuxOS {
         } else {
             this.openWindow(id);
         }
+    }
+
+    setupResizing() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resize(e) {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                } else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                } else if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+        });
     }
 }
 
