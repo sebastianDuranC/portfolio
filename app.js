@@ -10,8 +10,10 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -91,6 +93,179 @@ class LinuxOS {
         });
     }
 
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalContent = document.getElementById('terminal-content');
+
+        if (!terminalInput || !terminalOutput) return;
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                terminalInput.value = '';
+                this.processCommand(command, terminalOutput);
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+            }
+        });
+
+        // Initial neofetch
+        this.processCommand('neofetch', terminalOutput, true);
+    }
+
+    processCommand(command, outputElement, isInitial = false) {
+        if (!isInitial) {
+            const cmdLine = document.createElement('div');
+            cmdLine.className = 'mb-2';
+            cmdLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span><span class="text-gray-100 font-bold">:</span><span class="text-blue-400 font-bold">~</span><span class="text-gray-100 font-bold">$</span> <span class="text-gray-200">${this.escapeHTML(command)}</span>`;
+            outputElement.appendChild(cmdLine);
+        }
+
+        const args = command.split(' ');
+        const cmd = args[0].toLowerCase();
+
+        let response = '';
+
+        switch (cmd) {
+            case 'help':
+                response = `<p class="text-gray-300 mb-4">Comandos disponibles:<br>
+                - <span class="text-green-400 font-bold">whoami</span>: Muestra el usuario actual<br>
+                - <span class="text-green-400 font-bold">neofetch</span>: Muestra información del sistema<br>
+                - <span class="text-green-400 font-bold">clear</span>: Limpia la terminal<br>
+                - <span class="text-green-400 font-bold">ls</span>: Lista los archivos en el directorio actual<br>
+                - <span class="text-green-400 font-bold">cat [file]</span>: Muestra el contenido de un archivo<br>
+                - <span class="text-green-400 font-bold">open [app]</span>: Abre una aplicación (ej. open projects)<br>
+                - <span class="text-green-400 font-bold">help</span>: Muestra este mensaje de ayuda</p>`;
+                break;
+            case 'whoami':
+                response = `<p class="text-gray-300 mb-4">Sebastian Duran Caballero</p>`;
+                break;
+            case 'clear':
+                outputElement.innerHTML = '';
+                return;
+            case 'ls':
+                response = `<p class="text-blue-400 font-bold mb-4">description.txt  projects/  skills/  contact/</p>`;
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    response = `<p class="text-gray-300 mb-4">Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.</p>`;
+                } else {
+                    response = `<p class="text-red-400 mb-4">cat: ${args[1] ? this.escapeHTML(args[1]) : ''}: No existe el archivo o directorio</p>`;
+                }
+                break;
+            case 'open':
+                const appName = args[1];
+                if (['projects', 'skills', 'contact'].includes(appName)) {
+                    this.openWindow(appName);
+                    response = `<p class="text-gray-300 mb-4">Abriendo ${appName}...</p>`;
+                } else {
+                    response = `<p class="text-red-400 mb-4">Aplicación no encontrada: ${appName ? this.escapeHTML(appName) : ''}</p>`;
+                }
+                break;
+            case 'neofetch':
+                response = `
+                    <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>`;
+                break;
+            case '':
+                break;
+            default:
+                response = `<p class="text-red-400 mb-4">Comando no encontrado: ${this.escapeHTML(cmd)}. Escribe 'help' para ver los comandos disponibles.</p>`;
+        }
+
+        if (response) {
+            const respElement = document.createElement('div');
+            respElement.innerHTML = response;
+            outputElement.appendChild(respElement);
+        }
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let initialX, initialY, initialWidth, initialHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', function(e) {
+                    isResizing = true;
+                    currentResizer = e.target;
+
+                    const rect = win.getBoundingClientRect();
+                    initialX = e.clientX;
+                    initialY = e.clientY;
+                    initialWidth = rect.width;
+                    initialHeight = rect.height;
+
+                    e.preventDefault();
+                });
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+
+                if (win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none';
+                }
+
+                if (currentResizer.classList.contains('resizer-r')) {
+                    win.style.width = initialWidth + (e.clientX - initialX) + 'px';
+                }
+                else if (currentResizer.classList.contains('resizer-b')) {
+                    win.style.height = initialHeight + (e.clientY - initialY) + 'px';
+                }
+                else if (currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = initialWidth + (e.clientX - initialX) + 'px';
+                    win.style.height = initialHeight + (e.clientY - initialY) + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', function(e) {
+                isResizing = false;
+            });
+        });
+    }
+
     setupDraggableWindows() {
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
@@ -103,23 +278,45 @@ class LinuxOS {
             let initialY;
             let xOffset = 0;
             let yOffset = 0;
+            const self = this;
 
             header.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if (win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none';
+                    const rect = win.getBoundingClientRect();
 
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+                    const ratioX = e.clientX / window.innerWidth;
+
+                    xOffset = e.clientX - (rect.width * ratioX);
+                    yOffset = e.clientY - 15;
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                    setTranslate(xOffset, yOffset, win);
+                } else {
+                    const transform = window.getComputedStyle(win).transform;
+                    if (transform !== 'none') {
+                        const matrix = new DOMMatrixReadOnly(transform);
+                        xOffset = matrix.m41;
+                        yOffset = matrix.m42;
+                    } else {
+                        xOffset = 0;
+                        yOffset = 0;
+                    }
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    self.bringToFront(win);
                 }
             }
 
@@ -134,6 +331,19 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    const snapPreview = document.getElementById('snap-preview');
+                    if (e.clientY <= 28) {
+                        if (snapPreview) {
+                            snapPreview.classList.remove('hidden');
+                            snapPreview.classList.add('maximized-snap-preview');
+                        }
+                    } else {
+                        if (snapPreview) {
+                            snapPreview.classList.add('hidden');
+                            snapPreview.classList.remove('maximized-snap-preview');
+                        }
+                    }
                 }
             }
 
@@ -142,9 +352,20 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
+                if (!isDragging) return;
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                const snapPreview = document.getElementById('snap-preview');
+                if (snapPreview) {
+                    snapPreview.classList.add('hidden');
+                    snapPreview.classList.remove('maximized-snap-preview');
+                }
+
+                if (e.clientY <= 28) {
+                    self.maximizeWindow(win.dataset.id);
+                }
             }
         });
     }
