@@ -50,6 +50,57 @@
     height: 8px;
 }
 
+/* Dock styling */
+#dock {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Terminal input styling */
+#terminal-input {
+    outline: none;
+    background: transparent;
+    border: none;
+}
+#terminal-input:focus {
+    outline: none;
+}
+
+/* Snap Preview styling */
+.maximized-snap-preview {
+    top: 28px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - 28px) !important;
+}
+
+/* Resizer styling */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 10px;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 10px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 15px;
+    height: 15px;
+    right: 0;
+    bottom: 0;
+    z-index: 11;
+}
+
 ::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
