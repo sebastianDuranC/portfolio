@@ -190,6 +190,47 @@
     backdrop-filter: blur(10px);
 }
 
+/* Window Resizers */
+.resizer {
+    position: absolute;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 10px;
+    right: -5px;
+    top: 0;
+    height: 100%;
+    z-index: 10;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 10px;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 15px;
+    height: 15px;
+    right: -5px;
+    bottom: -5px;
+    z-index: 20;
+}
+
+/* Aero Snap Preview Overlay */
+#aero-snap-preview.maximized-snap-preview {
+    top: 28px !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - 28px) !important;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    display: block !important;
+    transition: all 0.15s ease-in-out;
+}
+
 /* Active window styling */
 .window-active {
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
