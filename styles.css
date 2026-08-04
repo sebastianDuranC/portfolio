@@ -86,7 +86,7 @@
     top: 28px !important; /* Below top bar */
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: calc(100vh - 28px - 56px) !important; /* Account for top bar and bottom dock */
     max-width: none !important;
     border-radius: 0;
     transform: none;
@@ -126,13 +126,13 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,29 +149,70 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
+}
+
+/* Resizing Utilities */
+.resizer {
+    position: absolute;
+    z-index: 20;
+}
+.resizer-r {
+    right: 0;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resizer-b {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    cursor: s-resize;
+}
+.resizer-br {
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    cursor: se-resize;
+    z-index: 30;
+}
+
+/* Aero snap preview */
+.maximized-snap-preview {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 28px - 56px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    z-index: 40;
+    pointer-events: none;
 }
 /* Login Screen Fade Out */
 .fade-out {
