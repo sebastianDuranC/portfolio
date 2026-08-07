@@ -12,6 +12,59 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupWindowResizing();
+    }
+
+
+    setupWindowResizing() {
+        let isResizing = false;
+        let currentResizer = null;
+        let currentWindow = null;
+        let startX, startY, startWidth, startHeight;
+
+        document.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('resizer')) {
+                isResizing = true;
+                currentResizer = e.target;
+                currentWindow = e.target.closest('.os-window');
+
+                startX = e.clientX;
+                startY = e.clientY;
+
+                const rect = currentWindow.getBoundingClientRect();
+                startWidth = rect.width;
+                startHeight = rect.height;
+
+                // Prevent bringing to front from triggering drag by stopping propagation
+                e.preventDefault();
+                this.bringToFront(currentWindow);
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            if (currentWindow.classList.contains('maximized')) return;
+
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+
+            if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                newWidth = startWidth + (e.clientX - startX);
+                currentWindow.style.width = `${newWidth}px`;
+            }
+
+            if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                newHeight = startHeight + (e.clientY - startY);
+                currentWindow.style.height = `${newHeight}px`;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizing = false;
+            currentResizer = null;
+            currentWindow = null;
+        });
     }
 
     setupLogin() {
@@ -108,24 +161,61 @@ class LinuxOS {
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
+
+            let isMaximizedRestoreDrag = false;
+
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
-
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+
+                    if(win.classList.contains('maximized')) {
+                        isMaximizedRestoreDrag = true;
+                    } else {
+                        isMaximizedRestoreDrag = false;
+                    }
+
+                    // Memory constraint: temporarily set transform to 'none' before getBoundingClientRect
+                    const prevTransform = win.style.transform;
+                    win.style.transform = 'none';
+                    const rect = win.getBoundingClientRect();
+
+                    // We also need to restore it right after capturing if it wasn't maximized
+                    if (!isMaximizedRestoreDrag) {
+                        win.style.transform = prevTransform;
+                        // Calculate initial offset based on mouse position and the current window translation
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    } else {
+                        // If it is maximized, we will restore it, so we need to calculate where to grab it.
+                        // We will unmaximize it in the first 'drag' event.
+                        // But we capture initialX/Y now as if it had no transform, since we just set it to 'none'
+                        // Actually, if we are restoring from maximized, we don't have an xOffset/yOffset yet (they are 0 or from before).
+                        // Let's just capture the mouse relative to the top-left of the untransformed window.
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
                 }
             }
+
+            let snapPreview = null;
 
             function drag(e) {
                 if (isDragging) {
                     e.preventDefault();
+
+                    if (isMaximizedRestoreDrag) {
+                        isMaximizedRestoreDrag = false;
+                        win.classList.remove('maximized');
+                        // Calculate new xOffset so the window center is at mouse X, but keep Y relative to header
+                        const rect = win.getBoundingClientRect();
+                        const newWidth = parseInt(win.style.width) || rect.width;
+                        xOffset = e.clientX - (newWidth / 2);
+                        yOffset = e.clientY - 20; // grab it by the header
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
@@ -134,6 +224,20 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Snap preview logic
+                    if (e.clientY <= 28) {
+                        if (!snapPreview) {
+                            snapPreview = document.createElement('div');
+                            snapPreview.className = 'maximized-snap-preview';
+                            document.getElementById('windows-container').appendChild(snapPreview);
+                        }
+                    } else {
+                        if (snapPreview) {
+                            snapPreview.remove();
+                            snapPreview = null;
+                        }
+                    }
                 }
             }
 
@@ -145,8 +249,18 @@ class LinuxOS {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
-            }
-        });
+
+                if (snapPreview) {
+                    snapPreview.remove();
+                    snapPreview = null;
+                    if (e.clientY <= 28 && !win.classList.contains('maximized')) {
+                        // trigger maximization
+                        // Since we are maximizing via drag, we need to save the transform so it can be restored
+                        // Or we can just call our app.maximizeWindow logic
+                        app.maximizeWindow(win.dataset.id);
+                    }
+                }
+            });
     }
 
     openWindow(id) {

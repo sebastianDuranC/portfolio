@@ -78,7 +78,10 @@
         <div id="windows-container" class="absolute inset-0 pointer-events-none">
             
             <!-- Terminal Window (Sobre Mi) -->
-            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
+            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] min-w-[300px] min-h-[200px] bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@ubuntu: ~</div>
                     <div class="flex space-x-2 absolute right-3">
@@ -137,7 +140,10 @@
             </div>
 
             <!-- Projects Explorer Window -->
-            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] min-w-[300px] min-h-[200px] bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Proyectos</span>
@@ -231,7 +237,10 @@
             </div>
 
             <!-- Skills Window (Settings style) -->
-            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] min-w-[300px] min-h-[200px] bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
                  <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Habilidades</span>
@@ -300,7 +309,10 @@
             </div>
 
             <!-- Contact Window (Mail client style) -->
-            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-md bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] min-w-[300px] min-h-[200px] bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+                <div class="resizer resizer-r"></div>
+                <div class="resizer resizer-b"></div>
+                <div class="resizer resizer-br"></div>
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Contacto</span>
@@ -363,28 +375,25 @@
             </div>
 
         </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
-            <i class="fas fa-folder text-2xl text-[#e95420] drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-projects"></div>
-        </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
-            <i class="fas fa-cogs text-2xl text-gray-300 drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-skills"></div>
-        </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
-            <i class="fas fa-envelope text-2xl text-blue-400 drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-contact"></div>
-        </div>
-
-        <!-- Dock Bottom section -->
-        <div class="mt-auto pt-4 flex flex-col space-y-3 w-full items-center">
-            <div class="w-8 h-px bg-white/20"></div>
+        <div class="fixed bottom-0 left-0 right-0 h-14 flex justify-center items-center bg-black/40 backdrop-blur-md z-40 space-x-4 mb-2 pb-1 rounded-2xl mx-auto w-max px-4">
+            <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
+                <i class="fas fa-folder text-2xl text-[#e95420] drop-shadow-sm"></i>
+                <div class="absolute left-1/2 -bottom-1 w-1.5 h-1.5 -translate-x-1/2 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-projects"></div>
+            </div>
+            <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
+                <i class="fas fa-cogs text-2xl text-gray-300 drop-shadow-sm"></i>
+                <div class="absolute left-1/2 -bottom-1 w-1.5 h-1.5 -translate-x-1/2 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-skills"></div>
+            </div>
+            <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
+                <i class="fas fa-envelope text-2xl text-blue-400 drop-shadow-sm"></i>
+                <div class="absolute left-1/2 -bottom-1 w-1.5 h-1.5 -translate-x-1/2 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-contact"></div>
+            </div>
+            <div class="w-px h-8 bg-white/20 mx-2"></div>
             <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" data-title="Mostrar Aplicaciones">
                 <i class="fas fa-th text-xl text-gray-200"></i>
             </div>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
