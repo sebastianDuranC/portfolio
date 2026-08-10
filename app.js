@@ -12,6 +12,8 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
+        this.setupResizableWindows();
     }
 
     setupLogin() {
@@ -83,6 +85,54 @@ class LinuxOS {
         });
     }
 
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    const rect = win.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+
+                    // Bring to front on resize
+                    this.bringToFront(win);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    win.style.width = `${newWidth}px`;
+                }
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    const newHeight = startHeight + (e.clientY - startY);
+                    win.style.height = `${newHeight}px`;
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            };
+        });
+    }
+
     setupWindowClickToFront() {
         this.windows.forEach(win => {
             win.addEventListener('mousedown', () => {
@@ -104,22 +154,68 @@ class LinuxOS {
             let xOffset = 0;
             let yOffset = 0;
 
+            // Reference to global snap preview element if exists, or create one
+            let snapPreview = document.getElementById('snap-preview');
+            if (!snapPreview) {
+                snapPreview = document.createElement('div');
+                snapPreview.id = 'snap-preview';
+                snapPreview.className = 'maximized-snap-preview';
+                document.body.appendChild(snapPreview);
+            }
+
             header.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
+            const osInstance = this; // to call maximize/restore methods
+
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
-                if (e.target === header || header.contains(e.target)) {
+                if (win.classList.contains('maximized')) {
+                    // Start drag from maximized state
                     isDragging = true;
+
+                    // Temporarily remove transform to get accurate bounding rect
+                    win.style.transform = 'none';
+                    const rect = win.getBoundingClientRect();
+
+                    // Calculate click position ratio relative to header width
+                    const headerRect = header.getBoundingClientRect();
+                    const clickRatio = (e.clientX - headerRect.left) / headerRect.width;
+
+                    // Un-maximize
+                    win.classList.remove('maximized');
+                    if (win.dataset.prevTransform) {
+                        win.style.transform = win.dataset.prevTransform;
+                    }
+
+                    // Get new rect after un-maximizing
+                    const newRect = win.getBoundingClientRect();
+
+                    // Adjust transform to keep mouse over the same relative part of header
+                    const expectedLeft = e.clientX - (newRect.width * clickRatio);
+
+                    // Reset offsets to match new position
+                    currentX = expectedLeft - (rect.left - xOffset);
+                    // Just place it under cursor for Y
+                    currentY = e.clientY - (headerRect.height / 2);
+
+                    // Update transform immediately
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    setTranslate(xOffset, yOffset, win);
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+
+                    if (e.target === header || header.contains(e.target)) {
+                        isDragging = true;
+                    }
                 }
             }
 
@@ -134,6 +230,13 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Show snap preview if near top
+                    if (e.clientY < 10) {
+                        snapPreview.style.display = 'block';
+                    } else {
+                        snapPreview.style.display = 'none';
+                    }
                 }
             }
 
@@ -142,9 +245,20 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
+                if (!isDragging) return;
+
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                // Snap to maximize
+                if (e.clientY < 10) {
+                    snapPreview.style.display = 'none';
+                    if (!win.classList.contains('maximized')) {
+                        osInstance.maximizeWindow(win.id.replace('window-', ''));
+                    }
+                }
+                snapPreview.style.display = 'none';
             }
         });
     }
@@ -228,6 +342,128 @@ class LinuxOS {
         } else {
             this.openWindow(id);
         }
+    }
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalWindow = document.getElementById('window-terminal');
+        if (!terminalInput || !terminalOutput || !terminalWindow) return;
+
+        const terminalContent = terminalWindow.querySelector('.window-content');
+
+        // Focus input when clicking anywhere in the terminal window
+        terminalContent.addEventListener('click', () => {
+            terminalInput.focus();
+        });
+
+        const printLine = (text, isHtml = false) => {
+            const line = document.createElement('div');
+            line.className = 'mb-1';
+            if (isHtml) {
+                line.innerHTML = text;
+            } else {
+                line.textContent = text;
+            }
+            terminalOutput.appendChild(line);
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        };
+
+        const printPrompt = () => {
+            return `<span class="text-[#26a269] font-bold">sebastian@ubuntu</span><span class="text-white">:</span><span class="text-[#12488b] font-bold">~</span><span class="text-white">$ </span>`;
+        };
+
+        const escapeHTML = (str) => {
+            return str.replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        };
+
+        // Initial neofetch like display
+        printLine(printPrompt() + 'neofetch', true);
+        const neofetchOutput = `
+<div class="flex flex-col sm:flex-row gap-4 sm:gap-8 my-2 items-center sm:items-start text-xs sm:text-sm">
+    <div class="text-[#e95420] font-ubuntu-mono whitespace-pre leading-tight">
+            .-/+oossssoo+/-.
+        \`:+ssssssssssssssssss+:\`
+      -+ssssssssssssssssssyyssss+-
+    .ossssssssssssssssssdMMMNysssso.
+   /ssssssssssshdmmNNmmyNMMMMhssssss/
+  +ssssssssshmydMMMMMMMNddddyssssssss+
+ /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.
++sssshhhyNMMNyssssssssssssyNMMMysssssss+
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso
+ossyNMMMNyMMhsssssssssssssshmmmhssssssso
++sssshhhyNMMNyssssssssssssyNMMMysssssss+
+.ssssssssdMMMNhsssssssssshNMMMdssssssss.
+ /sssssssshNMMMyhhyyyyhdNMMMNhssssssss/
+  +sssssssssdmydMMMMMMMMddddyssssssss+
+   /ssssssssssshdmNNNNmyNMMMMhssssss/
+    .ossssssssssssssssssdMMMNysssso.
+      -+sssssssssssssssssyyyssss+-
+        \`:+ssssssssssssssssss+:\`
+            .-/+oossssoo+/-.
+    </div>
+    <div class="font-ubuntu-mono text-gray-300">
+        <div class="font-bold text-[#e95420]">sebastian@ubuntu</div>
+        <div class="border-b border-gray-600 mb-2 w-full"></div>
+        <div><span class="text-[#e95420] font-bold">OS</span>: Ubuntu 22.04 LTS x86_64</div>
+        <div><span class="text-[#e95420] font-bold">Host</span>: Desarrollador Web</div>
+        <div><span class="text-[#e95420] font-bold">Uptime</span>: 24/7 coding</div>
+        <div><span class="text-[#e95420] font-bold">Packages</span>: HTML, CSS, JS, .NET, C#</div>
+        <div><span class="text-[#e95420] font-bold">Shell</span>: bash 5.1.16</div>
+        <div><span class="text-[#e95420] font-bold">Location</span>: Santa Cruz, Bolivia</div>
+        <div><span class="text-[#e95420] font-bold">Email</span>: sd8587793@email.com</div>
+    </div>
+</div>`;
+        printLine(neofetchOutput, true);
+
+        const commands = {
+            'help': 'Comandos disponibles: help, whoami, clear, ls, neofetch, cat, open',
+            'whoami': 'Sebastian Duran Caballero - Desarrollador Web',
+            'clear': () => { terminalOutput.innerHTML = ''; },
+            'ls': 'description.txt   projects/   skills/',
+            'neofetch': () => { printLine(neofetchOutput, true); },
+            'cat description.txt': 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.',
+            'open projects': () => { this.openWindow('projects'); return 'Abriendo Proyectos...'; },
+            'open skills': () => { this.openWindow('skills'); return 'Abriendo Habilidades...'; },
+            'open contact': () => { this.openWindow('contact'); return 'Abriendo Contacto...'; }
+        };
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const inputVal = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                if (inputVal) {
+                    printLine(printPrompt() + escapeHTML(inputVal), true);
+
+                    const cmd = inputVal.toLowerCase();
+                    const response = commands[cmd];
+
+                    if (typeof response === 'function') {
+                        const result = response();
+                        if (result) printLine(result);
+                    } else if (response) {
+                        printLine(response);
+                    } else if (cmd.startsWith('cat ')) {
+                        printLine(`cat: ${escapeHTML(cmd.substring(4))}: No such file or directory`);
+                    } else if (cmd.startsWith('open ')) {
+                        printLine(`open: ${escapeHTML(cmd.substring(5))}: No such application`);
+                    } else {
+                        printLine(`${escapeHTML(cmd)}: command not found`);
+                    }
+                } else {
+                    printLine(printPrompt(), true);
+                }
+            }
+        });
     }
 }
 
