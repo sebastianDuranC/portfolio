@@ -1,11 +1,10 @@
-/* Ubuntu-like background */
+/* Modern GNOME / Adwaita Background */
 .ubuntu-bg {
     background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
+        radial-gradient(ellipse at bottom right, rgba(53, 132, 228, 0.7) 0%, rgba(30, 30, 30, 0) 60%),
+        radial-gradient(ellipse at top left, rgba(145, 65, 172, 0.7) 0%, rgba(30, 30, 30, 0) 60%),
+        linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+    background-size: cover;
 }
 
 /* Glassmorphism Utilities */
@@ -86,10 +85,53 @@
     top: 28px !important; /* Below top bar */
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: calc(100vh - 28px - 56px) !important; /* Adjust for top bar and bottom dock */
     max-width: none !important;
     border-radius: 0;
-    transform: none;
+    transform: none !important;
+}
+
+/* Snap Preview */
+.maximized-snap-preview {
+    position: fixed;
+    top: 32px;
+    left: 4px;
+    width: calc(100% - 8px);
+    height: calc(100vh - 28px - 56px - 8px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.15s ease-out;
+}
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    cursor: e-resize;
+}
+.resizer-b {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    cursor: s-resize;
+}
+.resizer-br {
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    cursor: se-resize;
+    z-index: 11;
 }
 
 /* Animations for window opening */
@@ -126,13 +168,13 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
+/* Tooltip for bottom dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -149,28 +191,28 @@
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
     z-index: 50;
 }
 /* Login Screen Fade Out */
