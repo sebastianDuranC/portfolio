@@ -12,6 +12,125 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
+        this.setupResizing();
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        if (!terminalInput || !terminalOutput) return;
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                // Print command
+                const cmdLine = document.createElement('p');
+                cmdLine.className = 'mb-2';
+                cmdLine.innerHTML = `<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ${this.escapeHTML(command)}`;
+                terminalOutput.appendChild(cmdLine);
+
+                // Process command
+                this.processCommand(command, terminalOutput);
+
+                // Scroll to bottom
+                const content = document.getElementById('terminal-content');
+                if (content) content.scrollTop = content.scrollHeight;
+            }
+        });
+    }
+
+    escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    processCommand(cmd, output) {
+        const args = cmd.split(' ').filter(c => c);
+        if (args.length === 0) return;
+
+        const mainCmd = args[0].toLowerCase();
+        const responseLine = document.createElement('div');
+        responseLine.className = 'text-gray-100 mb-4';
+
+        switch(mainCmd) {
+            case 'help':
+                responseLine.innerHTML = `Comandos disponibles:<br>
+                - <b>whoami</b>: Muestra el usuario actual<br>
+                - <b>neofetch</b>: Muestra información del sistema<br>
+                - <b>clear</b>: Limpia la terminal<br>
+                - <b>ls</b>: Lista los archivos en el directorio actual<br>
+                - <b>cat [archivo]</b>: Muestra el contenido de un archivo<br>
+                - <b>open [app]</b>: Abre una aplicación (projects, skills, contact)`;
+                break;
+            case 'whoami':
+                responseLine.textContent = 'Sebastian Duran Caballero';
+                break;
+            case 'clear':
+                output.innerHTML = '';
+                return;
+            case 'ls':
+                responseLine.innerHTML = `<span class="text-blue-400 font-bold mr-4">projects/</span> <span class="text-blue-400 font-bold mr-4">skills/</span> <span class="text-blue-400 font-bold mr-4">contact/</span> description.txt`;
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    responseLine.textContent = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.';
+                } else {
+                    responseLine.textContent = `cat: ${args[1] ? this.escapeHTML(args[1]) : ''}: No such file or directory`;
+                }
+                break;
+            case 'neofetch':
+                responseLine.innerHTML = `
+                    <div class="flex flex-col md:flex-row text-gray-100">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-\/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>`;
+                break;
+            case 'open':
+                if (args[1]) {
+                    const appId = args[1].toLowerCase();
+                    if (['projects', 'skills', 'contact'].includes(appId)) {
+                        this.openWindow(appId);
+                        responseLine.textContent = `Abriendo ${appId}...`;
+                    } else {
+                        responseLine.textContent = `open: ${this.escapeHTML(args[1])}: No such application`;
+                    }
+                } else {
+                    responseLine.textContent = 'open: missing application name';
+                }
+                break;
+            default:
+                responseLine.textContent = `${this.escapeHTML(mainCmd)}: command not found`;
+        }
+
+        output.appendChild(responseLine);
     }
 
     setupLogin() {
@@ -112,9 +231,6 @@ class LinuxOS {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
 
@@ -127,6 +243,21 @@ class LinuxOS {
                 if (isDragging) {
                     e.preventDefault();
 
+                    // Restore from maximized if dragging a maximized window
+                    if (win.classList.contains('maximized')) {
+                        win.classList.remove('maximized');
+                        win.style.transform = 'none';
+                        const rect = win.getBoundingClientRect();
+
+                        // Recalculate offsets based on where the mouse grabbed the header
+                        // Assuming header is roughly 38px
+                        xOffset = e.clientX - (rect.width / 2); // Center horizontally on mouse
+                        yOffset = e.clientY - 19; // Center vertically on header
+
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
+
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
@@ -134,6 +265,14 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero snap preview
+                    const snapPreview = document.getElementById('maximized-snap-preview');
+                    if (e.clientY < 30) {
+                        snapPreview.classList.remove('hidden');
+                    } else {
+                        snapPreview.classList.add('hidden');
+                    }
                 }
             }
 
@@ -142,10 +281,72 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
+                if (!isDragging) return;
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                // Perform snap if dropped near top
+                const snapPreview = document.getElementById('maximized-snap-preview');
+                if (e.clientY < 30 && snapPreview && !snapPreview.classList.contains('hidden')) {
+                    snapPreview.classList.add('hidden');
+                    app.maximizeWindow(win.dataset.id); // Maximize
+                } else if(snapPreview) {
+                    snapPreview.classList.add('hidden');
+                }
             }
+        });
+    }
+
+    setupResizing() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = e.target;
+
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    // Get computed style for width/height (handling both inline and class-based dims)
+                    const style = window.getComputedStyle(win);
+                    startWidth = parseInt(style.width, 10);
+                    startHeight = parseInt(style.height, 10);
+
+                    // Prevent text selection during resize
+                    document.body.style.userSelect = 'none';
+                    app.bringToFront(win);
+                });
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isResizing) return;
+
+                // Don't resize if maximized
+                if(win.classList.contains('maximized')) return;
+
+                if (currentResizer.classList.contains('right')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                } else if (currentResizer.classList.contains('bottom')) {
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                } else if (currentResizer.classList.contains('bottom-right')) {
+                    win.style.width = startWidth + (e.clientX - startX) + 'px';
+                    win.style.height = startHeight + (e.clientY - startY) + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', function(e) {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.userSelect = '';
+                }
+            });
         });
     }
 
