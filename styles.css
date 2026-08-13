@@ -195,6 +195,50 @@
     box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
 }
 
+.maximized-snap-preview {
+    position: absolute;
+    top: 28px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 28px - 56px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: 99;
+    pointer-events: none;
+    display: none;
+}
+
+.maximized-snap-preview.show {
+    display: block;
+}
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    z-index: 20;
+}
+.resizer-r {
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resizer-b {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    cursor: n-resize;
+}
+.resizer-br {
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    cursor: nwse-resize;
+}
+
 .window-inactive {
     opacity: 0.95;
     filter: brightness(0.95);
