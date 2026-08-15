@@ -10,8 +10,10 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -91,6 +93,56 @@ class LinuxOS {
         });
     }
 
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    const rect = win.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+
+                    this.bringToFront(win);
+
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                });
+            });
+
+            function handleMouseMove(e) {
+                if (!isResizing) return;
+
+                if (win.classList.contains('maximized')) return;
+
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    win.style.width = `${newWidth}px`;
+                }
+
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    const newHeight = startHeight + (e.clientY - startY);
+                    win.style.height = `${newHeight}px`;
+                }
+            }
+
+            function handleMouseUp() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            }
+        });
+    }
+
     setupDraggableWindows() {
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
@@ -103,23 +155,40 @@ class LinuxOS {
             let initialY;
             let xOffset = 0;
             let yOffset = 0;
+            let snapPreview = null;
 
-            header.addEventListener('mousedown', dragStart);
+            header.addEventListener('mousedown', (e) => dragStart(e, this));
             document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('mouseup', (e) => dragEnd(e, this));
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.closest('button')) return;
+            function dragStart(e, app) {
+                if(e.target.closest('button') || e.target.closest('.resizer')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if(win.classList.contains('maximized')) {
+                    // Restore from maximized on drag
+                    const id = win.dataset.id;
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none'; // Temporarily clear to get true rect
+
+                    const rect = win.getBoundingClientRect();
+                    // Keep cursor at same relative horizontal position
+                    let relativeX = e.clientX - rect.left;
+                    let targetX = e.clientX - relativeX;
+
+                    xOffset = targetX - rect.left;
+                    yOffset = e.clientY - rect.top; // Start at cursor Y
+
+                    if (win.dataset.prevTransform) {
+                         win.style.transform = win.dataset.prevTransform;
+                    }
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    app.bringToFront(win);
                 }
             }
 
@@ -134,6 +203,20 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero Snap preview
+                    if (e.clientY <= 28) { // 28px is top bar height
+                        if (!snapPreview) {
+                            snapPreview = document.createElement('div');
+                            snapPreview.className = 'maximized-snap-preview';
+                            document.body.appendChild(snapPreview);
+                        }
+                    } else {
+                        if (snapPreview) {
+                            snapPreview.remove();
+                            snapPreview = null;
+                        }
+                    }
                 }
             }
 
@@ -141,10 +224,21 @@ class LinuxOS {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
             }
 
-            function dragEnd(e) {
+            function dragEnd(e, app) {
+                if (!isDragging) return;
+
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
+
+                if (snapPreview) {
+                    snapPreview.remove();
+                    snapPreview = null;
+                    if (e.clientY <= 28) {
+                        const id = win.dataset.id;
+                        app.maximizeWindow(id);
+                    }
+                }
             }
         });
     }
@@ -228,6 +322,135 @@ class LinuxOS {
         } else {
             this.openWindow(id);
         }
+    }
+
+    setupTerminal() {
+        const terminalInput = document.getElementById('terminal-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalContent = document.getElementById('terminal-content');
+
+        if(!terminalInput || !terminalOutput) return;
+
+        const printLine = (html, isHTML = true) => {
+            const div = document.createElement('div');
+            div.className = 'mb-2';
+            if(isHTML) {
+                div.innerHTML = html;
+            } else {
+                div.textContent = html;
+            }
+            terminalOutput.appendChild(div);
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        };
+
+        const printPrompt = (cmd) => {
+            printLine(`<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ${this.escapeHTML(cmd)}`);
+        };
+
+        const initialNeofetch = `
+            <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/&#96;--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                </div>
+                <div>
+                    <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                    <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                    <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                    <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                    <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                    <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                    <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                </div>
+            </div>`;
+
+        // Pre-populate output
+        printPrompt('whoami');
+        printLine('Sebastian Duran Caballero', false);
+        printPrompt('cat description.txt');
+        printLine('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.', false);
+        printPrompt('neofetch');
+        printLine(initialNeofetch);
+
+        terminalInput.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter') {
+                const cmd = terminalInput.value.trim();
+                terminalInput.value = '';
+
+                printPrompt(cmd);
+
+                if (cmd === '') return;
+
+                const args = cmd.toLowerCase().split(' ');
+                const command = args[0];
+
+                switch(command) {
+                    case 'help':
+                        printLine('Comandos disponibles:<br>  help     - Muestra esta ayuda<br>  whoami   - Muestra el usuario actual<br>  clear    - Limpia la terminal<br>  ls       - Lista el contenido del directorio<br>  neofetch - Muestra información del sistema<br>  cat      - Lee un archivo (ej: cat description.txt)<br>  open     - Abre una aplicación (ej: open projects)');
+                        break;
+                    case 'whoami':
+                        printLine('Sebastian Duran Caballero', false);
+                        break;
+                    case 'clear':
+                        terminalOutput.innerHTML = '';
+                        break;
+                    case 'ls':
+                        printLine('<span class="text-blue-400 font-bold">projects/</span>  <span class="text-blue-400 font-bold">skills/</span>  <span class="text-blue-400 font-bold">contact/</span>  description.txt');
+                        break;
+                    case 'neofetch':
+                        printLine(initialNeofetch);
+                        break;
+                    case 'cat':
+                        if(args[1] === 'description.txt') {
+                            printLine('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.', false);
+                        } else if(args[1]) {
+                            printLine(`cat: ${this.escapeHTML(args[1])}: No such file or directory`);
+                        } else {
+                            printLine('cat: falta el operando de archivo');
+                        }
+                        break;
+                    case 'open':
+                        if(args[1] && ['projects', 'skills', 'contact'].includes(args[1])) {
+                            printLine(`Abriendo ${this.escapeHTML(args[1])}...`);
+                            this.openWindow(args[1]);
+                        } else if (args[1]) {
+                             printLine(`Aplicación no encontrada: ${this.escapeHTML(args[1])}`);
+                        } else {
+                             printLine('open: falta el nombre de la aplicación');
+                        }
+                        break;
+                    default:
+                        printLine(`${this.escapeHTML(command)}: command not found`);
+                }
+
+                terminalContent.scrollTop = terminalContent.scrollHeight;
+            }
+        });
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
     }
 }
 
