@@ -1,38 +1,9 @@
-/* Ubuntu-like background */
+/* Ubuntu/GNOME-like background */
 .ubuntu-bg {
     background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
-}
-
-/* Glassmorphism Utilities */
-.glass {
-    background: rgba(17, 17, 17, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-light {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-dark {
-    background: rgba(36, 36, 36, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal specific */
-.bg-aubergine {
-    background-color: #300a24;
+        url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #2e3440;
 }
 
 /* Base font classes */
@@ -46,50 +17,50 @@
 
 /* Custom scrollbar for windows */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05) inset;
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
-    border-radius: 10px;
+    transition: opacity 0.2s ease-out, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
     background-clip: padding-box;
 }
 
 .window-header {
-    border-radius: 10px 10px 0 0;
+    border-radius: 12px 12px 0 0;
 }
 
 .os-window.minimized {
-    transform: scale(0.8) translateY(100vh);
+    transform: scale(0.8) translateY(100vh) !important;
     opacity: 0;
     pointer-events: none;
 }
 
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: 100% !important;
     max-width: none !important;
     border-radius: 0;
-    transform: none;
+    transform: none !important;
+}
+.os-window.maximized .window-header {
+    border-radius: 0;
 }
 
 /* Animations for window opening */
@@ -105,7 +76,7 @@
 }
 
 .window-opening {
-    animation: windowOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: windowOpen 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Terminal blink cursor */
@@ -118,76 +89,57 @@
     50% { opacity: 0; }
 }
 
-/* Line clamp utility */
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Tooltip for left dock */
-.dock-icon:hover::after {
+/* Tooltips for bottom dock */
+.dock-icon:hover::before {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     padding: 6px 10px;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 12px;
     white-space: nowrap;
     pointer-events: none;
     font-family: 'Ubuntu', sans-serif;
     z-index: 50;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s, bottom 0.2s;
 }
 
-.dock-icon::after {
+.dock-icon:hover::before {
+    opacity: 1;
+    bottom: calc(100% + 10px);
+}
+
+/* Little triangle for tooltip */
+.dock-icon:hover::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
+    z-index: 50;
     opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s, bottom 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    bottom: calc(100% + 4px);
 }
 
-/* Little triangle for tooltip */
-.dock-icon:hover::before {
-    content: '';
-    position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
-    border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
-    z-index: 50;
-}
 /* Login Screen Fade Out */
 .fade-out {
     opacity: 0;
     pointer-events: none;
-}
-
-/* Subtle dock app active indicator */
-.dock-icon.active {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal transparency */
-#window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
-    backdrop-filter: blur(10px);
 }
 
 /* Active window styling */
@@ -196,13 +148,9 @@
 }
 
 .window-inactive {
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 0 0 1px rgba(0,0,0,0.5);
     opacity: 0.95;
-    filter: brightness(0.95);
-}
-
-/* Fix maximized state rounded corners */
-.os-window.maximized .window-header {
-    border-radius: 0;
+    filter: brightness(0.9);
 }
 
 /* Custom styles for window buttons */
@@ -211,4 +159,32 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 6px;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 6px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 10px;
+    height: 10px;
+    right: 0;
+    bottom: 0;
+    z-index: 11;
 }
