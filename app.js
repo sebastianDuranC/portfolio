@@ -10,6 +10,7 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupWindowResizing();
         this.setupWindowClickToFront();
         this.setupLogin();
     }
@@ -83,6 +84,55 @@ class LinuxOS {
         });
     }
 
+
+
+    setupWindowResizing() {
+        let isResizingGlobal = false;
+        let currentWindow = null;
+        let currentResizerGlobal = null;
+        let startXGlobal, startYGlobal, startWidthGlobal, startHeightGlobal;
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizingGlobal) return;
+
+            if (currentResizerGlobal.classList.contains('resizer-r')) {
+                currentWindow.style.width = startWidthGlobal + (e.clientX - startXGlobal) + 'px';
+            } else if (currentResizerGlobal.classList.contains('resizer-b')) {
+                currentWindow.style.height = startHeightGlobal + (e.clientY - startYGlobal) + 'px';
+            } else if (currentResizerGlobal.classList.contains('resizer-br')) {
+                currentWindow.style.width = startWidthGlobal + (e.clientX - startXGlobal) + 'px';
+                currentWindow.style.height = startHeightGlobal + (e.clientY - startYGlobal) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isResizingGlobal = false;
+        });
+
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if (win.classList.contains('maximized')) return;
+                    isResizingGlobal = true;
+                    currentResizerGlobal = resizer;
+                    currentWindow = win;
+                    startXGlobal = e.clientX;
+                    startYGlobal = e.clientY;
+
+                    startWidthGlobal = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeightGlobal = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    const rect = win.getBoundingClientRect();
+                    win.style.width = rect.width + 'px';
+                    win.style.height = rect.height + 'px';
+
+                    e.preventDefault(); // Prevent text selection
+                });
+            });
+        });
+    }
+
     setupWindowClickToFront() {
         this.windows.forEach(win => {
             win.addEventListener('mousedown', () => {
@@ -103,17 +153,35 @@ class LinuxOS {
             let initialY;
             let xOffset = 0;
             let yOffset = 0;
+            const self = this; // Capture reference to LinuxOS instance
 
             header.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if(win.classList.contains('maximized')) {
+                    // Restore maximized window via drag
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none'; // Temporarily clear transform
+
+                    const rect = win.getBoundingClientRect();
+                    const desktopRect = document.getElementById('desktop').getBoundingClientRect();
+
+                    // Recalculate offsets relative to the desktop container
+                    xOffset = rect.left - desktopRect.left;
+                    yOffset = rect.top - desktopRect.top;
+
+                    setTranslate(xOffset, yOffset, win);
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+
+                    isDragging = true;
+                    return;
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -142,9 +210,17 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
+                if (isDragging) {
+                    initialX = currentX;
+                    initialY = currentY;
+                    isDragging = false;
+
+                    // Aero snap: Maximize if dragged to top edge
+                    const desktopRect = document.getElementById('desktop').getBoundingClientRect();
+                    if (e.clientY <= desktopRect.top + 10) { // 10px threshold
+                        self.maximizeWindow(win.dataset.id);
+                    }
+                }
             }
         });
     }
@@ -232,4 +308,144 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
+window.terminal = new TerminalParser();
+
+class TerminalParser {
+    constructor() {
+        this.input = document.getElementById('terminal-input');
+        this.output = document.getElementById('terminal-output');
+        if(this.input && this.output) {
+            this.setup();
+            this.prePopulate();
+        }
+    }
+
+    setup() {
+        this.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = this.input.value.trim();
+                if (command) {
+                    this.print(`sebastian@ubuntu:~$ ${command}`, true);
+                    this.processCommand(command);
+                } else {
+                    this.print(`sebastian@ubuntu:~$ `);
+                }
+                this.input.value = '';
+                this.scrollToBottom();
+            }
+        });
+    }
+
+    prePopulate() {
+        this.print(`sebastian@ubuntu:~$ whoami`, true);
+        this.processCommand('whoami');
+        this.print(`sebastian@ubuntu:~$ neofetch`, true);
+        this.processCommand('neofetch');
+    }
+
+    print(html, isCommand = false) {
+        const div = document.createElement('div');
+        div.className = isCommand ? 'mb-2' : 'text-gray-100 mb-4';
+
+        if (isCommand) {
+            // Reformat the command prompt string
+            const commandText = document.createTextNode(html.replace('sebastian@ubuntu:~$ ', ''));
+            div.innerHTML = '<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ';
+            div.appendChild(commandText);
+        } else {
+            // Securely escape non-html string or just use innerHTML for known safe HTML (like neofetch)
+            div.innerHTML = html;
+        }
+        this.output.appendChild(div);
+    }
+
+    printText(text) {
+        const div = document.createElement('div');
+        div.className = 'text-gray-100 mb-4';
+        div.textContent = text;
+        this.output.appendChild(div);
+    }
+
+    processCommand(cmd) {
+        const args = cmd.split(' ');
+        const mainCmd = args[0].toLowerCase();
+
+        switch (mainCmd) {
+            case 'help':
+                this.print(`Comandos disponibles:
+<br> - <span class="text-green-300">help</span>: Muestra esta ayuda
+<br> - <span class="text-green-300">whoami</span>: Muestra el usuario actual
+<br> - <span class="text-green-300">clear</span>: Limpia la terminal
+<br> - <span class="text-green-300">ls</span>: Lista los archivos en el directorio actual
+<br> - <span class="text-green-300">cat &lt;file&gt;</span>: Muestra el contenido de un archivo
+<br> - <span class="text-green-300">neofetch</span>: Muestra información del sistema
+<br> - <span class="text-green-300">open &lt;app&gt;</span>: Abre una aplicación (projects, skills, contact)`);
+                break;
+            case 'whoami':
+                this.printText('Sebastian Duran Caballero');
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                break;
+            case 'ls':
+                this.print(`<span class="text-blue-400">projects/</span>  <span class="text-blue-400">skills/</span>  <span class="text-blue-400">contact/</span>  description.txt`);
+                break;
+            case 'neofetch':
+                this.print(`<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/&#96;--,-/\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
+                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>`);
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.printText('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+                } else {
+                    this.printText(`cat: ${args[1] || ''}: No such file or directory`);
+                }
+                break;
+            case 'open':
+                const app = args[1];
+                if (['projects', 'skills', 'contact'].includes(app)) {
+                    this.printText(`Opening ${app}...`);
+                    window.app.openWindow(app);
+                } else {
+                    this.printText(`Application not found: ${app || ''}`);
+                }
+                break;
+            default:
+                this.printText(`Command not found: ${mainCmd}`);
+        }
+    }
+
+    scrollToBottom() {
+        const content = document.getElementById('terminal-content');
+        if (content) {
+            content.scrollTop = content.scrollHeight;
+        }
+    }
+}
