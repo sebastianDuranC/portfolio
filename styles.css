@@ -212,3 +212,30 @@
 .window-header button:active {
     transform: scale(0.9);
 }
+
+/* Resizer styles */
+.resizer {
+    position: absolute;
+    z-index: 100;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 5px;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 5px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 10px;
+    height: 10px;
+    right: 0;
+    bottom: 0;
+}
