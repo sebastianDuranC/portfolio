@@ -3,6 +3,7 @@ class LinuxOS {
         this.windows = document.querySelectorAll('.os-window');
         this.highestZIndex = 100;
         this.openWindows = new Set();
+        this.desktopContainer = document.getElementById('desktop');
         
         this.init();
     }
@@ -10,8 +11,10 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.terminalParser = new TerminalParser();
     }
 
     setupLogin() {
@@ -108,15 +111,28 @@ class LinuxOS {
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
+            const appInstance = this;
             function dragStart(e) {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if (win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none'; // Temporarily clear transform for rect calc
+                    const desktopRect = appInstance.desktopContainer.getBoundingClientRect();
 
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+                    // Keep cursor at same relative position on header
+                    xOffset = e.clientX - desktopRect.left - (win.offsetWidth / 2);
+                    yOffset = e.clientY - desktopRect.top - (header.offsetHeight / 2);
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+
+                    setTranslate(xOffset, yOffset, win);
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
@@ -212,6 +228,46 @@ class LinuxOS {
         }
     }
 
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resize(e) {
+                if (!isResizing) return;
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    win.style.width = startWidth + e.clientX - startX + 'px';
+                }
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    win.style.height = startHeight + e.clientY - startY + 'px';
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+        });
+    }
+
     toggleWindow(id) {
         const win = document.getElementById(`window-${id}`);
         if(win && !win.classList.contains('hidden')) {
@@ -231,5 +287,91 @@ class LinuxOS {
     }
 }
 
+
+class TerminalParser {
+    constructor() {
+        this.input = document.getElementById('terminal-input');
+        this.output = document.getElementById('terminal-output');
+
+        if (this.input) {
+            this.input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = this.input.value.trim();
+                    this.input.value = '';
+                    this.executeCommand(command);
+                }
+            });
+        }
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
+    executeCommand(command) {
+        if (!command) return;
+
+        this.printLine(`<span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ ${this.escapeHTML(command)}`);
+
+        const args = command.split(' ');
+        const cmd = args[0].toLowerCase();
+
+        switch (cmd) {
+            case 'help':
+                this.printLine('Comandos disponibles: help, whoami, clear, ls, neofetch, cat, open');
+                break;
+            case 'whoami':
+                this.printLine('Sebastian Duran Caballero');
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                break;
+            case 'ls':
+                this.printLine('description.txt  projects/  skills/  contact/');
+                break;
+            case 'neofetch':
+                this.printLine('OS: Ubuntu 22.04 LTS x86_64<br>Host: Desarrollador Web');
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.printLine('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales.');
+                } else {
+                    this.printLine(`cat: ${this.escapeHTML(args[1] || '')}: No such file or directory`);
+                }
+                break;
+            case 'open':
+                const appName = args[1]?.toLowerCase();
+                if (['projects', 'skills', 'contact'].includes(appName)) {
+                    window.app.openWindow(appName);
+                    this.printLine(`Opening ${appName}...`);
+                } else {
+                    this.printLine(`Aplicación no encontrada. Apps: projects, skills, contact`);
+                }
+                break;
+            default:
+                this.printLine(`${this.escapeHTML(cmd)}: command not found`);
+        }
+
+        const content = document.querySelector('#window-terminal .window-content');
+        if (content) content.scrollTop = content.scrollHeight;
+    }
+
+    printLine(text) {
+        const p = document.createElement('p');
+        p.className = 'text-gray-100 mb-2';
+        p.innerHTML = text; // Safe here since we escape user input earlier or provide static strings
+        this.output.appendChild(p);
+    }
+}
+
 // Initialize the OS
 const app = new LinuxOS();
+window.app = app;
