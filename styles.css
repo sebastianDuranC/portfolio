@@ -83,13 +83,13 @@
 }
 
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: 100% !important;
     max-width: none !important;
     border-radius: 0;
-    transform: none;
+    transform: none !important;
 }
 
 /* Animations for window opening */
@@ -211,4 +211,31 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* Resizers */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: ew-resize;
+    width: 10px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.resizer-b {
+    cursor: ns-resize;
+    height: 10px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.resizer-br {
+    cursor: nwse-resize;
+    width: 15px;
+    height: 15px;
+    right: 0;
+    bottom: 0;
 }
