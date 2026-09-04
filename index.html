@@ -11,7 +11,7 @@
 </head>
 <body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-opacity duration-500 ease-in-out">
+    <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-xl transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
             <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-4 border-2 border-white/20 object-cover shadow-2xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
             <h1 class="text-2xl font-ubuntu font-bold text-white mb-6 drop-shadow-md">Sebastian Duran Caballero</h1>
@@ -79,6 +79,10 @@
             
             <!-- Terminal Window (Sobre Mi) -->
             <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
+                <div class="resizer resizer-r absolute right-0 top-0 bottom-0 w-2 cursor-e-resize z-20"></div>
+                <div class="resizer resizer-b absolute bottom-0 left-0 right-0 h-2 cursor-s-resize z-20"></div>
+                <div class="resizer resizer-br absolute bottom-0 right-0 w-3 h-3 cursor-se-resize z-30"></div>
+
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@ubuntu: ~</div>
                     <div class="flex space-x-2 absolute right-3">
@@ -94,50 +98,17 @@
                     </div>
                 </div>
                 <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text">
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ whoami</p>
-                    <p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ cat description.txt</p>
-                    <p class="text-gray-100 mb-4">
-                        Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.
-                    </p>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ neofetch</p>
-                    <div class="flex flex-col md:flex-row text-gray-100 mb-4">
-                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
-<pre>
-       _,-/`--,-/\-,
-     ,' /   ,-'   ) \
-   ,'  |  ,'     /   \
-  /    | /      /     \
- /      /      /      |
-|      /      /       |
-|      |     /        |
-|      |    /         |
- \     |   /         /
-  \    |  /         /
-   `.  | /        ,'
-     `./'      ,-'
-       `-----'
-</pre>
-                        </div>
-                        <div>
-                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
-                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
-                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
-                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
-                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
-                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
-                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
-                        </div>
-                    </div>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
+                    <div id="terminal-output" class="mb-2 whitespace-pre-wrap flex flex-col gap-2"></div>
+                    <div class="flex items-center"><span class="text-green-400 font-bold mr-1">sebastian@ubuntu:</span><span class="text-blue-400 font-bold mr-1">~</span>$ <input type="text" id="terminal-input" class="bg-transparent outline-none flex-1 text-gray-200 ml-2 font-ubuntu-mono" autocomplete="off" spellcheck="false"></div>
                 </div>
             </div>
 
             <!-- Projects Explorer Window -->
             <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+                <div class="resizer resizer-r absolute right-0 top-0 bottom-0 w-2 cursor-e-resize z-20"></div>
+                <div class="resizer resizer-b absolute bottom-0 left-0 right-0 h-2 cursor-s-resize z-20"></div>
+                <div class="resizer resizer-br absolute bottom-0 right-0 w-3 h-3 cursor-se-resize z-30"></div>
+
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Proyectos</span>
@@ -170,9 +141,7 @@
                          <!-- Path bar -->
                          <div class="absolute top-0 left-0 right-0 bg-[#2b2b2b] p-2 flex items-center border-b border-black/30 text-xs px-4">
                              <div class="flex space-x-1 items-center bg-[#1e1e1e] rounded-md border border-gray-700/50 p-1">
-                                <span class="px-2 text-gray-400 hover:text-gray-200 cursor-pointer">Inicio</span>
-                                <span class="text-gray-600">/</span>
-                                <span class="px-2 font-bold text-gray-200 bg-white/5 rounded">Proyectos</span>
+                                <span class="text-gray-400"><i class="fas fa-home px-2 hover:text-gray-200 cursor-pointer"></i> <span class="text-gray-600">/</span> <span class="px-2 font-bold text-gray-200 bg-white/5 rounded">Proyectos</span></span>
                              </div>
                          </div>
                         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -180,8 +149,8 @@
                             <!-- Project 1 -->
                             <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
                                 <div class="flex items-center mb-3">
-                                    <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3 border border-green-800/50">
-                                        <i class="fas fa-paw text-xl text-green-400 group-hover:scale-110 transition-transform"></i>
+                                    <div class="w-10 h-10 flex items-center justify-center mr-3">
+                                        <i class="fas fa-folder text-[#e95420] group-hover:scale-110 transition-transform text-3xl"></i>
                                     </div>
                                     <h3 class="font-bold text-gray-100 text-base leading-tight">Landing Page<br><span class="text-xs font-normal text-gray-400">Veterinaria</span></h3>
                                 </div>
@@ -196,8 +165,8 @@
                             <!-- Project 2 -->
                             <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
                                 <div class="flex items-center mb-3">
-                                    <div class="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3 border border-purple-800/50">
-                                        <i class="fas fa-calculator text-xl text-purple-400 group-hover:scale-110 transition-transform"></i>
+                                    <div class="w-10 h-10 flex items-center justify-center mr-3">
+                                        <i class="fas fa-folder text-[#e95420] group-hover:scale-110 transition-transform text-3xl"></i>
                                     </div>
                                     <h3 class="font-bold text-gray-100 text-base leading-tight">Calculadora IA<br><span class="text-xs font-normal text-gray-400">Gemini</span></h3>
                                 </div>
@@ -212,8 +181,8 @@
                             <!-- Project 3 -->
                             <div class="bg-[#2a2a2a] border border-[#3a3a3a] rounded-xl p-5 hover:bg-[#333] hover:border-[#555] transition-all duration-200 group shadow-sm flex flex-col h-full">
                                 <div class="flex items-center mb-3">
-                                    <div class="w-10 h-10 bg-orange-900/30 rounded-lg flex items-center justify-center mr-3 border border-orange-800/50">
-                                        <i class="fas fa-utensils text-xl text-orange-400 group-hover:scale-110 transition-transform"></i>
+                                    <div class="w-10 h-10 flex items-center justify-center mr-3">
+                                        <i class="fas fa-folder text-[#e95420] group-hover:scale-110 transition-transform text-3xl"></i>
                                     </div>
                                     <h3 class="font-bold text-gray-100 text-base leading-tight">Sistema Ventas<br><span class="text-xs font-normal text-gray-400">Restaurante</span></h3>
                                 </div>
@@ -232,6 +201,10 @@
 
             <!-- Skills Window (Settings style) -->
             <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+                <div class="resizer resizer-r absolute right-0 top-0 bottom-0 w-2 cursor-e-resize z-20"></div>
+                <div class="resizer resizer-b absolute bottom-0 left-0 right-0 h-2 cursor-s-resize z-20"></div>
+                <div class="resizer resizer-br absolute bottom-0 right-0 w-3 h-3 cursor-se-resize z-30"></div>
+
                  <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Habilidades</span>
@@ -251,46 +224,46 @@
                 <div class="flex flex-1 overflow-hidden">
                     <!-- Settings Sidebar -->
                     <div class="w-48 bg-[#2d2d2d] border-r border-black/40 p-2 text-[13px] font-ubuntu hidden sm:block overflow-y-auto select-none">
-                        <ul class="space-y-[2px]">
+                        <ul class="space-y-[2px]" id="skills-sidebar-items">
                             <div class="text-[11px] font-bold text-gray-400 px-3 py-2 uppercase tracking-wider">Sistema</div>
-                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="fas fa-desktop mr-3 w-4 text-center"></i>Pantalla</li>
-                            <li class="px-3 py-1.5 bg-white/10 font-bold rounded-md cursor-pointer flex items-center text-white transition-colors"><i class="fas fa-cogs mr-3 w-4 text-center"></i>Tecnologías</li>
-                            <li class="px-3 py-1.5 hover:bg-white/5 rounded-md cursor-pointer flex items-center text-gray-300 transition-colors"><i class="fas fa-network-wired mr-3 w-4 text-center"></i>Red</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 text-gray-300 rounded-md cursor-pointer flex items-center transition-colors" data-category="sistema"><i class="fas fa-desktop mr-3 w-4 text-center"></i>Pantalla</li>
+                            <li class="px-3 py-1.5 bg-white/10 font-bold text-white rounded-md cursor-pointer flex items-center transition-colors" data-category="tecnologias"><i class="fas fa-cogs mr-3 w-4 text-center"></i>Tecnologías</li>
+                            <li class="px-3 py-1.5 hover:bg-white/5 text-gray-300 rounded-md cursor-pointer flex items-center transition-colors" data-category="red"><i class="fas fa-network-wired mr-3 w-4 text-center"></i>Red</li>
                         </ul>
                     </div>
                     <div class="flex-1 p-8 overflow-y-auto bg-[#1e1e1e]">
                         <h2 class="text-xl font-ubuntu mb-8 text-gray-100 font-bold border-b border-white/10 pb-4">Stack Tecnológico Principal</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="skills-content-grid">
                             <!-- Skills Icons -->
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/html.png" alt="HTML5" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732212.png'">
                                 <span class="text-xs font-medium text-gray-300">HTML5</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/Official_CSS_Logo.svg.png" alt="CSS3" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/732/732190.png'">
                                 <span class="text-xs font-medium text-gray-300">CSS3</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/javascript.png" alt="JavaScript" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968292.png'">
                                 <span class="text-xs font-medium text-gray-300">JavaScript</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/c-sharp.png" alt="C#" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/6132/6132221.png'">
                                 <span class="text-xs font-medium text-gray-300">C#</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/Microsoft_.NET_logo.png" alt=".NET" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/.NET_Core_Logo.svg/512px-.NET_Core_Logo.svg.png'">
                                 <span class="text-xs font-medium text-gray-300">.NET</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/icons8-servidor-microsoft-sql-100.png" alt="SQL Server" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5968/5968313.png'">
                                 <span class="text-xs font-medium text-gray-300">SQL Server</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/git.png" alt="Git" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1162/1162803.png'">
                                 <span class="text-xs font-medium text-gray-300">Git</span>
                             </div>
-                            <div class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
+                            <div data-skill-category="tecnologias" class="flex flex-col items-center p-4 bg-[#2a2a2a] rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all cursor-pointer group shadow-sm">
                                 <img src="images/github.png" alt="Github" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform" onerror="this.src='https://cdn-icons-png.flaticon.com/512/25/25231.png'">
                                 <span class="text-xs font-medium text-gray-300">Github</span>
                             </div>
@@ -301,6 +274,10 @@
 
             <!-- Contact Window (Mail client style) -->
             <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-md bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+                <div class="resizer resizer-r absolute right-0 top-0 bottom-0 w-2 cursor-e-resize z-20"></div>
+                <div class="resizer resizer-b absolute bottom-0 left-0 right-0 h-2 cursor-s-resize z-20"></div>
+                <div class="resizer resizer-br absolute bottom-0 right-0 w-3 h-3 cursor-se-resize z-30"></div>
+
                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Contacto</span>
@@ -326,7 +303,7 @@
                     <p class="text-[#e95420] mb-8 font-ubuntu text-sm font-medium tracking-wide">Desarrollador Web .NET</p>
                     
                     <div class="w-full space-y-4">
-                        <a href="mailto:sd8587793@email.com" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                        <a href="mailto:sd8587793@email.com" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 hover:-translate-y-1 transition-transform duration-200 group shadow-sm">
                             <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-[#e95420] group-hover:text-white transition-colors border border-black/50">
                                 <i class="fas fa-envelope text-lg"></i>
                             </div>
@@ -337,7 +314,7 @@
                             <i class="fas fa-external-link-alt text-xs text-gray-600 group-hover:text-gray-400"></i>
                         </a>
 
-                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                        <a href="https://github.com/sebastianDuranC" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 hover:-translate-y-1 transition-transform duration-200 group shadow-sm">
                             <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-white group-hover:text-black transition-colors border border-black/50">
                                 <i class="fab fa-github text-lg"></i>
                             </div>
@@ -348,7 +325,7 @@
                             <i class="fas fa-external-link-alt text-xs text-gray-600 group-hover:text-gray-400"></i>
                         </a>
 
-                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 transition-all group shadow-sm">
+                        <a href="https://www.linkedin.com/in/sebastiandurancaballero/" target="_blank" class="flex items-center p-3.5 bg-[#2a2a2a] border border-white/5 rounded-xl hover:bg-[#333] hover:border-white/10 hover:-translate-y-1 transition-transform duration-200 group shadow-sm">
                             <div class="w-11 h-11 bg-[#1a1a1a] text-gray-300 rounded-lg flex items-center justify-center mr-4 group-hover:bg-[#0a66c2] group-hover:text-white transition-colors border border-black/50">
                                 <i class="fab fa-linkedin-in text-lg"></i>
                             </div>
