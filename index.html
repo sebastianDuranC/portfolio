@@ -9,14 +9,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 </head>
-<body class="ubuntu-bg overflow-hidden h-screen w-screen text-white select-none">
+<body class="adwaita-bg overflow-hidden h-screen w-screen text-white select-none">
     <!-- Login Screen Overlay -->
     <div id="login-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/40 backdrop-blur-md transition-opacity duration-500 ease-in-out">
         <div class="flex flex-col items-center">
             <img src="images/profile.jpg" alt="Sebastian" class="w-32 h-32 rounded-full mb-4 border-2 border-white/20 object-cover shadow-2xl" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
             <h1 class="text-2xl font-ubuntu font-bold text-white mb-6 drop-shadow-md">Sebastian Duran Caballero</h1>
             <div class="flex items-center bg-white/10 rounded-lg overflow-hidden border border-white/10 backdrop-blur-xl transition-all focus-within:border-[#e95420]/80 focus-within:ring-1 focus-within:ring-[#e95420]/80">
-                <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-56 font-ubuntu placeholder-gray-300" value="ubuntu" readonly>
+                <input type="password" id="login-password" placeholder="Contraseña" class="bg-transparent text-white px-4 py-2 outline-none w-56 font-ubuntu placeholder-gray-300" value="adwaita" readonly>
                 <button id="login-btn" class="bg-white/5 hover:bg-white/20 px-4 py-2 text-white transition-colors" onclick="app.login()">
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -42,9 +42,13 @@
     </div>
 
     <!-- Desktop Area -->
-    <div id="desktop" class="relative ml-14 h-[calc(100vh-28px)] mt-7 z-10">
+    <div id="desktop" class="relative w-full h-[calc(100vh-28px-56px)] mt-[28px] z-10">
+
+        <!-- Snap Indicator -->
+        <div id="snap-indicator" class="snap-indicator hidden"></div>
+
         <!-- Desktop Icons -->
-        <div class="absolute top-4 left-4 flex flex-col space-y-6 w-24">
+        <div class="absolute top-4 left-4 flex flex-col space-y-4 w-20">
             <div class="desktop-icon flex flex-col items-center cursor-pointer group" onclick="app.openWindow('terminal')">
                 <div class="w-14 h-14 bg-gray-800/90 rounded-2xl flex items-center justify-center border border-gray-600/50 shadow-md group-hover:bg-gray-700 transition-all hover:scale-105">
                     <i class="fas fa-terminal text-2xl text-gray-200"></i>
@@ -75,12 +79,13 @@
         </div>
 
         <!-- Windows Container -->
-        <div id="windows-container" class="absolute inset-0 pointer-events-none">
+        <div id="windows-container" class="absolute inset-0 pointer-events-none overflow-hidden">
             
             <!-- Terminal Window (Sobre Mi) -->
-            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] max-w-2xl bg-[#300a24]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
-                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
-                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@ubuntu: ~</div>
+            <div id="window-terminal" class="os-window hidden absolute top-10 left-[10%] w-[80%] h-[70%] min-w-[300px] bg-[#242424]/95 backdrop-blur-md rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col" data-id="terminal">
+                <div class="resizer right"></div><div class="resizer bottom"></div><div class="resizer bottom-right"></div>
+                <div class="window-header h-[38px] bg-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+                    <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center">sebastian@adwaita: ~</div>
                     <div class="flex space-x-2 absolute right-3">
                         <button class="w-6 h-6 rounded-full hover:bg-white/10 focus:outline-none flex items-center justify-center transition-colors" onclick="app.minimizeWindow('terminal')">
                             <span class="text-white font-bold mb-1">-</span>
@@ -93,18 +98,14 @@
                         </button>
                     </div>
                 </div>
-                <div class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text">
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ whoami</p>
+                <div id="terminal-content" class="window-content flex-1 p-4 font-ubuntu-mono text-sm overflow-y-auto text-gray-200 bg-transparent cursor-text">
+
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ whoami</p>
                     <p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>
 
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ cat description.txt</p>
-                    <p class="text-gray-100 mb-4">
-                        Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.
-                    </p>
-
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ neofetch</p>
+                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ neofetch</p>
                     <div class="flex flex-col md:flex-row text-gray-100 mb-4">
-                        <div class="mr-6 mb-4 md:mb-0 text-[#e95420] text-xs sm:text-sm font-bold">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
 <pre>
        _,-/`--,-/\-,
      ,' /   ,-'   ) \
@@ -122,23 +123,27 @@
 </pre>
                         </div>
                         <div>
-                            <p><span class="text-[#e95420] font-bold">OS:</span> Ubuntu 22.04 LTS x86_64</p>
-                            <p><span class="text-[#e95420] font-bold">Host:</span> Desarrollador Web</p>
-                            <p><span class="text-[#e95420] font-bold">Uptime:</span> 24/7 coding</p>
-                            <p><span class="text-[#e95420] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
-                            <p><span class="text-[#e95420] font-bold">Shell:</span> bash 5.1.16</p>
-                            <p><span class="text-[#e95420] font-bold">Location:</span> Santa Cruz, Bolivia</p>
-                            <p><span class="text-[#e95420] font-bold">Email:</span> sd8587793@email.com</p>
+                            <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita OS x86_64</p>
+                            <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
                         </div>
                     </div>
 
-                    <p class="mb-2"><span class="text-green-400 font-bold">sebastian@ubuntu</span>:<span class="text-blue-400 font-bold">~</span>$ <span class="animate-pulse block w-2 h-4 bg-gray-200 inline-block align-middle ml-1"></span></p>
+                    <div id="terminal-input-line" class="flex items-center mt-2">
+                        <span class="text-green-400 font-bold mr-1">sebastian@adwaita</span>:<span class="text-blue-400 font-bold mr-2">~</span>$
+                        <input type="text" id="terminal-input" class="bg-transparent border-none outline-none text-gray-200 flex-1 font-ubuntu-mono caret-white" autocomplete="off" spellcheck="false" autofocus>
+                    </div>
                 </div>
             </div>
 
             <!-- Projects Explorer Window -->
-            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] max-w-4xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
-                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+            <div id="window-projects" class="os-window hidden absolute top-16 left-[20%] w-[80%] h-[70%] min-w-[500px] bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="projects">
+                <div class="resizer right"></div><div class="resizer bottom"></div><div class="resizer bottom-right"></div>
+                <div class="window-header h-[38px] bg-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Proyectos</span>
                     </div>
@@ -231,8 +236,9 @@
             </div>
 
             <!-- Skills Window (Settings style) -->
-            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] max-w-2xl bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
-                 <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+            <div id="window-skills" class="os-window hidden absolute top-20 left-[30%] w-[80%] h-[70%] min-w-[400px] bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="skills">
+                <div class="resizer right"></div><div class="resizer bottom"></div><div class="resizer bottom-right"></div>
+                 <div class="window-header h-[38px] bg-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Habilidades</span>
                     </div>
@@ -300,8 +306,9 @@
             </div>
 
             <!-- Contact Window (Mail client style) -->
-            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] max-w-md bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
-                <div class="window-header h-[38px] bg-gradient-to-b from-[#404040] to-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
+            <div id="window-contact" class="os-window hidden absolute top-24 left-[15%] w-[80%] h-[70%] min-w-[300px] max-w-md bg-[#202020] rounded-lg shadow-2xl overflow-hidden border border-[#555] pointer-events-auto flex flex-col text-gray-200" data-id="contact">
+                <div class="resizer right"></div><div class="resizer bottom"></div><div class="resizer bottom-right"></div>
+                <div class="window-header h-[38px] bg-[#303030] flex justify-between items-center px-3 cursor-grab active:cursor-grabbing select-none border-b border-black/80">
                     <div class="text-gray-300 text-sm font-ubuntu font-medium flex-1 text-center flex items-center justify-center">
                         <span class="font-bold">Contacto</span>
                     </div>
@@ -363,25 +370,36 @@
             </div>
 
         </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
-            <i class="fas fa-folder text-2xl text-[#e95420] drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-projects"></div>
-        </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
-            <i class="fas fa-cogs text-2xl text-gray-300 drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-skills"></div>
-        </div>
-        <div class="dock-icon w-11 h-11 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
-            <i class="fas fa-envelope text-2xl text-blue-400 drop-shadow-sm"></i>
-            <div class="absolute left-1 w-1.5 h-1.5 bg-[#e95420] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#e95420]" id="dot-contact"></div>
+    </div>
+
+    <!-- Bottom Taskbar -->
+    <div class="fixed bottom-0 w-full h-[56px] bg-[#1e1e1e]/90 backdrop-blur-md border-t border-black/50 z-50 flex items-center justify-center space-x-2 px-4 shadow-lg pb-1">
+
+        <!-- App Icons -->
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('terminal')" id="dock-terminal" data-title="Terminal">
+            <i class="fas fa-terminal text-2xl text-gray-200 drop-shadow-sm"></i>
+            <div class="absolute bottom-0 w-1.5 h-1.5 bg-[#3584e4] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#3584e4]" id="dot-terminal"></div>
         </div>
 
-        <!-- Dock Bottom section -->
-        <div class="mt-auto pt-4 flex flex-col space-y-3 w-full items-center">
-            <div class="w-8 h-px bg-white/20"></div>
-            <div class="dock-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg cursor-pointer transition-all group relative" data-title="Mostrar Aplicaciones">
-                <i class="fas fa-th text-xl text-gray-200"></i>
-            </div>
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('projects')" id="dock-projects" data-title="Proyectos">
+            <i class="fas fa-folder text-2xl text-[#3584e4] drop-shadow-sm"></i>
+            <div class="absolute bottom-0 w-1.5 h-1.5 bg-[#3584e4] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#3584e4]" id="dot-projects"></div>
+        </div>
+
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('skills')" id="dock-skills" data-title="Habilidades">
+            <i class="fas fa-cogs text-2xl text-gray-300 drop-shadow-sm"></i>
+            <div class="absolute bottom-0 w-1.5 h-1.5 bg-[#3584e4] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#3584e4]" id="dot-skills"></div>
+        </div>
+
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" onclick="app.toggleWindow('contact')" id="dock-contact" data-title="Contacto">
+            <i class="fas fa-envelope text-2xl text-[#3584e4] drop-shadow-sm"></i>
+            <div class="absolute bottom-0 w-1.5 h-1.5 bg-[#3584e4] rounded-full hidden transition-all duration-300 shadow-[0_0_4px_#3584e4]" id="dot-contact"></div>
+        </div>
+
+        <div class="w-px h-8 bg-white/20 mx-2"></div>
+
+        <div class="dock-icon w-12 h-12 flex items-center justify-center hover:bg-white/15 rounded-xl cursor-pointer transition-all duration-200 group relative active:scale-95" data-title="Mostrar Aplicaciones">
+            <i class="fas fa-th text-2xl text-gray-200 drop-shadow-sm"></i>
         </div>
     </div>
 
