@@ -1,11 +1,7 @@
-/* Ubuntu-like background */
-.ubuntu-bg {
-    background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
+/* Adwaita Dark background */
+.adwaita-bg {
+    background-color: #242424;
+    background-image: radial-gradient(circle at top right, #2a2a2a, #1e1e1e);
 }
 
 /* Glassmorphism Utilities */
@@ -32,7 +28,7 @@
 
 /* Terminal specific */
 .bg-aubergine {
-    background-color: #300a24;
+    background-color: #1e1e1e;
 }
 
 /* Base font classes */
@@ -83,10 +79,10 @@
 }
 
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: 100% !important;
     max-width: none !important;
     border-radius: 0;
     transform: none;
@@ -186,8 +182,35 @@
 
 /* Terminal transparency */
 #window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
-    backdrop-filter: blur(10px);
+    background-color: rgba(30, 30, 30, 0.95);
+}
+
+/* Resizer styles */
+.resizer {
+    position: absolute;
+    z-index: 10;
+}
+.resizer-r {
+    cursor: e-resize;
+    right: 0;
+    top: 0;
+    width: 10px;
+    height: 100%;
+}
+.resizer-b {
+    cursor: s-resize;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+.resizer-br {
+    cursor: se-resize;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    z-index: 11;
 }
 
 /* Active window styling */
