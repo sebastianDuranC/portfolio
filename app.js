@@ -12,6 +12,7 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
     }
 
     setupLogin() {
@@ -91,6 +92,51 @@ class LinuxOS {
         });
     }
 
+
+    setupResizers() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    const rect = win.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+
+                    e.preventDefault(); // Prevent text selection
+
+                    // Bring window to front
+                    this.bringToFront(win);
+                });
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('right') || currentResizer.classList.contains('bottom-right')) {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    win.style.width = `${newWidth}px`;
+                }
+
+                if (currentResizer.classList.contains('bottom') || currentResizer.classList.contains('bottom-right')) {
+                    const newHeight = startHeight + (e.clientY - startY);
+                    win.style.height = `${newHeight}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+            });
+        });
+    }
+
     setupDraggableWindows() {
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
@@ -108,22 +154,41 @@ class LinuxOS {
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
+
+
             function dragStart(e) {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if (win.classList.contains('maximized')) {
+                    const desktop = document.getElementById('desktop');
+                    const desktopRect = desktop.getBoundingClientRect();
 
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+                    win.style.transform = 'none'; // Temporarily set to none to recalculate
+
+                    const clickX = e.clientX;
+                    const clickY = e.clientY;
+
+                    // Recalculate xOffset and yOffset relative to the desktop container
+                    xOffset = clickX - desktopRect.left - (win.offsetWidth / 2);
+                    yOffset = clickY - desktopRect.top - 15;
+
+                    win.classList.remove('maximized');
+
+                    setTranslate(xOffset, yOffset, win);
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
                 }
             }
-
-            function drag(e) {
+function drag(e) {
                 if (isDragging) {
                     e.preventDefault();
 
@@ -232,4 +297,137 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
+
+class TerminalParser {
+    constructor() {
+        this.output = document.getElementById('terminal-output');
+        this.input = document.getElementById('terminal-input');
+        if (!this.input || !this.output) return;
+
+        this.prompt = '<span class="text-green-400 font-bold mr-2">sebastian@adwaita:~$</span>';
+
+        this.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = this.input.value.trim();
+                this.executeCommand(command);
+                this.input.value = '';
+            }
+        });
+
+        // Populate initially
+        this.executeCommand('whoami', true);
+        this.executeCommand('neofetch', true);
+    }
+
+    printLine(htmlString) {
+        const line = document.createElement('div');
+        line.innerHTML = htmlString;
+        this.output.appendChild(line);
+        this.scrollToBottom();
+    }
+
+    printTextSafe(text) {
+        const line = document.createElement('div');
+        line.textContent = text;
+        this.output.appendChild(line);
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        const content = this.output.parentElement;
+        content.scrollTop = content.scrollHeight;
+    }
+
+    executeCommand(cmd, isInit = false) {
+        if (!isInit) {
+            // Echo command
+            const echoLine = document.createElement('div');
+            echoLine.innerHTML = this.prompt;
+            const cmdText = document.createElement('span');
+            cmdText.textContent = cmd;
+            echoLine.appendChild(cmdText);
+            this.output.appendChild(echoLine);
+        }
+
+        const args = cmd.split(' ').filter(Boolean);
+        if (args.length === 0) return;
+
+        const mainCmd = args[0].toLowerCase();
+
+        switch (mainCmd) {
+            case 'help':
+                this.printLine('Comandos disponibles: help, whoami, clear, ls, neofetch, cat, open');
+                break;
+            case 'whoami':
+                this.printLine('<p class="text-gray-100 mb-2">Sebastian Duran Caballero</p>');
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                break;
+            case 'ls':
+                this.printLine('<p class="text-blue-400 mb-2">Proyectos  Habilidades  Contacto  description.txt</p>');
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.printLine('<p class="text-gray-100 mb-2">Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.</p>');
+                } else {
+                    this.printLine(`<p class="text-red-400 mb-2">cat: ${args[1] ? args[1] : ''}: No existe el archivo o directorio</p>`);
+                }
+                break;
+            case 'open':
+                if (args[1]) {
+                    const target = args[1].toLowerCase();
+                    if (['projects', 'skills', 'contact'].includes(target)) {
+                        if (window.app) window.app.openWindow(target);
+                        this.printLine(`<p class="text-gray-100 mb-2">Abriendo ${target}...</p>`);
+                    } else {
+                        this.printLine(`<p class="text-red-400 mb-2">open: no se pudo encontrar la aplicación '${target}'</p>`);
+                    }
+                } else {
+                    this.printLine('<p class="text-red-400 mb-2">open: falta un argumento</p>');
+                }
+                break;
+            case 'neofetch':
+                this.printLine(`
+                    <div class="flex flex-col md:flex-row text-gray-100 mb-4 mt-2">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita Linux x86_64</p>
+                            <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>
+                `);
+                break;
+            default:
+                this.printLine(`<p class="text-red-400 mb-2">${mainCmd}: comando no encontrado</p>`);
+        }
+        this.scrollToBottom();
+    }
+}
+
+// Initialize terminal parser
+document.addEventListener('DOMContentLoaded', () => {
+    window.terminalParser = new TerminalParser();
+});
