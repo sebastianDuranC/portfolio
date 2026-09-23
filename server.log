@@ -1,0 +1,30 @@
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] code 404, message File not found
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:32] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:12:33] code 404, message File not found
+127.0.0.1 - - [23/Sep/2026 19:12:33] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] code 404, message File not found
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/profile.jpg HTTP/1.1" 404 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/html.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/Official_CSS_Logo.svg.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/javascript.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/c-sharp.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /app.js HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/Microsoft_.NET_logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/icons8-servidor-microsoft-sql-100.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/git.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:22] "GET /images/github.png HTTP/1.1" 200 -
+127.0.0.1 - - [23/Sep/2026 19:14:23] code 404, message File not found
+127.0.0.1 - - [23/Sep/2026 19:14:23] "GET /images/profile.jpg HTTP/1.1" 404 -
