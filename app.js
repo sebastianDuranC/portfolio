@@ -10,6 +10,7 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
     }
@@ -91,6 +92,7 @@ class LinuxOS {
         });
     }
 
+
     setupDraggableWindows() {
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
@@ -101,22 +103,38 @@ class LinuxOS {
             let currentY;
             let initialX;
             let initialY;
-            let xOffset = 0;
-            let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
+            win.dataset.xOffset = win.dataset.xOffset || '0';
+            win.dataset.yOffset = win.dataset.yOffset || '0';
+
+            header.addEventListener('mousedown', dragStart.bind(this));
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if(win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
 
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
+                    const rect = win.getBoundingClientRect();
+                    const desktopRect = document.getElementById('desktop').getBoundingClientRect();
+
+                    win.style.transform = 'none';
+
+                    let newX = e.clientX - desktopRect.left - (win.offsetWidth / 2);
+                    let newY = e.clientY - desktopRect.top - 15;
+
+                    win.dataset.xOffset = newX;
+                    win.dataset.yOffset = newY;
+                    setTranslate(newX, newY, win);
+                }
+
+                let xOff = parseFloat(win.dataset.xOffset) || 0;
+                let yOff = parseFloat(win.dataset.yOffset) || 0;
+
+                initialX = e.clientX - xOff;
+                initialY = e.clientY - yOff;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
@@ -130,8 +148,8 @@ class LinuxOS {
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
-                    xOffset = currentX;
-                    yOffset = currentY;
+                    win.dataset.xOffset = currentX;
+                    win.dataset.yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
                 }
@@ -142,9 +160,59 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
                 isDragging = false;
+            }
+        });
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let originalWidth;
+            let originalHeight;
+            let originalMouseX;
+            let originalMouseY;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    originalWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+                    originalHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+                    originalMouseX = e.pageX;
+                    originalMouseY = e.pageY;
+
+                    window.addEventListener('mousemove', resize);
+                    window.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resize(e) {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('bottom-right')) {
+                    const width = originalWidth + (e.pageX - originalMouseX);
+                    const height = originalHeight + (e.pageY - originalMouseY);
+                    win.style.width = width + 'px';
+                    win.style.height = height + 'px';
+                }
+                else if (currentResizer.classList.contains('bottom')) {
+                    const height = originalHeight + (e.pageY - originalMouseY);
+                    win.style.height = height + 'px';
+                }
+                else if (currentResizer.classList.contains('right')) {
+                    const width = originalWidth + (e.pageX - originalMouseX);
+                    win.style.width = width + 'px';
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                window.removeEventListener('mousemove', resize);
+                window.removeEventListener('mouseup', stopResize);
             }
         });
     }
@@ -231,5 +299,199 @@ class LinuxOS {
     }
 }
 
-// Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
+const app = window.app;
+
+
+class TerminalParser {
+    constructor() {
+        this.terminalContent = document.getElementById('terminal-content');
+        this.prompt = '<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ ';
+        this.history = [];
+        this.init();
+    }
+
+    init() {
+        if (!this.terminalContent) return;
+        this.terminalContent.innerHTML = '';
+        this.terminalContent.addEventListener('click', () => {
+            const input = this.terminalContent.querySelector('.terminal-input');
+            if(input) input.focus();
+        });
+
+        // Initial commands
+        this.simulateCommand('whoami', 'Sebastian Duran Caballero');
+        this.simulateCommand('cat description.txt', 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+
+        const neofetchOutput = `
+<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+    <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita 22.04 LTS x86_64</p>
+        <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`;
+        this.simulateCommand('neofetch', neofetchOutput, true);
+
+        this.createNewInput();
+    }
+
+    simulateCommand(command, output, isHtml = false) {
+        const cmdLine = document.createElement('p');
+        cmdLine.className = 'mb-2';
+        cmdLine.innerHTML = this.prompt + this.escapeHTML(command);
+        this.terminalContent.appendChild(cmdLine);
+
+        if (output) {
+            const outLine = document.createElement('div');
+            outLine.className = 'text-gray-100 mb-4';
+            if (isHtml) {
+                outLine.innerHTML = output;
+            } else {
+                outLine.textContent = output;
+            }
+            this.terminalContent.appendChild(outLine);
+        }
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
+    createNewInput() {
+        const inputLine = document.createElement('div');
+        inputLine.className = 'flex items-center mb-2';
+        inputLine.innerHTML = this.prompt;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'terminal-input bg-transparent border-none outline-none text-gray-200 flex-1 ml-1 font-fira-code';
+        input.autocomplete = 'off';
+        input.spellcheck = false;
+
+        inputLine.appendChild(input);
+        this.terminalContent.appendChild(inputLine);
+
+        input.focus();
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim();
+                inputLine.innerHTML = this.prompt + this.escapeHTML(cmd);
+                this.processCommand(cmd);
+            }
+        });
+
+        this.terminalContent.scrollTop = this.terminalContent.scrollHeight;
+    }
+
+    processCommand(cmd) {
+        const args = cmd.split(' ').filter(Boolean);
+        const command = args[0] ? args[0].toLowerCase() : '';
+
+        let output = '';
+        let isHtml = false;
+
+        switch (command) {
+            case '':
+                break;
+            case 'help':
+                output = 'Comandos disponibles: whoami, neofetch, clear, ls, cat, open, help';
+                break;
+            case 'whoami':
+                output = 'Sebastian Duran Caballero';
+                break;
+            case 'neofetch':
+                isHtml = true;
+                output = `
+<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+    <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita 22.04 LTS x86_64</p>
+        <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+    </div>
+</div>`;
+                break;
+            case 'clear':
+                this.terminalContent.innerHTML = '';
+                break;
+            case 'ls':
+                output = 'description.txt  projects/  skills/  contact/';
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    output = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales.';
+                } else {
+                    output = `cat: ${this.escapeHTML(args[1] || '')}: No such file or directory`;
+                }
+                break;
+            case 'open':
+                if (['projects', 'skills', 'contact'].includes(args[1])) {
+                    window.app.openWindow(args[1]);
+                    output = `Opening ${args[1]}...`;
+                } else {
+                    output = `Cannot open: ${this.escapeHTML(args[1] || '')}`;
+                }
+                break;
+            default:
+                output = `bash: ${this.escapeHTML(command)}: command not found`;
+        }
+
+        if (output) {
+            const outLine = document.createElement('div');
+            outLine.className = 'text-gray-100 mb-4';
+            if (isHtml) outLine.innerHTML = output;
+            else outLine.textContent = output;
+            this.terminalContent.appendChild(outLine);
+        }
+
+        this.createNewInput();
+    }
+}
+
+const terminal = new TerminalParser();
