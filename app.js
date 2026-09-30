@@ -10,6 +10,7 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
     }
@@ -36,7 +37,6 @@ class LinuxOS {
             }
         });
     }
-
 
     login() {
         const loginScreen = document.getElementById('login-screen');
@@ -92,6 +92,7 @@ class LinuxOS {
     }
 
     setupDraggableWindows() {
+        const self = this;
         this.windows.forEach(win => {
             const header = win.querySelector('.window-header');
             if (!header) return;
@@ -112,8 +113,21 @@ class LinuxOS {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if (win.classList.contains('maximized')) {
+                    // Un-maximize gracefully
+                    const rectLeft = win.getBoundingClientRect().left;
+
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none';
+
+                    // Calculate where the mouse is relative to the unmaximized window size
+                    const targetLeft = Math.max(0, e.clientX - (win.offsetWidth / 2));
+
+                    xOffset = targetLeft - rectLeft;
+                    yOffset = 0; // Stick to top initially
+
+                    setTranslate(xOffset, yOffset, win);
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -142,10 +156,67 @@ class LinuxOS {
             }
 
             function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
+                if(isDragging) {
+                    initialX = currentX;
+                    initialY = currentY;
+                    isDragging = false;
+
+                    // Aero snap to top
+                    if (e.clientY <= 28) {
+                        self.maximizeWindow(win.dataset.id);
+                    }
+                }
             }
+        });
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer = null;
+            let originalWidth = 0;
+            let originalHeight = 0;
+            let originalMouseX = 0;
+            let originalMouseY = 0;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if(win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    originalWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+                    originalHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+                    originalMouseX = e.pageX;
+                    originalMouseY = e.pageY;
+                    document.body.classList.add('resizing');
+                });
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('right') || currentResizer.classList.contains('bottom-right')) {
+                    const width = originalWidth + (e.pageX - originalMouseX);
+                    if (width > 300) {
+                        win.style.width = width + 'px';
+                    }
+                }
+
+                if (currentResizer.classList.contains('bottom') || currentResizer.classList.contains('bottom-right')) {
+                    const height = originalHeight + (e.pageY - originalMouseY);
+                    if (height > 200) {
+                        win.style.height = height + 'px';
+                    }
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                currentResizer = null;
+                document.body.classList.remove('resizing');
+            });
         });
     }
 
@@ -232,4 +303,4 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
