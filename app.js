@@ -12,6 +12,8 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
+        this.setupTerminal();
     }
 
     setupLogin() {
@@ -83,6 +85,243 @@ class LinuxOS {
         });
     }
 
+
+
+    setupTerminal() {
+        this.terminalOutput = document.getElementById('terminal-output');
+        this.terminalInput = document.getElementById('terminal-input');
+
+        if (!this.terminalInput) return;
+
+        // Setup initial text
+        this.echo('whoami', 'cmd');
+        this.echo('Sebastian Duran Caballero');
+        this.echo('');
+        this.echo('neofetch', 'cmd');
+        this.echo(`
+<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+    <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita OS x86_64</p>
+        <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`, 'html');
+
+        this.terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = this.terminalInput.value.trim();
+                this.terminalInput.value = '';
+                this.executeCommand(cmd);
+            }
+        });
+    }
+
+    echo(text, type = 'text') {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+
+        if (type === 'cmd') {
+            div.innerHTML = `<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ ${this.escapeHTML(text)}`;
+        } else if (type === 'html') {
+            div.innerHTML = text; // Trusted HTML only!
+        } else {
+            div.textContent = text;
+            div.className = 'text-gray-100 mb-4';
+        }
+
+        this.terminalOutput.appendChild(div);
+
+        // Scroll to bottom
+        const container = document.getElementById('terminal-content');
+        container.scrollTop = container.scrollHeight;
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
+    }
+
+    executeCommand(cmd) {
+        if (!cmd) {
+            this.echo('', 'cmd');
+            return;
+        }
+
+        this.echo(cmd, 'cmd');
+        const args = cmd.split(' ');
+        const command = args[0].toLowerCase();
+
+        switch (command) {
+            case 'help':
+                this.echo('Comandos disponibles:');
+                this.echo('  help      - Muestra este mensaje');
+                this.echo('  whoami    - Muestra el usuario actual');
+                this.echo('  clear     - Limpia la pantalla');
+                this.echo('  ls        - Lista los archivos');
+                this.echo('  cat       - Muestra el contenido de un archivo (ej: cat description.txt)');
+                this.echo('  neofetch  - Muestra la información del sistema');
+                this.echo('  open      - Abre una aplicación (ej: open projects)');
+                break;
+            case 'whoami':
+                this.echo('Sebastian Duran Caballero');
+                break;
+            case 'clear':
+                this.terminalOutput.innerHTML = '';
+                break;
+            case 'ls':
+                this.echo('description.txt  projects/  skills/  contact/');
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.echo('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+                } else if (!args[1]) {
+                    this.echo('Falta un operando');
+                } else {
+                    this.echo(`cat: ${this.escapeHTML(args[1])}: No existe el archivo o directorio`);
+                }
+                break;
+            case 'neofetch':
+                this.echo(`
+<div class="flex flex-col md:flex-row text-gray-100 mb-4">
+    <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+    </div>
+    <div>
+        <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita OS x86_64</p>
+        <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+        <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+        <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+        <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+        <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+        <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+    </div>
+</div>`, 'html');
+                break;
+            case 'open':
+                if (args[1]) {
+                    const validApps = ['projects', 'skills', 'contact', 'terminal'];
+                    if (validApps.includes(args[1])) {
+                        this.openWindow(args[1]);
+                    } else {
+                        this.echo(`No se encontro la aplicacion: ${this.escapeHTML(args[1])}`);
+                    }
+                } else {
+                    this.echo('Especifique una aplicacion para abrir');
+                }
+                break;
+            default:
+                this.echo(`Comando no encontrado: ${this.escapeHTML(command)}. Escriba 'help' para ver los comandos.`);
+        }
+    }
+
+
+    setupResizers() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight, startLeft, startTop;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    // Get current dimensions and position, including transform
+                    const rect = win.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+
+                    // Compute effective top and left considering margins/offsets in DOM
+                    const computedStyle = window.getComputedStyle(win);
+                    startLeft = parseFloat(computedStyle.left) || 0;
+                    startTop = parseFloat(computedStyle.top) || 0;
+
+                    // Incorporate translate3d values if present
+                    const transform = computedStyle.transform;
+                    let xOffset = 0;
+                    let yOffset = 0;
+                    if(transform !== 'none') {
+                        const matrix = new DOMMatrix(transform);
+                        xOffset = matrix.m41;
+                        yOffset = matrix.m42;
+                    }
+
+                    // Convert translate to absolute left/top so resizing works predictably
+                    win.style.transform = 'none';
+                    win.style.left = (startLeft + xOffset) + 'px';
+                    win.style.top = (startTop + yOffset) + 'px';
+
+                    startLeft = parseFloat(win.style.left);
+                    startTop = parseFloat(win.style.top);
+
+                    document.addEventListener('mousemove', handleMouseMove);
+                    document.addEventListener('mouseup', handleMouseUp);
+                });
+            });
+
+            const handleMouseMove = (e) => {
+                if (!isResizing) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                if (currentResizer.classList.contains('right') || currentResizer.classList.contains('bottom-right')) {
+                    win.style.width = `${startWidth + dx}px`;
+                }
+
+                if (currentResizer.classList.contains('bottom') || currentResizer.classList.contains('bottom-right')) {
+                    win.style.height = `${startHeight + dy}px`;
+                }
+            };
+
+            const handleMouseUp = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleMouseMove);
+                document.removeEventListener('mouseup', handleMouseUp);
+            };
+        });
+    }
+
+
     setupWindowClickToFront() {
         this.windows.forEach(win => {
             win.addEventListener('mousedown', () => {
@@ -109,17 +348,34 @@ class LinuxOS {
             document.addEventListener('mouseup', dragEnd);
 
             function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
-
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+
+                    if(win.classList.contains('maximized')) {
+                        win.classList.remove('maximized');
+
+                        // Temporarily set transform to none to get real layout rect
+                        win.style.transform = 'none';
+                        const rect = win.getBoundingClientRect();
+
+                        // Calculate new xOffset based on mouse position so it snaps to cursor
+                        // Instead of centering, let's keep it relative to the mouse X if possible,
+                        // but ensure it stays within bounds.
+                        const targetLeft = Math.max(0, e.clientX - (rect.width / 2));
+                        xOffset = targetLeft - rect.left;
+
+                        // The top should be at the mouse cursor basically, or slightly offset
+                        const topBarHeight = 28;
+                        const targetTop = Math.max(topBarHeight, e.clientY - 20);
+                        yOffset = targetTop - rect.top;
+
+                        setTranslate(xOffset, yOffset, win);
+                    }
+
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
                 }
             }
 
@@ -233,3 +489,4 @@ class LinuxOS {
 
 // Initialize the OS
 const app = new LinuxOS();
+window.app = app;
