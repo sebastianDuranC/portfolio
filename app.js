@@ -12,6 +12,7 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
     }
 
     setupLogin() {
@@ -112,14 +113,22 @@ class LinuxOS {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    if(win.classList.contains('maximized')){
+                       win.classList.remove('maximized');
+                       // recalculate position to not jump
+                       const rect = win.getBoundingClientRect();
+                       // the top-bar is 28px
+                       xOffset = e.clientX - rect.left;
+                       yOffset = e.clientY - rect.top;
+                       initialX = e.clientX - xOffset;
+                       initialY = e.clientY - yOffset;
+                       win.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
+                    } else {
+                       initialX = e.clientX - xOffset;
+                       initialY = e.clientY - yOffset;
+                    }
                 }
             }
 
@@ -191,6 +200,54 @@ class LinuxOS {
         if (win) {
             win.classList.add('minimized');
         }
+    }
+
+    setupResizers() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let originalWidth;
+            let originalHeight;
+            let originalMouseX;
+            let originalMouseY;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    const rect = win.getBoundingClientRect();
+                    originalWidth = rect.width;
+                    originalHeight = rect.height;
+                    originalMouseX = e.clientX;
+                    originalMouseY = e.clientY;
+
+                    window.addEventListener('mousemove', resize);
+                    window.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                    const width = originalWidth + (e.clientX - originalMouseX);
+                    win.style.width = width + 'px';
+                }
+
+                if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                    const height = originalHeight + (e.clientY - originalMouseY);
+                    win.style.height = height + 'px';
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                window.removeEventListener('mousemove', resize);
+                window.removeEventListener('mouseup', stopResize);
+            };
+        });
     }
 
     maximizeWindow(id) {
