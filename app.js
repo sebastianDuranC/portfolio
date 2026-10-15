@@ -12,6 +12,63 @@ class LinuxOS {
         this.setupDraggableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.setupResizers();
+    }
+
+    setupResizers() {
+        const resizers = document.querySelectorAll('.resizer');
+
+        resizers.forEach(resizer => {
+            let isResizing = false;
+            let currentResizer;
+            let currentWindow;
+            let initialX, initialY, initialWidth, initialHeight;
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                currentResizer = e.target;
+                currentWindow = currentResizer.closest('.os-window');
+
+                initialX = e.clientX;
+                initialY = e.clientY;
+
+                const rect = currentWindow.getBoundingClientRect();
+                initialWidth = rect.width;
+                initialHeight = rect.height;
+
+                // Bring to front
+                this.bringToFront(currentWindow);
+
+                // Disable transition during resize
+                currentWindow.style.transition = 'none';
+
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', stopResize);
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer.classList.contains('right') || currentResizer.classList.contains('bottom-right')) {
+                    const width = initialWidth + (e.clientX - initialX);
+                    currentWindow.style.width = `${width}px`;
+                }
+
+                if (currentResizer.classList.contains('bottom') || currentResizer.classList.contains('bottom-right')) {
+                    const height = initialHeight + (e.clientY - initialY);
+                    currentWindow.style.height = `${height}px`;
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                if(currentWindow) {
+                    currentWindow.style.transition = '';
+                }
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            };
+        });
     }
 
     setupLogin() {
@@ -104,26 +161,71 @@ class LinuxOS {
             let xOffset = 0;
             let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
-
-            function dragStart(e) {
+            const dragStart = (e) => {
                 // Don't drag if maximizing/closing buttons are clicked
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
-
-                initialX = e.clientX - xOffset;
-                initialY = e.clientY - yOffset;
-
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
-                }
-            }
+                    this.bringToFront(win);
 
-            function drag(e) {
+                    if (win.classList.contains('maximized')) {
+                        // Restore and start dragging
+                        win.classList.remove('maximized');
+                        win.style.transform = 'none';
+
+                        // Calculate offset relative to mouse position to avoid jumping
+                        const rectLeft = win.getBoundingClientRect().left;
+                        const headerRect = header.getBoundingClientRect();
+
+                        // The relative percentage of where the user clicked on the header
+                        const clickPercentageX = (e.clientX - headerRect.left) / headerRect.width;
+
+                        // The new window width will be the width it had before maximizing.
+                        // But we don't know it since we didn't save it and we rely on css classes.
+                        // However, we can just position it so the cursor stays where it clicked
+                        // relative to the unmaximized width. Let's just use the current rect after unmaximizing.
+
+                        const newRectLeft = win.getBoundingClientRect().left;
+
+                        xOffset = newRectLeft;
+                        yOffset = e.clientY - header.getBoundingClientRect().height / 2; // Grab from top area roughly
+
+                        // Actually, just let's set the target translation based on cursor
+
+                        // Wait, a simpler fix is what was requested in memory:
+                        // "recalculate xOffset based on targetLeft - rectLeft to prevent positioning jumps."
+
+                        // A simpler fix following memory: recalculate xOffset based on targetLeft - rectLeft
+                        const unmaximizedRect = win.getBoundingClientRect();
+                        const targetLeft = e.clientX - (clickPercentageX * unmaximizedRect.width);
+
+                        xOffset = targetLeft - rectLeft;
+                        yOffset = e.clientY - rectLeft; // this is just roughly the Y
+                        // Actually, yOffset should be near 0 relative to header top.
+                        yOffset = 0;
+                        // Wait, it is better to just set xOffset to the position we want the window at minus its static layout position
+
+                        // We will compute xOffset based on `e.clientX - unmaximizedRect.left` but preserving the relative click point.
+
+                        // Correct calculation:
+                        const layoutLeft = unmaximizedRect.left - (win.style.transform ? new DOMMatrixReadOnly(win.style.transform).m41 : 0);
+                        const layoutTop = unmaximizedRect.top - (win.style.transform ? new DOMMatrixReadOnly(win.style.transform).m42 : 0);
+
+                        xOffset = targetLeft - layoutLeft;
+                        yOffset = e.clientY - layoutTop - (e.clientY - headerRect.top); // keeping Y relative to cursor
+
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                        setTranslate(xOffset, yOffset, win);
+                    } else {
+                        initialX = e.clientX - xOffset;
+                        initialY = e.clientY - yOffset;
+                    }
+                }
+            };
+
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
 
@@ -135,17 +237,27 @@ class LinuxOS {
 
                     setTranslate(currentX, currentY, win);
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
+            const setTranslate = (xPos, yPos, el) => {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
+            };
 
-            function dragEnd(e) {
+            const dragEnd = (e) => {
+                if (!isDragging) return;
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
-            }
+
+                // Aero snap to top
+                if (e.clientY <= 0) {
+                    this.maximizeWindow(win.dataset.id);
+                }
+            };
+
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
         });
     }
 
