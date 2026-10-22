@@ -126,13 +126,14 @@
     overflow: hidden;
 }
 
-/* Tooltip for left dock */
-.dock-icon:hover::after {
+/* Tooltip for bottom dock */
+.dock-icon::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    opacity: 0;
     background: rgba(17, 17, 17, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
@@ -141,37 +142,35 @@
     font-size: 13px;
     white-space: nowrap;
     pointer-events: none;
-    font-family: 'Ubuntu', sans-serif;
+    font-family: 'Cantarell', sans-serif;
     z-index: 50;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.dock-icon::after {
-    content: '';
-    position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
-    opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
 }
 
 .dock-icon:hover::after {
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateX(-50%) translateY(-10px);
 }
 
 /* Little triangle for tooltip */
-.dock-icon:hover::before {
+.dock-icon::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
+    border-color: rgba(17, 17, 17, 0.95) transparent transparent transparent;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
     z-index: 50;
+}
+
+.dock-icon:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
 }
 /* Login Screen Fade Out */
 .fade-out {
@@ -186,7 +185,7 @@
 
 /* Terminal transparency */
 #window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
+    background-color: rgba(36, 36, 36, 0.85);
     backdrop-filter: blur(10px);
 }
 
