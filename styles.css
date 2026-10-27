@@ -1,95 +1,60 @@
-/* Ubuntu-like background */
-.ubuntu-bg {
-    background: 
-        radial-gradient(ellipse at bottom left, rgba(233,84,32,0.85) 0%, rgba(30,30,30,0) 60%),
-        radial-gradient(ellipse at top right, rgba(119,33,111,0.85) 0%, rgba(30,30,30,0) 60%),
-        url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z" fill="%23000" fill-opacity="0.1"/><path d="M0 100 Q 50 0 100 100 Z" fill="%23fff" fill-opacity="0.03"/></svg>');
-    background-size: cover, cover, cover;
-    background-color: #300a24;
-}
-
-/* Glassmorphism Utilities */
-.glass {
-    background: rgba(17, 17, 17, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.glass-light {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-}
-
-.glass-dark {
-    background: rgba(36, 36, 36, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal specific */
-.bg-aubergine {
-    background-color: #300a24;
-}
-
-/* Base font classes */
-.font-ubuntu {
-    font-family: 'Ubuntu', sans-serif;
-}
-
-.font-ubuntu-mono {
-    font-family: 'Ubuntu Mono', monospace;
+/* Base settings */
+body {
+    background-color: #242424;
 }
 
 /* Custom scrollbar for windows */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    border: 2px solid #1e1e1e;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 /* Window specific styles */
 .os-window {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255,255,255,0.05) inset;
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
-    border-radius: 10px;
-    background-clip: padding-box;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out; /* Removed long transform transition for dragging */
 }
 
+/* Window Header Customization */
 .window-header {
-    border-radius: 10px 10px 0 0;
+    border-radius: 12px 12px 0 0;
 }
 
+/* Hide when minimized */
 .os-window.minimized {
-    transform: scale(0.8) translateY(100vh);
+    transform: scale(0.9) translateY(20px);
     opacity: 0;
     pointer-events: none;
 }
 
+/* Maximized state - adheres to desktop boundaries */
 .os-window.maximized {
-    top: 28px !important; /* Below top bar */
+    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: calc(100vh - 28px) !important;
+    height: 100% !important;
     max-width: none !important;
     border-radius: 0;
-    transform: none;
+    transform: none !important;
+}
+
+/* Fix maximized state rounded corners */
+.os-window.maximized .window-header {
+    border-radius: 0;
 }
 
 /* Animations for window opening */
@@ -105,7 +70,7 @@
 }
 
 .window-opening {
-    animation: windowOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: windowOpen 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 /* Terminal blink cursor */
@@ -118,91 +83,73 @@
     50% { opacity: 0; }
 }
 
-/* Line clamp utility */
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Tooltip for left dock */
+/* Tooltip for Dock */
 .dock-icon:hover::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(17, 17, 17, 0.95);
+    bottom: calc(100% + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30, 30, 30, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
     font-size: 13px;
     white-space: nowrap;
     pointer-events: none;
-    font-family: 'Ubuntu', sans-serif;
-    z-index: 50;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-family: 'Cantarell', sans-serif;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    opacity: 1;
 }
 
 .dock-icon::after {
     content: '';
     position: absolute;
-    left: calc(100% + 5px);
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
     opacity: 0;
     transition: opacity 0.2s, transform 0.2s;
-}
-
-.dock-icon:hover::after {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
 }
 
 /* Little triangle for tooltip */
 .dock-icon:hover::before {
     content: '';
     position: absolute;
-    left: calc(100% + 4px);
-    top: 50%;
-    transform: translateY(-50%);
-    border-width: 6px 6px 6px 0;
+    bottom: calc(100% + 9px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
     border-style: solid;
-    border-color: transparent rgba(17, 17, 17, 0.95) transparent transparent;
-    z-index: 50;
+    border-color: rgba(30, 30, 30, 0.95) transparent transparent transparent;
+    z-index: 100;
+    opacity: 1;
 }
+
+.dock-icon::before {
+    content: '';
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
 /* Login Screen Fade Out */
 .fade-out {
     opacity: 0;
     pointer-events: none;
 }
 
-/* Subtle dock app active indicator */
-.dock-icon.active {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Terminal transparency */
-#window-terminal .window-content {
-    background-color: rgba(48, 10, 36, 0.85);
-    backdrop-filter: blur(10px);
-}
-
 /* Active window styling */
 .window-active {
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.15) inset, 0 0 0 1px rgba(0,0,0,0.8);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255,255,255,0.15) inset;
 }
 
 .window-inactive {
-    opacity: 0.95;
-    filter: brightness(0.95);
-}
-
-/* Fix maximized state rounded corners */
-.os-window.maximized .window-header {
-    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
+    /* Optional: slightly dim inactive windows */
+    /* filter: brightness(0.9); */
 }
 
 /* Custom styles for window buttons */
@@ -211,4 +158,61 @@
 }
 .window-header button:active {
     transform: scale(0.9);
+}
+
+/* --- Resizer Styles --- */
+.resizer {
+    position: absolute;
+    z-index: 20;
+}
+
+.resizer-r {
+    cursor: e-resize;
+    height: 100%;
+    width: 10px;
+    right: 0;
+    top: 0;
+}
+
+.resizer-b {
+    cursor: s-resize;
+    width: 100%;
+    height: 10px;
+    bottom: 0;
+    left: 0;
+}
+
+.resizer-br {
+    cursor: se-resize;
+    width: 15px;
+    height: 15px;
+    right: 0;
+    bottom: 0;
+}
+
+/* Hide resizers when maximized */
+.os-window.maximized .resizer {
+    display: none;
+}
+
+/* Terminal output specific */
+#terminal-output p {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.terminal-input-container {
+    display: flex;
+    align-items: center;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    outline: none;
+    flex-grow: 1;
+    font-family: inherit;
+    margin-left: 0.5rem;
+    font-size: 14px;
 }
