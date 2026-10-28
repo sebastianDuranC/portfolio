@@ -10,6 +10,7 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
     }
@@ -97,23 +98,33 @@ class LinuxOS {
             if (!header) return;
 
             let isDragging = false;
-            let currentX;
-            let currentY;
             let initialX;
             let initialY;
             let xOffset = 0;
             let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
-
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
+            const dragStart = (e) => {
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                if(win.classList.contains('maximized')) {
+                    // Start dragging from maximized state
+                    const rect = win.getBoundingClientRect();
+                    win.classList.remove('maximized');
+
+                    // Reset transform to calculate natural offsets
+                    win.style.transform = 'none';
+                    const newRect = win.getBoundingClientRect();
+
+                    // Calculate offsets based on where the mouse is relative to the natural layout position
+                    xOffset = e.clientX - newRect.left - (rect.width / 2) + (newRect.width / 2);
+                    yOffset = e.clientY - newRect.top;
+
+                    // Ensure the window is within bounds horizontally
+                    if(xOffset > 0) xOffset = 0;
+                    if(xOffset < -newRect.width + 100) xOffset = -newRect.width + 100;
+
+                    setTranslate(xOffset, yOffset, win);
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -121,31 +132,90 @@ class LinuxOS {
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
                 }
-            }
+            };
 
-            function drag(e) {
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
 
-                    currentX = e.clientX - initialX;
-                    currentY = e.clientY - initialY;
+                    let currentX = e.clientX - initialX;
+                    let currentY = e.clientY - initialY;
+
+                    // Prevent dragging above top bar (if any) or out of bounds
+                    if (currentY < 0) currentY = 0;
 
                     xOffset = currentX;
                     yOffset = currentY;
 
-                    setTranslate(currentX, currentY, win);
+                    setTranslate(xOffset, yOffset, win);
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
-
-            function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
+            const dragEnd = () => {
                 isDragging = false;
-            }
+            };
+
+            const setTranslate = (xPos, yPos, el) => {
+                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+            };
+
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+        });
+    }
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizerR = win.querySelector('.resizer-r');
+            const resizerB = win.querySelector('.resizer-b');
+            const resizerBR = win.querySelector('.resizer-br');
+
+            if (!resizerR && !resizerB && !resizerBR) return;
+
+            let isResizing = false;
+            let currentResizer;
+            let startX, startY, startWidth, startHeight;
+
+            const resizeStart = (e, resizerType) => {
+                e.preventDefault();
+                e.stopPropagation();
+                isResizing = true;
+                currentResizer = resizerType;
+
+                startX = e.clientX;
+                startY = e.clientY;
+
+                const rect = win.getBoundingClientRect();
+                startWidth = rect.width;
+                startHeight = rect.height;
+
+                // Bring to front on resize
+                this.bringToFront(win);
+            };
+
+            if(resizerR) resizerR.addEventListener('mousedown', (e) => resizeStart(e, 'r'));
+            if(resizerB) resizerB.addEventListener('mousedown', (e) => resizeStart(e, 'b'));
+            if(resizerBR) resizerBR.addEventListener('mousedown', (e) => resizeStart(e, 'br'));
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+
+                if (currentResizer === 'r' || currentResizer === 'br') {
+                    const newWidth = startWidth + (e.clientX - startX);
+                    win.style.width = `${Math.max(300, newWidth)}px`;
+                }
+
+                if (currentResizer === 'b' || currentResizer === 'br') {
+                    const newHeight = startHeight + (e.clientY - startY);
+                    win.style.height = `${Math.max(200, newHeight)}px`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isResizing = false;
+                currentResizer = null;
+            });
         });
     }
 
@@ -232,4 +302,123 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
+new TerminalParser();
+
+
+class TerminalParser {
+    constructor() {
+        this.input = document.getElementById('terminal-input');
+        this.output = document.getElementById('terminal-output');
+
+        if(this.input && this.output) {
+            this.input.addEventListener('keydown', (e) => this.handleInput(e));
+        }
+    }
+
+    handleInput(e) {
+        if (e.key === 'Enter') {
+            const command = this.input.value.trim();
+            this.input.value = '';
+            this.processCommand(command);
+        }
+    }
+
+    processCommand(command) {
+        // Echo command
+        const promptLine = document.createElement('p');
+        promptLine.className = 'mb-2';
+        promptLine.innerHTML = '<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ ';
+        const cmdSpan = document.createElement('span');
+        cmdSpan.textContent = command;
+        promptLine.appendChild(cmdSpan);
+        this.output.appendChild(promptLine);
+
+        if (!command) {
+            this.scrollToBottom();
+            return;
+        }
+
+        const args = command.split(' ');
+        const cmd = args[0].toLowerCase();
+
+        const resultLine = document.createElement('div');
+        resultLine.className = 'text-gray-100 mb-4 whitespace-pre-wrap';
+
+        switch(cmd) {
+            case 'help':
+                resultLine.textContent = 'Available commands:\nhelp - Show this message\nwhoami - Print current user\nclear - Clear terminal output\nls - List directory contents\nneofetch - System information\ncat - Read file\nopen - Open application (e.g. open projects)';
+                break;
+            case 'whoami':
+                resultLine.textContent = 'Sebastian Duran Caballero';
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                return;
+            case 'ls':
+                resultLine.textContent = 'description.txt\nprojects\nskills\ncontact';
+                break;
+            case 'neofetch':
+                resultLine.innerHTML = `
+                        <div class="flex flex-col md:flex-row text-gray-100">
+                            <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/'--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   '.  | /        ,'
+     './'      ,-'
+       '-----'
+</pre>
+                            </div>
+                            <div>
+                                <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita Linux x86_64</p>
+                                <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+                                <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+                                <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                                <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+                                <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                                <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+                            </div>
+                        </div>`;
+                break;
+            case 'cat':
+                if(args[1] === 'description.txt') {
+                    resultLine.textContent = 'Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.';
+                } else {
+                    resultLine.textContent = `cat: ${args[1] || ''}: No such file or directory`;
+                }
+                break;
+            case 'open':
+                if(args[1] && window.app) {
+                    window.app.openWindow(args[1]);
+                    resultLine.textContent = `Opening ${args[1]}...`;
+                } else {
+                    resultLine.textContent = 'Usage: open <app_name>';
+                }
+                break;
+            default:
+                resultLine.textContent = `bash: ${cmd}: command not found`;
+        }
+
+        if(resultLine.innerHTML !== '') {
+            this.output.appendChild(resultLine);
+        }
+
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        const terminalContent = document.getElementById('terminal-content');
+        if (terminalContent) {
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+    }
+}
