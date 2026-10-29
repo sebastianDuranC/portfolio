@@ -1,3 +1,137 @@
+class TerminalParser {
+    constructor(os) {
+        this.os = os;
+        this.output = document.getElementById('terminal-output');
+        this.input = document.getElementById('terminal-input');
+
+        if (this.input) {
+            this.input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = this.input.value.trim();
+                    this.executeCommand(command);
+                    this.input.value = '';
+                }
+            });
+
+            // Re-focus input when clicking terminal content
+            const content = document.querySelector('#window-terminal .window-content');
+            if(content) {
+                content.addEventListener('click', () => this.input.focus());
+            }
+        }
+    }
+
+    printLine(html, isCommand = false) {
+        if(!this.output) return;
+        const line = document.createElement('div');
+        line.className = isCommand ? 'mb-2' : 'mb-4 text-gray-100';
+        // Only use innerHTML for known safe formatted templates, use textContent for user input echoing
+        line.innerHTML = html;
+        this.output.appendChild(line);
+        this.output.parentElement.scrollTop = this.output.parentElement.scrollHeight;
+    }
+
+    printText(text) {
+        if(!this.output) return;
+        const line = document.createElement('div');
+        line.className = 'mb-4 text-gray-100';
+        line.textContent = text;
+        this.output.appendChild(line);
+        this.output.parentElement.scrollTop = this.output.parentElement.scrollHeight;
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
+    executeCommand(cmd) {
+        if(!cmd) {
+            this.printLine(`<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-adwaita-blue font-bold">~</span>$ `);
+            return;
+        }
+
+        const escapedCmd = this.escapeHTML(cmd);
+        this.printLine(`<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-adwaita-blue font-bold">~</span>$ ${escapedCmd}`, true);
+
+        const args = cmd.split(' ');
+        const command = args[0].toLowerCase();
+
+        switch(command) {
+            case 'help':
+                this.printLine('Available commands: help, whoami, clear, ls, neofetch, cat [file], open [app]');
+                break;
+            case 'whoami':
+                this.printLine('Sebastian Duran Caballero');
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                break;
+            case 'ls':
+                this.printLine('description.txt<br>projects/<br>skills/<br>contact/');
+                break;
+            case 'neofetch':
+                this.printLine(`
+                    <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                        <div class="mr-6 mb-4 md:mb-0 text-[#3584e4] text-xs sm:text-sm font-bold">
+<pre>
+       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \
+   ,'  |  ,'     /   \
+  /    | /      /     \
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \     |   /         /
+  \    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'
+</pre>
+                        </div>
+                        <div>
+                            <p><span class="text-[#3584e4] font-bold">OS:</span> Adwaita OS x86_64</p>
+                            <p><span class="text-[#3584e4] font-bold">Host:</span> Desarrollador Web</p>
+                            <p><span class="text-[#3584e4] font-bold">Uptime:</span> 24/7 coding</p>
+                            <p><span class="text-[#3584e4] font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                            <p><span class="text-[#3584e4] font-bold">Shell:</span> bash 5.1.16</p>
+                            <p><span class="text-[#3584e4] font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                            <p><span class="text-[#3584e4] font-bold">Email:</span> sd8587793@email.com</p>
+                        </div>
+                    </div>
+                `);
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.printLine('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+                } else if(args[1]) {
+                    this.printText(`cat: ${args[1]}: No such file or directory`);
+                } else {
+                    this.printLine('Usage: cat [file]');
+                }
+                break;
+            case 'open':
+                if(args[1] && ['terminal', 'projects', 'skills', 'contact'].includes(args[1])) {
+                    this.os.openWindow(args[1]);
+                    this.printLine(`Opening ${args[1]}...`);
+                } else {
+                    this.printLine('Usage: open [terminal|projects|skills|contact]');
+                }
+                break;
+            default:
+                this.printText(`${command}: command not found`);
+        }
+    }
+}
+
 class LinuxOS {
     constructor() {
         this.windows = document.querySelectorAll('.os-window');
@@ -10,8 +144,13 @@ class LinuxOS {
     init() {
         this.setupClock();
         this.setupDraggableWindows();
+        this.setupResizableWindows();
         this.setupWindowClickToFront();
         this.setupLogin();
+        this.terminal = new TerminalParser(this);
+        this.terminal.executeCommand('whoami');
+        this.terminal.executeCommand('neofetch');
+        this.terminal.executeCommand('');
     }
 
     setupLogin() {
@@ -83,6 +222,58 @@ class LinuxOS {
         });
     }
 
+
+    setupResizableWindows() {
+        this.windows.forEach(win => {
+            const resizers = win.querySelectorAll('.resizer');
+            let isResizing = false;
+            let currentResizer;
+            let originalWidth = 0;
+            let originalHeight = 0;
+            let originalX = 0;
+            let originalY = 0;
+
+            resizers.forEach(resizer => {
+                resizer.addEventListener('mousedown', (e) => {
+                    if (win.classList.contains('maximized')) return;
+                    e.preventDefault();
+                    isResizing = true;
+                    currentResizer = resizer;
+                    originalWidth = parseFloat(getComputedStyle(win, null).getPropertyValue('width').replace('px', ''));
+                    originalHeight = parseFloat(getComputedStyle(win, null).getPropertyValue('height').replace('px', ''));
+                    originalX = e.clientX;
+                    originalY = e.clientY;
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                    this.bringToFront(win);
+                });
+            });
+
+            const resize = (e) => {
+                if (!isResizing) return;
+                if (currentResizer.classList.contains('right')) {
+                    const width = originalWidth + (e.clientX - originalX);
+                    win.style.width = width + 'px';
+                } else if (currentResizer.classList.contains('bottom')) {
+                    const height = originalHeight + (e.clientY - originalY);
+                    win.style.height = height + 'px';
+                } else if (currentResizer.classList.contains('bottom-right')) {
+                    const width = originalWidth + (e.clientX - originalX);
+                    const height = originalHeight + (e.clientY - originalY);
+                    win.style.width = width + 'px';
+                    win.style.height = height + 'px';
+                }
+            };
+
+            const stopResize = () => {
+                isResizing = false;
+                document.removeEventListener('mousemove', resize);
+                document.removeEventListener('mouseup', stopResize);
+            };
+        });
+    }
+
     setupWindowClickToFront() {
         this.windows.forEach(win => {
             win.addEventListener('mousedown', () => {
@@ -108,12 +299,19 @@ class LinuxOS {
             document.addEventListener('mousemove', drag);
             document.addEventListener('mouseup', dragEnd);
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
+            const dragStart = (e) => {
                 if(e.target.closest('button')) return;
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                // If maximized, we restore it to normal size and drag it
+                if(win.classList.contains('maximized')) {
+                    this.maximizeWindow(win.dataset.id || win.id.replace('window-', ''));
+                    // We need to recalculate offsets because position just jumped
+                    const rect = win.getBoundingClientRect();
+                    xOffset = e.clientX - rect.left;
+                    yOffset = e.clientY - rect.top;
+                    // Temporary set transform to none to prevent visual jumps while dragging
+                    win.style.transform = 'none';
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -123,7 +321,7 @@ class LinuxOS {
                 }
             }
 
-            function drag(e) {
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
 
@@ -137,11 +335,11 @@ class LinuxOS {
                 }
             }
 
-            function setTranslate(xPos, yPos, el) {
+            const setTranslate = (xPos, yPos, el) => {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
             }
 
-            function dragEnd(e) {
+            const dragEnd = (e) => {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
@@ -232,4 +430,4 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+window.app = new LinuxOS();
