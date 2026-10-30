@@ -103,50 +103,106 @@ class LinuxOS {
             let initialY;
             let xOffset = 0;
             let yOffset = 0;
+            let isResizing = false;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
+            const dragStart = (e) => {
+                if (e.target.closest('button') || e.target.classList.contains('resizer') || isResizing) return;
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.closest('button')) return;
+                if (win.classList.contains('maximized')) {
+                    // Logic to restore window when dragged while maximized
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none';
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                    const rect = win.getBoundingClientRect();
+                    const targetLeft = e.clientX - (rect.width / 2);
+
+                    xOffset = targetLeft - rect.left;
+                    yOffset = 0;
+
+                    this.setTranslate(xOffset, yOffset, win);
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    this.bringToFront(win);
                 }
-            }
+            };
 
-            function drag(e) {
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
 
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
+                    // Implement 'Aero Snap' to top
+                    if (e.clientY <= 28) {
+                        this.maximizeWindow(win.dataset.id);
+                        isDragging = false;
+                        return;
+                    }
+
                     xOffset = currentX;
                     yOffset = currentY;
 
-                    setTranslate(currentX, currentY, win);
+                    this.setTranslate(currentX, currentY, win);
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
-
-            function dragEnd(e) {
+            const dragEnd = (e) => {
                 initialX = currentX;
                 initialY = currentY;
                 isDragging = false;
-            }
+            };
+
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+
+            // Setup Resizing
+            const resizers = win.querySelectorAll('.resizer');
+            resizers.forEach(resizer => {
+                let startWidth, startHeight, startX, startY;
+
+                const resizeStart = (e) => {
+                    e.preventDefault();
+                    isResizing = true;
+                    this.bringToFront(win);
+
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startWidth = parseInt(document.defaultView.getComputedStyle(win).width, 10);
+                    startHeight = parseInt(document.defaultView.getComputedStyle(win).height, 10);
+
+                    const resize = (e) => {
+                        if(resizer.classList.contains('resizer-r') || resizer.classList.contains('resizer-br')) {
+                            win.style.width = (startWidth + e.clientX - startX) + 'px';
+                        }
+                        if(resizer.classList.contains('resizer-b') || resizer.classList.contains('resizer-br')) {
+                            win.style.height = (startHeight + e.clientY - startY) + 'px';
+                        }
+                    };
+
+                    const resizeEnd = (e) => {
+                        isResizing = false;
+                        document.removeEventListener('mousemove', resize);
+                        document.removeEventListener('mouseup', resizeEnd);
+                    };
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', resizeEnd);
+                };
+
+                resizer.addEventListener('mousedown', resizeStart);
+            });
         });
+    }
+
+    setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
     }
 
     openWindow(id) {
@@ -231,5 +287,265 @@ class LinuxOS {
     }
 }
 
+class TerminalParser {
+    constructor(containerId) {
+        this.container = document.getElementById(containerId);
+        this.history = [];
+        this.historyIndex = -1;
+        this.prompt = '<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ ';
+
+        this.commands = {
+            'help': this.cmdHelp.bind(this),
+            'whoami': this.cmdWhoami.bind(this),
+            'clear': this.cmdClear.bind(this),
+            'ls': this.cmdLs.bind(this),
+            'neofetch': this.cmdNeofetch.bind(this),
+            'cat': this.cmdCat.bind(this),
+            'open': this.cmdOpen.bind(this)
+        };
+
+        this.init();
+    }
+
+    init() {
+        if(!this.container) return;
+        this.container.innerHTML = ''; // Clear initial html
+        this.container.addEventListener('click', () => {
+            const input = this.container.querySelector('.terminal-input');
+            if(input) input.focus();
+        });
+
+        // Pre-populate
+        this.printLine(`${this.prompt}whoami`);
+        this.printLine('Sebastian Duran Caballero');
+        this.printLine(`${this.prompt}neofetch`);
+        this.cmdNeofetch([]);
+        this.createNewInputLine();
+    }
+
+    printLine(htmlString) {
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = htmlString; // prompt contains html, safe as we control it
+        this.container.appendChild(div);
+        this.scrollToBottom();
+    }
+
+    printText(text) {
+        const div = document.createElement('div');
+        div.className = 'mb-2 whitespace-pre-wrap text-gray-100';
+        div.textContent = text;
+        this.container.appendChild(div);
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        this.container.scrollTop = this.container.scrollHeight;
+    }
+
+    createNewInputLine() {
+        // Remove old input if exists
+        const oldInputContainer = this.container.querySelector('.terminal-input-container');
+        if (oldInputContainer) {
+            const oldInput = oldInputContainer.querySelector('input');
+            const val = oldInput ? oldInput.value : '';
+            oldInputContainer.outerHTML = `<div class="mb-2">${this.prompt}${this.escapeHTML(val)}</div>`;
+        }
+
+        const div = document.createElement('div');
+        div.className = 'terminal-input-container flex items-center mb-2';
+        div.innerHTML = `${this.prompt} <input type="text" class="terminal-input bg-transparent border-none outline-none text-gray-200 flex-1 ml-1 font-firacode" autocomplete="off" spellcheck="false" autofocus>`;
+
+        this.container.appendChild(div);
+
+        const input = div.querySelector('input');
+        input.addEventListener('keydown', this.handleInput.bind(this));
+        // Small delay to ensure render before focus
+        setTimeout(() => input.focus(), 10);
+        this.scrollToBottom();
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
+    handleInput(e) {
+        if (e.key === 'Enter') {
+            const val = e.target.value.trim();
+            if (val) {
+                this.history.push(val);
+                this.historyIndex = this.history.length;
+            }
+            this.processCommand(val);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (this.historyIndex > 0) {
+                this.historyIndex--;
+                e.target.value = this.history[this.historyIndex];
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (this.historyIndex < this.history.length - 1) {
+                this.historyIndex++;
+                e.target.value = this.history[this.historyIndex];
+            } else {
+                this.historyIndex = this.history.length;
+                e.target.value = '';
+            }
+        }
+    }
+
+    processCommand(cmdString) {
+        if (!cmdString) {
+            this.createNewInputLine();
+            return;
+        }
+
+        const parts = cmdString.split(' ').filter(p => p.trim() !== '');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        // Replace current input with static text
+        const oldInputContainer = this.container.querySelector('.terminal-input-container');
+        if (oldInputContainer) {
+            oldInputContainer.outerHTML = `<div class="mb-2">${this.prompt}${this.escapeHTML(cmdString)}</div>`;
+        } else {
+             this.printLine(`${this.prompt}${this.escapeHTML(cmdString)}`);
+        }
+
+
+        if (this.commands[cmd]) {
+            this.commands[cmd](args);
+        } else {
+            this.printText(`bash: ${cmd}: command not found`);
+        }
+
+        if (cmd !== 'clear') {
+            this.createNewInputLine();
+        }
+    }
+
+    cmdHelp() {
+        this.printText(`Available commands:
+  help      - Show this help message
+  whoami    - Print current user
+  clear     - Clear terminal output
+  ls        - List directory contents
+  neofetch  - Display system information
+  cat       - Concatenate and print files (try: cat description.txt)
+  open      - Open an application (usage: open <app_name>)
+              Apps: projects, skills, contact`);
+    }
+
+    cmdWhoami() {
+        this.printText('Sebastian Duran Caballero');
+    }
+
+    cmdClear() {
+        this.container.innerHTML = '';
+        this.createNewInputLine();
+    }
+
+    cmdLs() {
+        const html = `<div class="flex gap-4 text-adwaita-blue font-bold">
+            <span>projects/</span>
+            <span>skills/</span>
+            <span>contact/</span>
+            <span class="text-gray-200 font-normal">description.txt</span>
+        </div>`;
+        const div = document.createElement('div');
+        div.className = 'mb-2';
+        div.innerHTML = html;
+        this.container.appendChild(div);
+        this.scrollToBottom();
+    }
+
+    cmdNeofetch() {
+        // Escaping backticks carefully for the template literal
+        const ascii = `       _,-/\`--,-/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'`;
+
+        const html = `
+        <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+            <div class="mr-6 mb-4 md:mb-0 text-adwaita-blue text-xs sm:text-sm font-bold whitespace-pre">
+${this.escapeHTML(ascii)}
+            </div>
+            <div>
+                <p><span class="text-adwaita-blue font-bold">OS:</span> GNOME OS x86_64</p>
+                <p><span class="text-adwaita-blue font-bold">Host:</span> Desarrollador Web</p>
+                <p><span class="text-adwaita-blue font-bold">Uptime:</span> 24/7 coding</p>
+                <p><span class="text-adwaita-blue font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                <p><span class="text-adwaita-blue font-bold">Shell:</span> bash 5.1.16</p>
+                <p><span class="text-adwaita-blue font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                <p><span class="text-adwaita-blue font-bold">Email:</span> sd8587793@email.com</p>
+            </div>
+        </div>`;
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        this.container.appendChild(div);
+        this.scrollToBottom();
+    }
+
+    cmdCat(args) {
+        if (args.length === 0) {
+            this.printText('cat: missing operand');
+            return;
+        }
+
+        if (args[0] === 'description.txt') {
+            this.printText('Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.');
+        } else {
+            this.printText(`cat: ${args[0]}: No such file or directory`);
+        }
+    }
+
+    cmdOpen(args) {
+        if (args.length === 0) {
+            this.printText('open: missing application name');
+            return;
+        }
+
+        const appName = args[0].toLowerCase();
+        const validApps = ['projects', 'skills', 'contact', 'terminal'];
+
+        if (validApps.includes(appName)) {
+            if(window.app) {
+                window.app.openWindow(appName);
+                this.printText(`Opening ${appName}...`);
+            } else {
+                this.printText('Error: Window manager not found.');
+            }
+        } else {
+            this.printText(`open: application '${appName}' not found`);
+        }
+    }
+}
+
+
 // Initialize the OS
 const app = new LinuxOS();
+window.app = app;
+
+// Initialize Terminal Parser once the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.terminalParser = new TerminalParser('terminal-content');
+});
