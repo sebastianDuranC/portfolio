@@ -104,16 +104,27 @@ class LinuxOS {
             let xOffset = 0;
             let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
+            header.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button')) return;
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.closest('button')) return;
+                // If dragging maximized window, restore it down and snap to mouse cursor
+                if (win.classList.contains('maximized')) {
+                    win.classList.remove('maximized');
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                    const rect = win.getBoundingClientRect();
+
+                    // Temporarily set transform to none to recalculate correct natural offsets
+                    win.style.transform = 'none';
+                    const naturalRect = win.getBoundingClientRect();
+
+                    // Calculate center offset proportional to where the user clicked vs screen width
+                    const ratio = e.clientX / window.innerWidth;
+                    let targetLeft = e.clientX - (rect.width * ratio);
+                    let targetTop = 0; // snap to top where user dragged from
+
+                    xOffset = targetLeft - naturalRect.left;
+                    yOffset = targetTop - naturalRect.top;
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
@@ -121,31 +132,33 @@ class LinuxOS {
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
                 }
-            }
+            });
 
-            function drag(e) {
+            document.addEventListener('mousemove', (e) => {
                 if (isDragging) {
                     e.preventDefault();
-
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
                     xOffset = currentX;
                     yOffset = currentY;
 
-                    setTranslate(currentX, currentY, win);
+                    win.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
                 }
-            }
+            });
 
-            function setTranslate(xPos, yPos, el) {
-                el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
+            document.addEventListener('mouseup', (e) => {
+                if (isDragging) {
+                    initialX = currentX;
+                    initialY = currentY;
+                    isDragging = false;
 
-            function dragEnd(e) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-            }
+                    // Aero snap back to maximized if dragged to top
+                    if (e.clientY <= 28) {
+                        this.maximizeWindow(win.dataset.id);
+                    }
+                }
+            });
         });
     }
 

@@ -3,3 +3,7 @@ screenshot.js
 screenshot.png
 package-lock.json
 package.json
+venv/
+server.log
+*.png
+test_ui.py
