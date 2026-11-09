@@ -104,29 +104,41 @@ class LinuxOS {
             let xOffset = 0;
             let yOffset = 0;
 
-            header.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', dragEnd);
+            const dragStart = (e) => {
+                if (e.target.closest('button') || e.target.closest('.resizer')) return;
 
-            function dragStart(e) {
-                // Don't drag if maximizing/closing buttons are clicked
-                if(e.target.closest('button')) return;
+                if (win.classList.contains('maximized')) {
+                    // Restore from maximized on drag
+                    win.classList.remove('maximized');
+                    win.style.transform = 'none'; // Temporarily to measure
 
-                // Don't drag if maximized
-                if(win.classList.contains('maximized')) return;
+                    const rect = win.getBoundingClientRect();
+                    const targetLeft = e.clientX - (rect.width / 2);
+                    // Prevent dragging offscreen left/right
+                    const boundedLeft = Math.max(0, Math.min(targetLeft, window.innerWidth - rect.width));
+
+                    xOffset = boundedLeft - rect.left;
+                    yOffset = 0; // Snap to top initially
+
+                    if (win.dataset.prevTransform) {
+                         // We could use prevTransform but calculating it is smoother for the mouse position
+                    }
+
+                    setTranslate(xOffset, yOffset, win);
+                }
 
                 initialX = e.clientX - xOffset;
                 initialY = e.clientY - yOffset;
 
                 if (e.target === header || header.contains(e.target)) {
                     isDragging = true;
+                    this.bringToFront(win);
                 }
-            }
+            };
 
-            function drag(e) {
+            const drag = (e) => {
                 if (isDragging) {
                     e.preventDefault();
-
                     currentX = e.clientX - initialX;
                     currentY = e.clientY - initialY;
 
@@ -134,18 +146,79 @@ class LinuxOS {
                     yOffset = currentY;
 
                     setTranslate(currentX, currentY, win);
+
+                    // Aero snap preview (optional visual) - for now just maximizing on dragEnd if at top
                 }
-            }
+            };
 
-            function setTranslate(xPos, yPos, el) {
+            const setTranslate = (xPos, yPos, el) => {
                 el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-            }
+            };
 
-            function dragEnd(e) {
+            const dragEnd = (e) => {
                 initialX = currentX;
                 initialY = currentY;
+
+                if (isDragging && e.clientY <= 0) {
+                    // Aero snap maximize
+                    win.dataset.prevTransform = win.style.transform;
+                    win.classList.add('maximized');
+                    win.style.transform = 'none';
+                }
+
                 isDragging = false;
-            }
+            };
+
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+
+            // Resizing logic
+            const resizers = win.querySelectorAll('.resizer');
+            resizers.forEach(resizer => {
+                let isResizing = false;
+                let currentResizer = null;
+                let originalWidth, originalHeight, originalX, originalY;
+
+                const resizeStart = (e) => {
+                    isResizing = true;
+                    currentResizer = resizer;
+                    this.bringToFront(win);
+
+                    const rect = win.getBoundingClientRect();
+                    originalWidth = rect.width;
+                    originalHeight = rect.height;
+                    originalX = e.clientX;
+                    originalY = e.clientY;
+
+                    resizer.classList.add('active');
+                };
+
+                const resize = (e) => {
+                    if (!isResizing) return;
+
+                    if (currentResizer.classList.contains('resizer-r') || currentResizer.classList.contains('resizer-br')) {
+                        const width = originalWidth + (e.clientX - originalX);
+                        win.style.width = `${width}px`;
+                    }
+
+                    if (currentResizer.classList.contains('resizer-b') || currentResizer.classList.contains('resizer-br')) {
+                        const height = originalHeight + (e.clientY - originalY);
+                        win.style.height = `${height}px`;
+                    }
+                };
+
+                const resizeEnd = () => {
+                    if (isResizing) {
+                        isResizing = false;
+                        currentResizer.classList.remove('active');
+                    }
+                };
+
+                resizer.addEventListener('mousedown', resizeStart);
+                document.addEventListener('mousemove', resize);
+                document.addEventListener('mouseup', resizeEnd);
+            });
         });
     }
 
@@ -232,4 +305,162 @@ class LinuxOS {
 }
 
 // Initialize the OS
-const app = new LinuxOS();
+
+
+
+
+class TerminalParser {
+    constructor(appInstance) {
+        this.app = appInstance;
+        this.output = document.getElementById('terminal-output');
+        this.input = document.getElementById('terminal-input');
+
+        if (!this.output || !this.input) return;
+
+        this.setupInput();
+        this.printInitialState();
+    }
+
+    setupInput() {
+        this.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const command = this.input.value.trim();
+                this.input.value = '';
+                this.processCommand(command);
+            }
+        });
+    }
+
+    escapeHTML(str) {
+        return str.replace(/[&<>'"]/g,
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag)
+        );
+    }
+
+    printLine(htmlString) {
+        const line = document.createElement('div');
+        line.innerHTML = htmlString;
+        this.output.appendChild(line);
+        this.output.scrollTop = this.output.scrollHeight;
+    }
+
+    printCommand(command) {
+        const safeCommand = this.escapeHTML(command);
+        this.printLine(`<span class="text-green-400 font-bold">sebastian@adwaita</span>:<span class="text-blue-400 font-bold">~</span>$ ${safeCommand}`);
+    }
+
+    processCommand(command) {
+        this.printCommand(command);
+        if (!command) return;
+
+        const args = command.split(' ').filter(Boolean);
+        const cmd = args[0].toLowerCase();
+
+        switch(cmd) {
+            case 'help':
+                this.printLine(`<p class="text-gray-100 mb-2">Available commands:</p>
+                    <ul class="text-gray-300 ml-4 mb-4">
+                        <li><span class="text-adwaita-blue font-bold">help</span> - Show this help</li>
+                        <li><span class="text-adwaita-blue font-bold">whoami</span> - Display current user</li>
+                        <li><span class="text-adwaita-blue font-bold">clear</span> - Clear the terminal</li>
+                        <li><span class="text-adwaita-blue font-bold">ls</span> - List directory contents</li>
+                        <li><span class="text-adwaita-blue font-bold">neofetch</span> - Display system information</li>
+                        <li><span class="text-adwaita-blue font-bold">cat</span> [file] - Read file content</li>
+                        <li><span class="text-adwaita-blue font-bold">open</span> [app] - Open an application (projects, skills, contact)</li>
+                    </ul>`);
+                break;
+            case 'whoami':
+                this.printLine(`<p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>`);
+                break;
+            case 'clear':
+                this.output.innerHTML = '';
+                break;
+            case 'ls':
+                this.printLine(`<p class="text-gray-100 mb-4">
+                    <span class="text-adwaita-blue font-bold mr-4">description.txt</span>
+                    <span class="text-adwaita-blue font-bold mr-4">projects/</span>
+                    <span class="text-adwaita-blue font-bold">skills/</span>
+                </p>`);
+                break;
+            case 'neofetch':
+                this.printNeofetch();
+                break;
+            case 'cat':
+                if (args[1] === 'description.txt') {
+                    this.printLine(`<p class="text-gray-100 mb-4">Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.</p>`);
+                } else {
+                    this.printLine(`<p class="text-red-400 mb-4">cat: ${this.escapeHTML(args[1] || '')}: No such file or directory</p>`);
+                }
+                break;
+            case 'open':
+                const app = args[1];
+                if (['projects', 'skills', 'contact'].includes(app)) {
+                    this.app.openWindow(app);
+                    this.printLine(`<p class="text-gray-300 mb-4">Opening ${this.escapeHTML(app)}...</p>`);
+                } else {
+                    this.printLine(`<p class="text-red-400 mb-4">open: ${this.escapeHTML(app || '')}: Application not found</p>`);
+                }
+                break;
+            default:
+                this.printLine(`<p class="text-red-400 mb-4">${this.escapeHTML(cmd)}: command not found</p>`);
+        }
+    }
+
+    printInitialState() {
+        this.printCommand('whoami');
+        this.printLine('<p class="text-gray-100 mb-4">Sebastian Duran Caballero</p>');
+
+        this.printCommand('cat description.txt');
+        this.printLine('<p class="text-gray-100 mb-4">Hola, soy un Desarrollador web apasionado por crear experiencias digitales únicas y funcionales. Especializado en el desarrollo web con .NET.</p>');
+
+        this.printCommand('neofetch');
+        this.printNeofetch();
+    }
+
+    printNeofetch() {
+        const ascii = `       _,-/\`--,-\/\\-,
+     ,' /   ,-'   ) \\
+   ,'  |  ,'     /   \\
+  /    | /      /     \\
+ /      /      /      |
+|      /      /       |
+|      |     /        |
+|      |    /         |
+ \\     |   /         /
+  \\    |  /         /
+   \`.  | /        ,'
+     \`./'      ,-'
+       \`-----'`;
+
+        // Remove backslash escaping for backticks in JS string literal evaluation if needed
+        const cleanAscii = ascii.replace(/\\`/g, '`');
+        const safeAscii = this.escapeHTML(cleanAscii);
+
+        this.printLine(`
+            <div class="flex flex-col md:flex-row text-gray-100 mb-4">
+                <div class="mr-6 mb-4 md:mb-0 text-adwaita-blue text-xs sm:text-sm font-bold whitespace-pre">
+${safeAscii}
+                </div>
+                <div>
+                    <p><span class="text-adwaita-blue font-bold">OS:</span> GNOME OS x86_64</p>
+                    <p><span class="text-adwaita-blue font-bold">Host:</span> Desarrollador Web</p>
+                    <p><span class="text-adwaita-blue font-bold">Uptime:</span> 24/7 coding</p>
+                    <p><span class="text-adwaita-blue font-bold">Packages:</span> HTML, CSS, JS, .NET, C#</p>
+                    <p><span class="text-adwaita-blue font-bold">Shell:</span> bash 5.1.16</p>
+                    <p><span class="text-adwaita-blue font-bold">Location:</span> Santa Cruz, Bolivia</p>
+                    <p><span class="text-adwaita-blue font-bold">Email:</span> sd8587793@email.com</p>
+                </div>
+            </div>
+        `);
+    }
+}
+
+window.app = new LinuxOS();
+const app = window.app;
+const terminal = new TerminalParser(app);
